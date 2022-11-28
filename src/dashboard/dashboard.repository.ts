@@ -48,7 +48,7 @@ export class DashBoardRepository {
     );
   }
 
-  async findForPageInfo(pageIndex: number, query: BerthQueryDto) {
+  async findForPageInfo(offset: number, query: BerthQueryDto) {
     const whereArr = [
       ["AND trminlCode = :trminlCode", query.trminlCode],
       [
@@ -92,11 +92,11 @@ export class DashBoardRepository {
             berthStat_schedule
             WHERE TRUE
             ${this.utils.generator(whereArr, query)}
-            LIMIT :pageIndex, 20
+            LIMIT :offset, 20
           `,
       {
         type: sequelize.QueryTypes.SELECT,
-        replacements: { pageIndex: pageIndex, ...query },
+        replacements: { offset: offset, ...query },
       }
     );
   }

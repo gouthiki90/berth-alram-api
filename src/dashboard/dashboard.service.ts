@@ -15,6 +15,7 @@ export class DashboardService {
   ) {}
   async makePageInfo(data: OffsetPagingInfoDto, query: BerthQueryDto) {
     const PAGE_ITEM_COUNT = 20;
+    const OFFSET = PAGE_ITEM_COUNT * data.pageIndex;
     const itmes = new Array<BerthStatDto>();
 
     if ("number" !== typeof data.pageIndex) {
@@ -24,10 +25,9 @@ export class DashboardService {
     if (typeof null === typeof data.pageIndex) {
       throw new NotFoundException("Is null");
     }
-
     try {
       const berthStatListForPage =
-        await this.dashBoardRepository.findForPageInfo(data.pageIndex, query);
+        await this.dashBoardRepository.findForPageInfo(OFFSET, query);
       const berthStatListForPageAll =
         await this.dashBoardRepository.findForPageInfoAll(query);
 
