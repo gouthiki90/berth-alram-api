@@ -70,6 +70,7 @@ export class AlramService {
   async makePageInfoForAlramList(data: OffsetPagingInfoDto, oid: string) {
     /** 20개로 최대 고정값 */
     const PAGE_ITEM_COUNT = 20;
+    const OFFSET = PAGE_ITEM_COUNT * data.pageIndex;
     const itmes = new Array<OffsetAlramDto>();
 
     if ("number" !== typeof data.pageIndex) {
@@ -83,7 +84,7 @@ export class AlramService {
     try {
       const userAlramListForPaging = await this.alramRepository.findOne(
         oid,
-        data.pageIndex
+        OFFSET
       );
 
       const userAlramListForPagingAll = await this.alramRepository.findAll(oid);

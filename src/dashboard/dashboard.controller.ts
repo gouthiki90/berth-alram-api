@@ -15,7 +15,7 @@ import { DashboardService } from "./dashboard.service";
 import { BerthQueryDto } from "./dto/berth-query.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("dashboard")
 export class DashboardController {

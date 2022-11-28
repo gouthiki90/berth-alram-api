@@ -6,7 +6,7 @@ import seqeulize from "sequelize";
 export class AlramRepository {
   constructor(private readonly sequelize: Sequelize) {}
 
-  async findOne(oid: string, pageIndex: number) {
+  async findOne(oid: string, offset: number) {
     try {
       const list = await this.sequelize.query(
         `
@@ -28,11 +28,11 @@ export class AlramRepository {
         LEFT JOIN user AS usr ON alram.user_oid = usr.oid
         WHERE TRUE
         AND usr.oid = $oid
-        LIMIT $pageIndex, 20
+        LIMIT $offset, 20
         `,
         {
           type: seqeulize.QueryTypes.SELECT,
-          bind: { oid: oid, pageIndex: pageIndex },
+          bind: { oid: oid, offset: offset },
         }
       );
 
