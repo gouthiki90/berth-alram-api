@@ -27,12 +27,11 @@ export class AlramRepository {
         LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
         LEFT JOIN user AS usr ON alram.user_oid = usr.oid
         WHERE TRUE
-        AND usr.oid = $oid
-        LIMIT $offset, 20
+        AND usr.oid = '${oid}'
+        LIMIT ${offset}, 20
         `,
         {
           type: seqeulize.QueryTypes.SELECT,
-          bind: { oid: oid, offset: offset },
         }
       );
 
@@ -63,11 +62,10 @@ export class AlramRepository {
         LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
         LEFT JOIN user AS usr ON alram.user_oid = usr.oid
         WHERE TRUE
-        AND usr.oid = $oid
+        AND usr.oid = '${oid}'
         `,
         {
           type: seqeulize.QueryTypes.SELECT,
-          bind: { oid: oid },
         }
       );
 

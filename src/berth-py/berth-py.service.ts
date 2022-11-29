@@ -71,14 +71,13 @@ export class BerthPyService {
             }
           }
         } else {
-          await berthStatSchedule.create(obj, { transaction: t });
+          await berthStatSchedule.upsert(obj, { transaction: t });
         }
       }
 
       await t.commit();
     } catch (error) {
       console.log(error);
-      await t.rollback();
     }
   }
 }

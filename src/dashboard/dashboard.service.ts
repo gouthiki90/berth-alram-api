@@ -25,6 +25,7 @@ export class DashboardService {
     if (typeof null === typeof data.pageIndex) {
       throw new NotFoundException("Is null");
     }
+
     try {
       const berthStatListForPage =
         await this.dashBoardRepository.findForPageInfo(OFFSET, query);

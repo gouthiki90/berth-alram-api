@@ -14,6 +14,7 @@ export interface subscriptionAlramAttributes {
   scheduleOid?: string;
   title?: string;
   content?: string;
+  isChange?: number;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -52,6 +53,14 @@ export class subscriptionAlram
 
   @Column({ allowNull: true, type: DataType.STRING(150), comment: "문자 내용" })
   content?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "입항시간 변경 여부",
+    defaultValue: "0",
+  })
+  isChange?: number;
 
   @Column({
     field: "create_date",
