@@ -98,20 +98,22 @@ export class UserService {
     const t = await this.seqeulize.transaction();
     try {
       // duple check
-      const userData = await user.findOne({
-        where: {
-          userId: updateUserDto.userId,
-        },
-      });
-
-      if (userData?.userId) {
-        res.status(409).json({
-          statusCode: 409,
-          message: "중복된 아이디 입니다.",
-          path: "/user/:oid",
+      if (updateUserDto.userId) {
+        const userData = await user.findOne({
+          where: {
+            userId: updateUserDto.userId,
+          },
         });
 
-        throw new Error("중복된 아이디 입니다.");
+        if (userData?.userId) {
+          res.status(409).json({
+            statusCode: 409,
+            message: "중복된 아이디 입니다.",
+            path: "/user/:oid",
+          });
+
+          throw new Error("중복된 아이디 입니다.");
+        }
       }
 
       await user.update(updateUserDto, {
