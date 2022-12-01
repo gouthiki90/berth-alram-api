@@ -10,7 +10,7 @@ import { AlramModule } from "./alram/alram.module";
 import { AuthModule } from "./auth/auth.module";
 import { BerthPyModule } from "./berth-py/berth-py.module";
 import { HttpModule } from "@nestjs/axios";
-import { AlramPushModule } from './alram-push/alram-push.module';
+import { AlramPushModule } from "./alram-push/alram-push.module";
 
 @Module({
   imports: [

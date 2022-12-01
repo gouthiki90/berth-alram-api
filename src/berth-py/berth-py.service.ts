@@ -73,67 +73,6 @@ export class BerthPyService {
     }
   }
 
-  /** 날짜에 따른 알람 푸쉬 */
-  async sendAlramOfDayAgo(userInfoList: Array<user>, obj: CreateBerthPyDto) {
-    const TODAY = new Date();
-    const ONE_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 1)).getDate(),
-      "1일",
-    ];
-    const TOW_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 2)).getDate(),
-      "2일",
-    ];
-    const THREE_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 3)).getDate(),
-      "3일",
-    ];
-    const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
-
-    const sendMessage = (contact: string, comment: any) => {
-      this.httpService.axiosRef.post(
-        "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
-        {
-          content: `${obj.trminlCode} 터미널의 입항시간이 ${comment} 전입니다.`,
-          receivers: [`${contact}`],
-        },
-        {
-          headers: {
-            "x-api-key": `${process.env.MESSAGE_KEY}`,
-          },
-        }
-      );
-    };
-
-    console.log("::: compare Date :::", {
-      ONE_DAYS_AGO,
-      TOW_DAYS_AGO,
-      THREE_DAYS_AGO,
-      BERTH_DAY,
-    });
-
-    try {
-      if (ONE_DAYS_AGO[0] === BERTH_DAY) {
-        console.log("1일 남음");
-        for (const userInfo of userInfoList) {
-          sendMessage(userInfo.contact, ONE_DAYS_AGO[1]);
-        }
-      } else if (TOW_DAYS_AGO[0] === BERTH_DAY) {
-        console.log("2일 남음");
-        for (const userInfo of userInfoList) {
-          sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
-        }
-      } else if (THREE_DAYS_AGO[0] === BERTH_DAY) {
-        console.log("3일 남음");
-        for (const userInfo of userInfoList) {
-          sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
     try {
@@ -163,9 +102,6 @@ export class BerthPyService {
         } else {
           await berthStatSchedule.upsert(obj, { transaction: t });
         }
-
-        /** 날짜에 따른 문자 전송 */
-        await this.sendAlramOfDayAgo(userInfoList, obj);
       }
 
       await t.commit();
