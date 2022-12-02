@@ -3,7 +3,7 @@ import sequelize from "sequelize";
 import { BerthPyDto } from "../alram-push/dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
 import { Sequelize } from "sequelize-typescript";
-import { berthStatSchedule, subscriptionAlram, user } from "src/models";
+import { berthStatSchedule, user } from "src/models";
 import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
@@ -14,53 +14,18 @@ export class AlramPushService {
     private readonly schedulerRegistry: SchedulerRegistry
   ) {}
 
-  /** 날짜 체크를 위한 선석 SELECT */
-  async findAllBerthData() {
-    let getList: any;
-    const pushList: berthStatSchedule[] = [];
-    try {
-      const inAlramBerthDataList = await this.seqeulize.query(
-        `
-        SELECT
-          alram.schedule_oid
-        FROM subscription_alram AS alram
-        WHERE TRUE
-          `,
-        {
-          type: sequelize.QueryTypes.SELECT,
-          mapToModel: true,
-          model: subscriptionAlram,
-        }
-      );
-
-      if (inAlramBerthDataList) {
-        for (const obj of inAlramBerthDataList) {
-          getList = await berthStatSchedule.findAll({
-            where: { oid: obj.scheduleOid },
-          });
-        }
-        pushList.push(getList);
-        return pushList;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   /** 해당 모선항차를 구독한 유저들 */
   async findUserInfoListForAlram(obj: BerthPyDto) {
     try {
       const userInfoList = await this.seqeulize.query(
         `
-          SELECT
-            users.contact,
-            berth.oid
-          FROM subscription_alram AS alram
-          LEFT JOIN user AS users ON alram.user_oid = users.oid
-          LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid
-          WHERE TRUE
-          AND alram.schedule_oid = '${obj.oid}'
-          `,
+            SELECT
+              users.contact
+            FROM subscription_alram AS alram
+            LEFT JOIN user AS users ON alram.user_oid = users.oid
+            WHERE TRUE
+            AND alram.schedule_oid = '${obj.oid}'
+            `,
         {
           type: sequelize.QueryTypes.SELECT,
           mapToModel: true,
@@ -90,11 +55,12 @@ export class AlramPushService {
     ];
     const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
 
-    const sendMessage = (contact: string, comment: any) => {
-      this.httpService.axiosRef.post(
+    const sendMessage = async (contact: string, comment: any) => {
+      console.log(contact);
+      await this.httpService.axiosRef.post(
         "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
         {
-          content: `${obj.trminlCode} 터미널의 입항시간이 ${comment} 전입니다.`,
+          content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${comment} 전입니다.`,
           receivers: [`${contact}`],
         },
         {
@@ -116,17 +82,17 @@ export class AlramPushService {
       if (ONE_DAYS_AGO[0] === BERTH_DAY) {
         Logger.warn("1일 남음");
         for (const userInfo of userInfoList) {
-          sendMessage(userInfo.contact, ONE_DAYS_AGO[1]);
+          await sendMessage(userInfo.contact, ONE_DAYS_AGO[1]);
         }
       } else if (TOW_DAYS_AGO[0] === BERTH_DAY) {
         Logger.warn("2일 남음");
         for (const userInfo of userInfoList) {
-          sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
+          await sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
         }
       } else if (THREE_DAYS_AGO[0] === BERTH_DAY) {
         Logger.warn("3일 남음");
         for (const userInfo of userInfoList) {
-          sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
+          await sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
         }
       }
     } catch (error) {
@@ -138,11 +104,29 @@ export class AlramPushService {
   async checkBerthDaysAndAlramPush() {
     try {
       /** 선석 데이터 */
-      const berthAllData = await this.findAllBerthData();
+      const inAlramBerthDataList = await this.seqeulize.query(
+        `
+        SELECT 
+          berth.oid,
+          berth.trminlCode,
+          IF(LEFT(berth.csdhpPrarnde, 1) = '(',
+          MID(berth.csdhpPrarnde, 2, 16),
+          LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde
+        FROM subscription_alram AS alram
+        LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
+          `,
+        {
+          type: sequelize.QueryTypes.SELECT,
+          mapToModel: true,
+          model: berthStatSchedule,
+        }
+      );
 
-      for (const obj of berthAllData) {
-        const userInfoList = await this.findUserInfoListForAlram(obj);
-        await this.sendAlramOfDayAgo(userInfoList, obj);
+      if (inAlramBerthDataList) {
+        for (const obj of inAlramBerthDataList) {
+          const userInfoList = await this.findUserInfoListForAlram(obj);
+          await this.sendAlramOfDayAgo(userInfoList, obj);
+        }
       }
     } catch (error) {
       console.log(error);
