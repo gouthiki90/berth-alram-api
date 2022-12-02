@@ -60,7 +60,7 @@ export class AlramPushService {
       await this.httpService.axiosRef.post(
         "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
         {
-          content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${comment} 전입니다.`,
+          content: `${obj.trminlCode} 터미널의 ${obj.oid}(${obj.csdhpPrarnde}) 모선항차 입항시간이 ${comment} 전입니다.`,
           receivers: [`${contact}`],
         },
         {
