@@ -11,6 +11,7 @@ import { AuthModule } from "./auth/auth.module";
 import { BerthPyModule } from "./berth-py/berth-py.module";
 import { HttpModule } from "@nestjs/axios";
 import { AlramPushModule } from "./alram-push/alram-push.module";
+import { ContainersModule } from "./containers/containers.module";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AlramPushModule } from "./alram-push/alram-push.module";
     BerthPyModule,
     HttpModule,
     AlramPushModule,
+    ContainersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
