@@ -10,6 +10,12 @@ import {
 
 export interface containerAttributes {
   oid: string;
+  berthOid?: string;
+  userOid?: string;
+  alramOid?: string;
+  containerStatus?: number;
+  finishCount?: number;
+  containerCount?: number;
   carCode?: string;
   outgateCy?: string;
   cntrNo?: string;
@@ -35,6 +41,55 @@ export class container
   @Column({ primaryKey: true, type: DataType.STRING(100), comment: "키값" })
   @Index({ name: "PRIMARY", using: "BTREE", order: "ASC", unique: true })
   oid!: string;
+
+  @Column({
+    field: "berth_oid",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "선석 스케줄 키값",
+  })
+  berthOid?: string;
+
+  @Column({
+    field: "user_oid",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "유저 키값",
+  })
+  userOid?: string;
+
+  @Column({
+    field: "alram_oid",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "알람 키값",
+  })
+  alramOid?: string;
+
+  @Column({
+    field: "container_status",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "컨테이너 반입 상태(대기, 반입완료)",
+    defaultValue: "0",
+  })
+  containerStatus?: number;
+
+  @Column({
+    field: "finish_count",
+    allowNull: true,
+    type: DataType.INTEGER,
+    comment: "반입완료 카운트",
+  })
+  finishCount?: number;
+
+  @Column({
+    field: "container_count",
+    allowNull: true,
+    type: DataType.INTEGER,
+    comment: "컨테이너 갯수 카운트",
+  })
+  containerCount?: number;
 
   @Column({
     field: "CAR_CODE",
