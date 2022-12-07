@@ -8,4 +8,6 @@ export class ContainerListDto {
   CNTR_STATUS?: string;
   TERMINAL_NAME?: string;
   STATUS_TM?: string;
+  /** 반입 상태값 */
+  containerStatus?: number;
 }

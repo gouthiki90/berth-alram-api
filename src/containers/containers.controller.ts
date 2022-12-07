@@ -16,11 +16,6 @@ import { UpdateContainerDto } from "./dto/update-container.dto";
 export class ContainersController {
   constructor(private readonly containersService: ContainersService) {}
 
-  @Post("/")
-  create(@Body() createContainerDto: CreateContainerDto) {
-    return this.containersService.create(createContainerDto);
-  }
-
   @Post("/new-list")
   getContainerListFormEtrans(@Body() containerListDto: PostContainerListDto) {
     return this.containersService.createContainerList(containerListDto);

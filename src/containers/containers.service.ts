@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { container } from "src/models";
 import { Utils } from "src/util/common.utils";
-import { CreateContainerDto } from "./dto/create-container.dto";
+import { ContainersReposiotry } from "./containers.repository";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 import { UpdateContainerDto } from "./dto/update-container.dto";
@@ -13,17 +13,9 @@ export class ContainersService {
   constructor(
     private readonly seqeulize: Sequelize,
     private readonly utils: Utils,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    private readonly containersRepository: ContainersReposiotry
   ) {}
-  async create(data: CreateContainerDto) {
-    const t = await this.seqeulize.transaction();
-
-    try {
-      const CON_OID = this.utils.getOid(container, "container");
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async createContainerList(dto: PostContainerListDto) {
     const t = await this.seqeulize.transaction();
@@ -45,8 +37,24 @@ export class ContainersService {
 
       if (containerDataResult.rsMsg.statusCode === "S") {
         const getContainerList = containerDataResult.dma_tracking;
-        await container.bulkCreate({ ...getContainerList, ...dto });
+
+        /** 상태값을 확인하고 update */
+        getContainerList.map((value) => {
+          if (value.CNTR_STATUS === "78") {
+            value.containerStatus = 1;
+          }
+        });
+
+        await container.bulkCreate(
+          { ...getContainerList, ...dto },
+          { transaction: t }
+        );
       }
+
+      await t.commit();
+
+      const newContainerList = await this.containersRepository.findAll();
+      return newContainerList;
     } catch (error) {
       console.log(error);
       await t.rollback();
