@@ -9,7 +9,8 @@ import {
 } from "sequelize-typescript";
 
 export interface containerAttributes {
-  oid: string;
+  id?: number;
+  oid?: string;
   berthOid?: string;
   userOid?: string;
   alramOid?: string;
@@ -38,9 +39,17 @@ export class container
   extends Model<containerAttributes, containerAttributes>
   implements containerAttributes
 {
-  @Column({ primaryKey: true, type: DataType.STRING(100), comment: "키값" })
+  @Column({
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataType.INTEGER,
+    comment: "키값",
+  })
   @Index({ name: "PRIMARY", using: "BTREE", order: "ASC", unique: true })
-  oid!: string;
+  id?: number;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "키값" })
+  oid?: string;
 
   @Column({
     field: "berth_oid",

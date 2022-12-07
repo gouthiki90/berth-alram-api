@@ -92,7 +92,7 @@ export class AlramPushService {
       } else if (THREE_DAYS_AGO[0] === BERTH_DAY) {
         Logger.warn("3일 남음");
         for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
+          await sendMessage(userInfo.contact, THREE_DAYS_AGO[1]);
         }
       }
     } catch (error) {

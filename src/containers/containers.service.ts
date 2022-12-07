@@ -4,6 +4,7 @@ import { Sequelize } from "sequelize-typescript";
 import { container } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { CreateContainerDto } from "./dto/create-container.dto";
+import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 import { UpdateContainerDto } from "./dto/update-container.dto";
 
@@ -40,8 +41,12 @@ export class ContainersService {
         TEST_DEFAULT_VALUE
       );
 
-      const result = response.data;
-      console.log(result);
+      const containerDataResult: PostContainerListResponseDto = response.data;
+
+      if (containerDataResult.rsMsg.statusCode === "S") {
+        const getContainerList = containerDataResult.dma_tracking;
+        await container.bulkCreate({ ...getContainerList, ...dto });
+      }
     } catch (error) {
       console.log(error);
       await t.rollback();
