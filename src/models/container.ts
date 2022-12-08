@@ -15,15 +15,15 @@ export interface containerAttributes {
   userOid?: string;
   alramOid?: string;
   containerStatus?: number;
-  carCode?: string;
-  outgateCy?: string;
-  cntrNo?: string;
-  outgateTime?: string;
-  statusDt?: string;
-  statusNm?: string;
-  cntrStatus?: string;
-  terminalName?: string;
-  statusTm?: string;
+  CAR_CODE?: string;
+  OUTGATE_CY?: string;
+  CNTR_NO?: string;
+  OUTGATE_TIME?: string;
+  STATUS_DT?: string;
+  STATUS_NM?: string;
+  CNTR_STATUS?: string;
+  TERMINAL_NAME?: string;
+  STATUS_TM?: string;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -88,7 +88,7 @@ export class container
     type: DataType.STRING(100),
     comment: "차량번호",
   })
-  carCode?: string;
+  CAR_CODE?: string;
 
   @Column({
     field: "OUTGATE_CY",
@@ -96,7 +96,7 @@ export class container
     type: DataType.STRING(50),
     comment: "터미널 코드",
   })
-  outgateCy?: string;
+  OUTGATE_CY?: string;
 
   @Column({
     field: "CNTR_NO",
@@ -104,7 +104,7 @@ export class container
     type: DataType.STRING(100),
     comment: "컨테이너 번호",
   })
-  cntrNo?: string;
+  CNTR_NO?: string;
 
   @Column({
     field: "OUTGATE_TIME",
@@ -112,7 +112,7 @@ export class container
     type: DataType.STRING(100),
     comment: "반출시간",
   })
-  outgateTime?: string;
+  OUTGATE_TIME?: string;
 
   @Column({
     field: "STATUS_DT",
@@ -120,7 +120,7 @@ export class container
     type: DataType.STRING(100),
     comment: "해당 데이터 기준 날짜",
   })
-  statusDt?: string;
+  STATUS_DT?: string;
 
   @Column({
     field: "STATUS_NM",
@@ -128,7 +128,7 @@ export class container
     type: DataType.STRING(100),
     comment: "반입/반출 상태",
   })
-  statusNm?: string;
+  STATUS_NM?: string;
 
   @Column({
     field: "CNTR_STATUS",
@@ -136,7 +136,7 @@ export class container
     type: DataType.STRING(100),
     comment: "반입/반출 상태 코드",
   })
-  cntrStatus?: string;
+  CNTR_STATUS?: string;
 
   @Column({
     field: "TERMINAL_NAME",
@@ -144,7 +144,7 @@ export class container
     type: DataType.STRING(100),
     comment: "터미널 이름",
   })
-  terminalName?: string;
+  TERMINAL_NAME?: string;
 
   @Column({
     field: "STATUS_TM",
@@ -152,7 +152,7 @@ export class container
     type: DataType.STRING(100),
     comment: "해당 데이터 기준의 시간",
   })
-  statusTm?: string;
+  STATUS_TM?: string;
 
   @Column({
     field: "create_date",
