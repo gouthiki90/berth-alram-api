@@ -15,12 +15,10 @@ export interface containerAttributes {
   userOid?: string;
   alramOid?: string;
   containerStatus?: number;
-  finishCount?: number;
-  containerCount?: number;
   carCode?: string;
   outgateCy?: string;
   cntrNo?: string;
-  outgateTime?: Date;
+  outgateTime?: string;
   statusDt?: string;
   statusNm?: string;
   cntrStatus?: string;
@@ -85,22 +83,6 @@ export class container
   containerStatus?: number;
 
   @Column({
-    field: "finish_count",
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: "반입완료 카운트",
-  })
-  finishCount?: number;
-
-  @Column({
-    field: "container_count",
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: "컨테이너 갯수 카운트",
-  })
-  containerCount?: number;
-
-  @Column({
     field: "CAR_CODE",
     allowNull: true,
     type: DataType.STRING(100),
@@ -127,15 +109,15 @@ export class container
   @Column({
     field: "OUTGATE_TIME",
     allowNull: true,
-    type: DataType.DATE,
+    type: DataType.STRING(100),
     comment: "반출시간",
   })
-  outgateTime?: Date;
+  outgateTime?: string;
 
   @Column({
     field: "STATUS_DT",
     allowNull: true,
-    type: DataType.DATEONLY,
+    type: DataType.STRING(100),
     comment: "해당 데이터 기준 날짜",
   })
   statusDt?: string;
@@ -167,7 +149,7 @@ export class container
   @Column({
     field: "STATUS_TM",
     allowNull: true,
-    type: DataType.TIME,
+    type: DataType.STRING(100),
     comment: "해당 데이터 기준의 시간",
   })
   statusTm?: string;

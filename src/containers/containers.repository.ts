@@ -20,9 +20,9 @@ export class ContainersReposiotry {
         con.CNTR_STATUS,
         con.TERMINAL_NAME,
         con.STATUS_TM,
-        (SELECT COUNT(container_status) FROM containers WHERE container_status = 1) AS finishCount,
-        (SELECT COUNT(id) FROM containers WHERE berthOid = berth.oid) AS conCount
-      FROM containers AS con
+        (SELECT COUNT(container_status) FROM container WHERE container_status = 1) AS finishCount,
+        (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid) AS conCount
+      FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       `,
       {

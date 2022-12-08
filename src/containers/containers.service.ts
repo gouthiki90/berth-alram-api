@@ -23,7 +23,7 @@ export class ContainersService {
     const TEST_DEFAULT_VALUE = {
       dma_search: {
         KLNET_ID: "",
-        SEARCH_DATA: "FSCU5909470",
+        SEARCH_DATA: `${dto.postInfo}`,
         NOTICE_CNT: 25,
       },
     };
@@ -45,16 +45,15 @@ export class ContainersService {
           }
         });
 
-        await container.bulkCreate(
-          { ...getContainerList, ...dto },
-          { transaction: t }
-        );
+        for (const obj of getContainerList) {
+          console.log({ ...obj, ...dto });
+          await container.create({ ...obj, ...dto }, { transaction: t });
+        }
+
+        await t.commit();
+        const newContainerList = await this.containersRepository.findAll();
+        return newContainerList;
       }
-
-      await t.commit();
-
-      const newContainerList = await this.containersRepository.findAll();
-      return newContainerList;
     } catch (error) {
       console.log(error);
       await t.rollback();
