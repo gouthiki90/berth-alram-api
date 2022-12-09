@@ -22,7 +22,9 @@ export class AlramRepository {
           usr.user_id AS userId,
           usr.biz_name AS bizName,
           usr.manager_tel AS managerTel,
-          usr.manager_name AS managerName
+          usr.manager_name AS managerName,
+          (SELECT COUNT(container_status) FROM container WHERE container_status = 1) AS finishCount,
+          (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid) AS conCount
         FROM subscription_alram AS alram
         LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
         LEFT JOIN user AS usr ON alram.user_oid = usr.oid
@@ -57,7 +59,9 @@ export class AlramRepository {
           usr.user_id AS userId,
           usr.biz_name AS bizName,
           usr.manager_tel AS managerTel,
-          usr.manager_name AS managerName
+          usr.manager_name AS managerName,
+          (SELECT COUNT(container_status) FROM container WHERE container_status = 1) AS finishCount,
+          (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid) AS conCount
         FROM subscription_alram AS alram
         LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
         LEFT JOIN user AS usr ON alram.user_oid = usr.oid

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import sequelize from "sequelize";
+import { Utils } from "src/util/common.utils";
 
 @Injectable()
 export class ContainersReposiotry {
@@ -24,6 +25,8 @@ export class ContainersReposiotry {
         (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid) AS conCount
       FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
+      WHERE TRUE
+      AND con.STATUS_NM LIKE '%반입%'
       `,
       {
         type: sequelize.QueryTypes.SELECT,

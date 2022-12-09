@@ -16,6 +16,7 @@ export class ContainersService {
     private readonly containersRepository: ContainersReposiotry
   ) {}
 
+  /** 새로운 컨테이너 검색 시 create && select */
   async createContainerList(dto: PostContainerListDto) {
     const t = await this.seqeulize.transaction();
     const TODAY = new Date();
@@ -107,6 +108,19 @@ export class ContainersService {
         const newContainerList = await this.containersRepository.findAll();
         return newContainerList;
       }
+    } catch (error) {
+      console.log(error);
+      await t.rollback();
+    }
+  }
+
+  async deleteContainers(oid: Array<string>) {
+    const t = await this.seqeulize.transaction();
+    try {
+      for (const obj of oid) {
+        await container.destroy({ where: { oid: obj }, transaction: t });
+      }
+      await t.commit();
     } catch (error) {
       console.log(error);
       await t.rollback();
