@@ -14,7 +14,7 @@ export class ContainersReposiotry {
     return await this.sequelize.query(
       `
       SELECT
-        con.id,
+        con.oid,
         con.CAR_CODE,
         con.OUTGATE_CY,
         con.CNTR_NO,
@@ -48,7 +48,7 @@ export class ContainersReposiotry {
     return await this.sequelize.query(
       `
       SELECT
-        con.id,
+        con.oid,
         con.CAR_CODE,
         con.OUTGATE_CY,
         con.CNTR_NO,
