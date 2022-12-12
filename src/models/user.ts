@@ -12,6 +12,7 @@ export interface userAttributes {
   id?: number;
   oid?: string;
   userId: string;
+  userName?: string;
   password: Uint8Array;
   bizName?: string;
   contact?: string;
@@ -46,6 +47,9 @@ export class user
   @Index({ name: "user_id_UNIQUE", using: "BTREE", order: "ASC", unique: true })
   userId!: string;
 
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: "유저 이름" })
+  userName?: string;
+
   @Column({ type: DataType.BLOB, comment: "PW" })
   password!: Uint8Array;
 
@@ -76,7 +80,7 @@ export class user
     field: "manager_name",
     allowNull: true,
     type: DataType.STRING(20),
-    comment: "담당자 이름",
+    comment: "부서 이름",
   })
   managerName?: string;
 
