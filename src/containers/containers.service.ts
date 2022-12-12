@@ -117,10 +117,10 @@ export class ContainersService {
     }
   }
 
-  async deleteContainers(dto: DeleteContainerDto) {
+  async deleteContainers(data: DeleteContainerDto) {
     const t = await this.seqeulize.transaction();
     try {
-      for (const obj of dto.data.oid) {
+      for (const obj of data.oid) {
         await container.destroy({ where: { oid: obj }, transaction: t });
       }
       await t.commit();

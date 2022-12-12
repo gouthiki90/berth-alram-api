@@ -1,5 +1,3 @@
 export class DeleteContainerDto {
-  data: {
-    oid: Array<string>;
-  };
+  oid: Array<string>;
 }

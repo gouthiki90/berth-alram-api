@@ -27,8 +27,8 @@ export class ContainersController {
     return this.containersService.sendConInfoToPython(upsertContainer);
   }
 
-  @Delete("/")
-  deleteContainers(@Body() dto: DeleteContainerDto) {
-    return this.containersService.deleteContainers(dto);
+  @Post("/")
+  deleteContainers(@Body() data: DeleteContainerDto) {
+    return this.containersService.deleteContainers(data);
   }
 }
