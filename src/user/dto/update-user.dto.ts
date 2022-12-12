@@ -9,4 +9,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   contact?: string;
   managerTel?: string;
   managerName?: string;
+  contact_option?: number;
 }

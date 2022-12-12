@@ -8,4 +8,5 @@ export class CreateUserDto {
   contact?: string;
   managerTel?: string;
   managerName?: string;
+  contact_option?: number;
 }
