@@ -25,8 +25,8 @@ export class ContainersReposiotry {
         con.TERMINAL_NAME,
         con.STATUS_TM,
         con.container_status,
-        (SELECT COUNT(container_status) FROM container WHERE container_status = 1) AS finishCount,
-        (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid AND con.STATUS_NM LIKE '%반입%') AS conCount
+        (SELECT COUNT(container_status) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS finishCount,
+        (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
       FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
@@ -48,22 +48,23 @@ export class ContainersReposiotry {
     return await this.sequelize.query(
       `
       SELECT
-      con.id,
-      con.CAR_CODE,
-      con.OUTGATE_CY,
-      con.CNTR_NO,
-      con.OUTGATE_TIME,
-      con.STATUS_DT,
-      con.STATUS_NM,
-      con.CNTR_STATUS,
-      con.TERMINAL_NAME,
-      con.STATUS_TM,
-      con.container_status,
-      (SELECT COUNT(container_status) FROM container WHERE container_status = 1) AS finishCount,
-      (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid AND con.STATUS_NM LIKE '%반입%') AS conCount
-    FROM container AS con
-    LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
-    WHERE TRUE
+        con.id,
+        con.CAR_CODE,
+        con.OUTGATE_CY,
+        con.CNTR_NO,
+        con.OUTGATE_TIME,
+        con.STATUS_DT,
+        con.STATUS_NM,
+        con.CNTR_STATUS,
+        con.TERMINAL_NAME,
+        con.STATUS_TM,
+        con.container_status,
+        (SELECT COUNT(container_status) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS finishCount,
+        (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
+      FROM container AS con
+      LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
+      WHERE TRUE
+      AND con.STATUS_NM LIKE '%반입%'
     ${this.util.generator(whereArr, query)}
       `,
       { type: sequelize.QueryTypes.SELECT, replacements: query }
