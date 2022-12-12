@@ -109,6 +109,11 @@ export class ContainersService {
         await t.commit();
 
         const newContainerList = await this.containersRepository.findAll();
+
+        if (newContainerList.length === 0) {
+          return { message: "조회된 데이터가 없습니다." };
+        }
+
         return newContainerList;
       }
     } catch (error) {
