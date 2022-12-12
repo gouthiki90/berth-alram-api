@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Delete, Get, Query } from "@nestjs/common";
 import { ContainersReposiotry } from "./containers.repository";
 import { ContainersService } from "./containers.service";
+import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
@@ -27,7 +28,7 @@ export class ContainersController {
   }
 
   @Delete("/")
-  deleteContainers(@Body() oid: Array<string>) {
-    return this.containersService.deleteContainers(oid);
+  deleteContainers(@Body() dto: DeleteContainerDto) {
+    return this.containersService.deleteContainers(dto);
   }
 }

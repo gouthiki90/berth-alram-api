@@ -4,6 +4,7 @@ import { Sequelize } from "sequelize-typescript";
 import { berthStatSchedule, container } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { ContainersReposiotry } from "./containers.repository";
+import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
@@ -116,10 +117,10 @@ export class ContainersService {
     }
   }
 
-  async deleteContainers(oid: Array<string>) {
+  async deleteContainers(dto: DeleteContainerDto) {
     const t = await this.seqeulize.transaction();
     try {
-      for (const obj of oid) {
+      for (const obj of dto.data.oid) {
         await container.destroy({ where: { oid: obj }, transaction: t });
       }
       await t.commit();
