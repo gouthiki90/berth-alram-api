@@ -18,6 +18,7 @@ export interface userAttributes {
   contact?: string;
   managerTel?: string;
   managerName?: string;
+  contactOption?: number;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -83,6 +84,15 @@ export class user
     comment: "부서 이름",
   })
   managerName?: string;
+
+  @Column({
+    field: "contact_option",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "문자/카카오톡 옵션",
+    defaultValue: "0",
+  })
+  contactOption?: number;
 
   @Column({
     field: "create_date",

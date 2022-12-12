@@ -9,21 +9,21 @@ import {
 } from "sequelize-typescript";
 
 export interface containerAttributes {
+  oid: string;
   id?: number;
-  oid?: string;
   berthOid?: string;
   userOid?: string;
   alramOid?: string;
   containerStatus?: number;
-  CAR_CODE?: string;
-  OUTGATE_CY?: string;
-  CNTR_NO?: string;
-  OUTGATE_TIME?: string;
-  STATUS_DT?: string;
-  STATUS_NM?: string;
-  CNTR_STATUS?: string;
-  TERMINAL_NAME?: string;
-  STATUS_TM?: string;
+  carCode?: string;
+  outgateCy?: string;
+  cntrNo?: string;
+  outgateTime?: string;
+  statusDt?: string;
+  statusNm?: string;
+  cntrStatus?: string;
+  terminalName?: string;
+  statusTm?: string;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -37,17 +37,12 @@ export class container
   extends Model<containerAttributes, containerAttributes>
   implements containerAttributes
 {
-  @Column({
-    primaryKey: true,
-    autoIncrement: true,
-    type: DataType.INTEGER,
-    comment: "키값",
-  })
+  @Column({ primaryKey: true, type: DataType.STRING(100), comment: "키값" })
   @Index({ name: "PRIMARY", using: "BTREE", order: "ASC", unique: true })
-  id?: number;
+  oid!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(100), comment: "키값" })
-  oid?: string;
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: "키값" })
+  id?: number;
 
   @Column({
     field: "berth_oid",
@@ -88,7 +83,7 @@ export class container
     type: DataType.STRING(100),
     comment: "차량번호",
   })
-  CAR_CODE?: string;
+  carCode?: string;
 
   @Column({
     field: "OUTGATE_CY",
@@ -96,7 +91,7 @@ export class container
     type: DataType.STRING(50),
     comment: "터미널 코드",
   })
-  OUTGATE_CY?: string;
+  outgateCy?: string;
 
   @Column({
     field: "CNTR_NO",
@@ -104,7 +99,7 @@ export class container
     type: DataType.STRING(100),
     comment: "컨테이너 번호",
   })
-  CNTR_NO?: string;
+  cntrNo?: string;
 
   @Column({
     field: "OUTGATE_TIME",
@@ -112,7 +107,7 @@ export class container
     type: DataType.STRING(100),
     comment: "반출시간",
   })
-  OUTGATE_TIME?: string;
+  outgateTime?: string;
 
   @Column({
     field: "STATUS_DT",
@@ -120,7 +115,7 @@ export class container
     type: DataType.STRING(100),
     comment: "해당 데이터 기준 날짜",
   })
-  STATUS_DT?: string;
+  statusDt?: string;
 
   @Column({
     field: "STATUS_NM",
@@ -128,7 +123,7 @@ export class container
     type: DataType.STRING(100),
     comment: "반입/반출 상태",
   })
-  STATUS_NM?: string;
+  statusNm?: string;
 
   @Column({
     field: "CNTR_STATUS",
@@ -136,7 +131,7 @@ export class container
     type: DataType.STRING(100),
     comment: "반입/반출 상태 코드",
   })
-  CNTR_STATUS?: string;
+  cntrStatus?: string;
 
   @Column({
     field: "TERMINAL_NAME",
@@ -144,7 +139,7 @@ export class container
     type: DataType.STRING(100),
     comment: "터미널 이름",
   })
-  TERMINAL_NAME?: string;
+  terminalName?: string;
 
   @Column({
     field: "STATUS_TM",
@@ -152,7 +147,7 @@ export class container
     type: DataType.STRING(100),
     comment: "해당 데이터 기준의 시간",
   })
-  STATUS_TM?: string;
+  statusTm?: string;
 
   @Column({
     field: "create_date",
