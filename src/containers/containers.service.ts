@@ -100,7 +100,7 @@ export class ContainersService {
 
         for (const obj of getContainerList) {
           const CON_OID = await this.utils.getOid(container, "container");
-          await container.create(
+          await container.upsert(
             { ...obj, ...dto, oid: CON_OID },
             { transaction: t }
           );
