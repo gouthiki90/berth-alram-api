@@ -26,7 +26,7 @@ export class ContainersReposiotry {
         con.STATUS_TM,
         con.container_status,
         (SELECT COUNT(container_status) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS finishCount,
-        (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
+        (SELECT COUNT(oid) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
       FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
@@ -60,7 +60,7 @@ export class ContainersReposiotry {
         con.STATUS_TM,
         con.container_status,
         (SELECT COUNT(container_status) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS finishCount,
-        (SELECT COUNT(id) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
+        (SELECT COUNT(oid) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
       FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
