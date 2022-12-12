@@ -92,6 +92,8 @@ export class ContainersService {
             value.CNTR_STATUS === "78"
           ) {
             value.containerStatus = 1;
+          } else if (value.CNTR_STATUS === "78") {
+            value.containerStatus = 1;
           }
         });
 
