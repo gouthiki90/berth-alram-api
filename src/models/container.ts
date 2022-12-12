@@ -15,15 +15,15 @@ export interface containerAttributes {
   userOid?: string;
   alramOid?: string;
   containerStatus?: number;
-  carCode?: string;
-  outgateCy?: string;
-  cntrNo?: string;
-  outgateTime?: string;
-  statusDt?: string;
-  statusNm?: string;
-  cntrStatus?: string;
-  terminalName?: string;
-  statusTm?: string;
+  CAR_CODE?: string;
+  OUTGATE_CY?: string;
+  CNTR_NO?: string;
+  OUTGATE_TIME?: string;
+  STATUS_DT?: string;
+  STATUS_NM?: string;
+  CNTR_STATUS?: string;
+  TERMINAL_NAME?: string;
+  STATUS_TM?: string;
   createDate?: Date;
   updateDate?: Date;
 }
