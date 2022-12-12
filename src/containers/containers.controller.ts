@@ -27,7 +27,7 @@ export class ContainersController {
   }
 
   @Delete("/")
-  deleteContainers(oid: Array<string>) {
+  deleteContainers(@Body() oid: Array<string>) {
     return this.containersService.deleteContainers(oid);
   }
 }
