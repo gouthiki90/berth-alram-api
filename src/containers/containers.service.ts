@@ -127,11 +127,33 @@ export class ContainersService {
     }
   }
 
-  async sendConInfoToPython() {
-    /** 먼저 모든 컨테이너 셀렉 후 해당 컨테이너 데이터를 파이썬에 전달함 */
+  async sendConInfoToPython(dto: PostContainerListResponseDto) {
+    const t = await this.seqeulize.transaction();
     try {
+      if (dto.rsMsg.statusCode === "S") {
+        const getContainerList = dto.dma_tracking;
+
+        /** 상태값을 확인하고 update */
+        getContainerList.map((value) => {
+          if (value.CNTR_STATUS === "78") {
+            value.containerStatus = 1;
+          }
+        });
+
+        for (const obj of getContainerList) {
+          const CON_OID = await this.utils.getOid(container, "container");
+          await container.upsert(
+            { ...obj, ...dto, oid: CON_OID },
+            { transaction: t }
+          );
+        }
+
+        const result = await t.commit();
+        return result;
+      }
     } catch (error) {
       console.log(error);
+      await t.rollback();
     }
   }
 }

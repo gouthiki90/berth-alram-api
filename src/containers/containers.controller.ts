@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Put, Delete, Param } from "@nestjs/common";
 import { ContainersService } from "./containers.service";
+import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
 @Controller("containers")
@@ -17,7 +18,7 @@ export class ContainersController {
   }
 
   @Post("/confirm-list-py")
-  postConCodeToPython() {
-    return this.containersService.sendConInfoToPython();
+  postConCodeToPython(@Body() upsertContainer: PostContainerListResponseDto) {
+    return this.containersService.sendConInfoToPython(upsertContainer);
   }
 }
