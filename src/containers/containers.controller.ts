@@ -1,10 +1,12 @@
-import { Controller, Post, Body, Delete, Get, Query } from "@nestjs/common";
+import { Controller, Post, Body, Get, Query, UseFilters } from "@nestjs/common";
+import { ErrorHandler } from "src/error-handler/error-handler";
 import { ContainersReposiotry } from "./containers.repository";
 import { ContainersService } from "./containers.service";
 import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
+@UseFilters(ErrorHandler)
 @Controller("containers")
 export class ContainersController {
   constructor(
