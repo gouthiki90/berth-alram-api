@@ -38,6 +38,8 @@ export class ContainersReposiotry {
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
       ${this.util.generator(whereArr, query)}
+      GROUP BY CNTR_NO
+      ORDER BY con.STATUS_DT DESC
       `,
       {
         type: sequelize.QueryTypes.SELECT,
@@ -73,6 +75,8 @@ export class ContainersReposiotry {
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
     ${this.util.generator(whereArr, query)}
+    GROUP BY CNTR_NO
+    ORDER BY con.STATUS_DT DESC
       `,
       { type: sequelize.QueryTypes.SELECT, replacements: query }
     );
