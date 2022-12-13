@@ -10,7 +10,14 @@ export class ContainersReposiotry {
     private readonly util: Utils
   ) {}
 
-  async findAll() {
+  async findAll(query: any) {
+    console.log(query);
+    const { berthOid, alramOid } = query;
+    const whereArr = [
+      ["AND con.STATUS_NM LIKE '%반입%'", true],
+      ["AND berth.oid = :berthOid", berthOid],
+      ["AND con.alram_oid = :alramOid", alramOid],
+    ];
     return await this.sequelize.query(
       `
       SELECT
@@ -30,10 +37,11 @@ export class ContainersReposiotry {
       FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
-      AND con.STATUS_NM LIKE '%반입%'
+      ${this.util.generator(whereArr, query)}
       `,
       {
         type: sequelize.QueryTypes.SELECT,
+        replacements: query,
       }
     );
   }
@@ -64,7 +72,6 @@ export class ContainersReposiotry {
       FROM container AS con
       LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
       WHERE TRUE
-      AND con.STATUS_NM LIKE '%반입%'
     ${this.util.generator(whereArr, query)}
       `,
       { type: sequelize.QueryTypes.SELECT, replacements: query }

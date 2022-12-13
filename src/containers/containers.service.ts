@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { berthStatSchedule, container } from "src/models";
 import { Utils } from "src/util/common.utils";
@@ -98,23 +98,47 @@ export class ContainersService {
           }
         });
 
+        /** 중복 데이터 검열 */
+        const containerDupleData = await container.findOne({
+          where: { berthOid: dto.berthOid },
+        });
+
         for (const obj of getContainerList) {
-          const CON_OID = await this.utils.getOid(container, "container");
-          await container.upsert(
-            { ...obj, ...dto, oid: CON_OID },
-            { transaction: t }
-          );
+          if (
+            !containerDupleData ||
+            containerDupleData.CNTR_NO !== obj.CNTR_NO
+          ) {
+            const CON_OID = await this.utils.getOid(container, "container");
+            await container.create(
+              { ...obj, ...dto, oid: CON_OID },
+              { transaction: t }
+            );
+          } else {
+            await container.update(
+              { ...obj, ...dto },
+              { where: { oid: containerDupleData.oid }, transaction: t }
+            );
+          }
         }
 
         await t.commit();
 
-        const newContainerList = await this.containersRepository.findAll();
+        /** 해당 조건으로 데이터 보여주기 */
+        const newContainerList = await this.containersRepository.findAll({
+          berthOid: dto.berthOid,
+          alramOid: dto.alramOid,
+        });
 
         if (newContainerList.length === 0) {
           return { message: "조회된 데이터가 없습니다." };
         }
 
         return newContainerList;
+      } else {
+        await t.rollback();
+        throw new InternalServerErrorException(
+          "데이터를 가져오는 데에 실패했습니다."
+        );
       }
     } catch (error) {
       console.log(error);
