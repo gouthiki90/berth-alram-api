@@ -14,32 +14,32 @@ export class ContainersReposiotry {
     console.log(query);
     const { berthOid, alramOid } = query;
     const whereArr = [
-      ["AND con.STATUS_NM LIKE '%반입%'", true],
+      ["AND con.container_status = 1", true],
       ["AND berth.oid = :berthOid", berthOid],
       ["AND con.alram_oid = :alramOid", alramOid],
     ];
     return await this.sequelize.query(
       `
       SELECT
-        con.oid,
-        con.CAR_CODE,
-        con.OUTGATE_CY,
-        con.CNTR_NO,
-        con.OUTGATE_TIME,
-        con.STATUS_DT,
-        con.STATUS_NM,
-        con.CNTR_STATUS,
-        con.TERMINAL_NAME,
-        con.STATUS_TM,
-        con.container_status,
-        (SELECT COUNT(container_status) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS finishCount,
-        (SELECT COUNT(oid) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
-      FROM container AS con
-      LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
-      WHERE TRUE
-      ${this.util.generator(whereArr, query)}
-      GROUP BY CNTR_NO
-      ORDER BY con.STATUS_DT DESC
+      con.oid,
+      con.CAR_CODE,
+      con.OUTGATE_CY,
+      con.CNTR_NO,
+      con.OUTGATE_TIME,
+      con.STATUS_DT,
+      con.STATUS_NM,
+      con.CNTR_STATUS,
+      con.TERMINAL_NAME,
+      con.STATUS_TM,
+      con.container_status,
+      (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND container_status = 1 AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS B) AS conCount,
+      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND container_status = 1 AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A) AS finishCount
+    FROM container AS con
+    LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
+    WHERE TRUE
+    ${this.util.generator(whereArr, query)}
+        GROUP BY CNTR_NO
+  ORDER BY con.STATUS_DT DESC
       `,
       {
         type: sequelize.QueryTypes.SELECT,
@@ -51,32 +51,32 @@ export class ContainersReposiotry {
   async findOne(query: any) {
     const { berthOid, alramOid } = query;
     const whereArr = [
-      ["AND con.STATUS_NM LIKE '%반입%'", true],
+      ["AND con.container_status = 1", true],
       ["AND berth.oid = :berthOid", berthOid],
       ["AND con.alram_oid = :alramOid", alramOid],
     ];
     return await this.sequelize.query(
       `
       SELECT
-        con.oid,
-        con.CAR_CODE,
-        con.OUTGATE_CY,
-        con.CNTR_NO,
-        con.OUTGATE_TIME,
-        con.STATUS_DT,
-        con.STATUS_NM,
-        con.CNTR_STATUS,
-        con.TERMINAL_NAME,
-        con.STATUS_TM,
-        con.container_status,
-        (SELECT COUNT(container_status) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS finishCount,
-        (SELECT COUNT(oid) FROM container WHERE berth_oid = berth.oid AND container_status = 1) AS conCount
-      FROM container AS con
-      LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
-      WHERE TRUE
+      con.oid,
+      con.CAR_CODE,
+      con.OUTGATE_CY,
+      con.CNTR_NO,
+      con.OUTGATE_TIME,
+      con.STATUS_DT,
+      con.STATUS_NM,
+      con.CNTR_STATUS,
+      con.TERMINAL_NAME,
+      con.STATUS_TM,
+      con.container_status,
+      (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND container_status = 1 AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS B) AS conCount,
+      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND container_status = 1 AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A) AS finishCount
+    FROM container AS con
+    LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
+    WHERE TRUE
     ${this.util.generator(whereArr, query)}
-    GROUP BY CNTR_NO
-    ORDER BY con.STATUS_DT DESC
+        GROUP BY CNTR_NO
+  ORDER BY con.STATUS_DT DESC
       `,
       { type: sequelize.QueryTypes.SELECT, replacements: query }
     );
