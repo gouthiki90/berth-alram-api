@@ -24,14 +24,14 @@ export class AlramRepository {
         usr.manager_tel AS managerTel,
         usr.manager_name AS managerName,
         (
-          SELECT COUNT(*) AS cnt FROM container 
-          WHERE container_status = 1
+          SELECT COUNT(*) FROM (SELECT * FROM container WHERE container_status = 1 GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
+          WHERE TRUE
           AND alram_oid = alram.oid
         ) AS finishCount,
         (
-          SELECT COUNT(*) AS cnt FROM container
-          WHERE CNTR_STATUS != '59'
-		  AND alram_oid = alram.oid
+          SELECT COUNT(*) FROM (SELECT * FROM container WHERE CNTR_STATUS != '59' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
+          WHERE TRUE
+		      AND alram_oid = alram.oid
         ) AS conCount
       FROM subscription_alram AS alram
       LEFT 
@@ -73,14 +73,14 @@ export class AlramRepository {
         usr.manager_tel AS managerTel,
         usr.manager_name AS managerName,
         (
-          SELECT COUNT(*) AS cnt FROM container 
-          WHERE container_status = 1
+          SELECT COUNT(*) FROM (SELECT * FROM container WHERE container_status = 1 GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
+          WHERE TRUE
           AND alram_oid = alram.oid
         ) AS finishCount,
         (
-          SELECT COUNT(*) AS cnt FROM container
-          WHERE CNTR_STATUS != '59'
-		  AND alram_oid = alram.oid
+          SELECT COUNT(*) FROM (SELECT * FROM container WHERE CNTR_STATUS != '59' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
+          WHERE TRUE
+		      AND alram_oid = alram.oid
         ) AS conCount
       FROM subscription_alram AS alram
       LEFT 
