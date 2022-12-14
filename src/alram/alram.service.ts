@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { Sequelize } from "sequelize-typescript";
 import { OffsetPagingInfoDto } from "src/dashboard/dto/offset-page-info.dto";
 import { ErrorHandler } from "src/error-handler/error-handler";
-import { subscriptionAlram } from "src/models";
+import { container, subscriptionAlram } from "src/models";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { CreateAlramDto } from "./dto/create-alram.dto";
@@ -52,11 +52,23 @@ export class AlramService {
   async remove(data: Array<RemoveAlramDto>) {
     const t = await this.seqeulize.transaction();
     try {
+      /** alram remove */
       for (const obj of data) {
         await subscriptionAlram.destroy({
           where: { oid: obj.alramOid },
           transaction: t,
         });
+      }
+
+      /** container remove */
+      for (const obj of data) {
+        const havingAlramOidContainers = await container.findAll({
+          where: { alramOid: obj.alramOid },
+        });
+
+        for (const con of havingAlramOidContainers) {
+          await container.destroy({ where: { oid: con.oid }, transaction: t });
+        }
       }
 
       const result = await t.commit();
