@@ -11,10 +11,9 @@ export class ContainersReposiotry {
   ) {}
 
   async findAll(query: any) {
-    console.log(query);
     const { berthOid, alramOid } = query;
     const whereArr = [
-      ["AND con.container_status = 1", true],
+      ["AND con.CNTR_STATUS != '59'", true],
       ["AND berth.oid = :berthOid", berthOid],
       ["AND con.alram_oid = :alramOid", alramOid],
     ];
@@ -51,7 +50,7 @@ export class ContainersReposiotry {
   async findOne(query: any) {
     const { berthOid, alramOid } = query;
     const whereArr = [
-      ["AND con.container_status = 1", true],
+      ["AND con.CNTR_STATUS != '59'", true],
       ["AND berth.oid = :berthOid", berthOid],
       ["AND con.alram_oid = :alramOid", alramOid],
     ];
