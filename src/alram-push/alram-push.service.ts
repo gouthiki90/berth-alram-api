@@ -142,6 +142,7 @@ export class AlramPushService {
       await this.checkBerthDaysAndAlramPush();
       Logger.warn("::: alramDayOfAgoSchedule end... :::");
     } catch (error) {
+      Logger.error(`::: alramDayOfAgoSchedule Error! :::`);
       console.log(error);
       const GET_JOB = this.schedulerRegistry.getCronJob(
         "alramDayOfAgoSchedule"

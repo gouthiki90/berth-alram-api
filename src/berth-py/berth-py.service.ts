@@ -1,15 +1,17 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { berthStatSchedule, user } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
+import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
 export class BerthPyService {
   constructor(
     private readonly seqeulize: Sequelize,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    private readonly schedulerRegistry: SchedulerRegistry
   ) {}
 
   /** 입항 시간 compare를 위한 SELECT */
@@ -45,6 +47,36 @@ export class BerthPyService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  /** 이전 데이터 삭제를 위한 SELECT */
+  async findAllBerthOldDataList() {
+    return await this.seqeulize.query(
+      `
+      SELECT 
+       oid
+      FROM
+      berthStat_schedule
+      WHERE
+        IF(
+          LEFT(tkoffPrarnde, 1
+          )
+        = '(',
+        MID(
+          tkoffPrarnde, 2, 16
+        ),
+        LEFT(
+          tkoffPrarnde, 19)
+        )
+        BETWEEN (
+          SELECT 
+            DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 5 DAY), '%Y-%m-%d')
+          FROM DUAL)
+        AND
+        (SELECT DATE_FORMAT(NOW(), '%Y-%m-%d') FROM DUAL)
+      `,
+      { type: sequelize.QueryTypes.SELECT }
+    );
   }
 
   /** 입항 시간에 따른 알람 푸쉬 */
@@ -107,6 +139,42 @@ export class BerthPyService {
       await t.commit();
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async deleteOldBerthData() {
+    const t = await this.seqeulize.transaction();
+    Logger.warn(`TODAY ::: ${new Date()} :::`);
+    try {
+      /** 삭제할 선석 데이터 */
+      const getAllBerthOldDataList = await this.findAllBerthOldDataList();
+
+      for (const obj of getAllBerthOldDataList) {
+        await berthStatSchedule.destroy({ where: { oid: obj } });
+      }
+
+      await t.commit();
+    } catch (error) {
+      console.log(error);
+      await t.rollback();
+    }
+  }
+
+  @Cron(CronExpression.EVERY_WEEKEND, {
+    name: "deleteOldBerthDataSchedule",
+  })
+  async deleteOldBerthDataSchedule() {
+    try {
+      Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
+      await this.deleteOldBerthData();
+      Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
+    } catch (error) {
+      Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
+      console.log(error);
+      const GET_JOB = this.schedulerRegistry.getCronJob(
+        "deleteOldBerthDataSchedule"
+      );
+      GET_JOB.stop();
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseFilters } from "@nestjs/common";
+import { Controller, Post, Body, UseFilters, Get } from "@nestjs/common";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { BerthPyService } from "./berth-py.service";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
@@ -11,5 +11,10 @@ export class BerthPyController {
   @Post("/")
   create(@Body() data: Array<CreateBerthPyDto>) {
     return this.berthPyService.create(data);
+  }
+
+  @Get("/")
+  test() {
+    return this.berthPyService.deleteOldBerthData();
   }
 }
