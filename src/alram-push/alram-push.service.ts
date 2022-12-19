@@ -133,7 +133,9 @@ export class AlramPushService {
     }
   }
 
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
+  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM, {
+    name: "alramDayOfAgoSchedule",
+  })
   async alramDayOfAgoSchedule() {
     try {
       Logger.warn("::: alramDayOfAgoSchedule start... :::");
@@ -141,6 +143,10 @@ export class AlramPushService {
       Logger.warn("::: alramDayOfAgoSchedule end... :::");
     } catch (error) {
       console.log(error);
+      const GET_JOB = this.schedulerRegistry.getCronJob(
+        "alramDayOfAgoSchedule"
+      );
+      GET_JOB.stop();
     }
   }
 }
