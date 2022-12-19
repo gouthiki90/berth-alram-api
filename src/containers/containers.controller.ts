@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, Query, UseFilters } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  UseFilters,
+  UseGuards,
+} from "@nestjs/common";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { ContainersReposiotry } from "./containers.repository";
 import { ContainersService } from "./containers.service";
@@ -6,6 +15,7 @@ import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
+@UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("containers")
 export class ContainersController {
