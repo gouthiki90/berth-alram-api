@@ -29,7 +29,7 @@ export class AlramRepository {
           AND alram_oid = alram.oid
         ) AS finishCount,
         (
-          SELECT COUNT(*) FROM (SELECT * FROM container WHERE CNTR_STATUS != '59' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
+          SELECT COUNT(*) FROM (SELECT * FROM container GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
           WHERE TRUE
 		      AND alram_oid = alram.oid
         ) AS conCount
@@ -78,7 +78,7 @@ export class AlramRepository {
           AND alram_oid = alram.oid
         ) AS finishCount,
         (
-          SELECT COUNT(*) FROM (SELECT * FROM container WHERE CNTR_STATUS != '59' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
+          SELECT COUNT(*) FROM (SELECT * FROM container GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
           WHERE TRUE
 		      AND alram_oid = alram.oid
         ) AS conCount
