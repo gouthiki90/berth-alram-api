@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AlramPushService } from './alram-push.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { AlramPushService } from "./alram-push.service";
 
-describe('AlramPushService', () => {
+describe("AlramPushService", () => {
   let service: AlramPushService;
 
   beforeEach(async () => {
@@ -12,7 +12,7 @@ describe('AlramPushService', () => {
     service = module.get<AlramPushService>(AlramPushService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });

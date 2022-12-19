@@ -1,7 +1,9 @@
-import { Controller, Post, Body } from "@nestjs/common";
+import { Controller, Post, Body, UseFilters } from "@nestjs/common";
+import { ErrorHandler } from "src/error-handler/error-handler";
 import { BerthPyService } from "./berth-py.service";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 
+@UseFilters(ErrorHandler)
 @Controller("berth-py")
 export class BerthPyController {
   constructor(private readonly berthPyService: BerthPyService) {}

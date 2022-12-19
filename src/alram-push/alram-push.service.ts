@@ -133,7 +133,7 @@ export class AlramPushService {
     }
   }
 
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_10PM)
+  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
   async alramDayOfAgoSchedule() {
     try {
       Logger.warn("::: alramDayOfAgoSchedule start... :::");
