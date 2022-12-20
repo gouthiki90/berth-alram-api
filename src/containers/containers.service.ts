@@ -142,7 +142,6 @@ export class ContainersService {
       }
     } catch (error) {
       console.log(error);
-      await t.rollback();
     }
   }
 
