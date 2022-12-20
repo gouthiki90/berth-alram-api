@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UseFilters,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { user } from "src/models";
@@ -12,7 +13,9 @@ import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "src/auth/auth.service";
 import { Utils } from "src/util/common.utils";
 import { Response } from "express";
+import { ErrorHandler } from "src/error-handler/error-handler";
 
+@UseFilters(ErrorHandler)
 @Injectable()
 export class UserService {
   constructor(
