@@ -24,15 +24,27 @@ export class AlramRepository {
         usr.manager_tel AS managerTel,
         usr.manager_name AS managerName,
         (
-          SELECT COUNT(*) FROM (SELECT * FROM container WHERE container_status = 1 GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
-          WHERE TRUE
-          AND alram_oid = alram.oid
+          SELECT COUNT(*) 
+          FROM 
+			(
+				SELECT * 
+                FROM container 
+                WHERE container_status = 1 
+                GROUP BY CNTR_NO, alram_oid ORDER BY STATUS_DT, STATUS_TM DESC
+			) AS A
+            where A.alram_oid = alram.oid
         ) AS finishCount,
         (
-          SELECT COUNT(*) FROM (SELECT * FROM container GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
-          WHERE TRUE
-		      AND alram_oid = alram.oid
-        ) AS conCount
+          SELECT COUNT(*)
+          FROM
+			(
+				SELECT *
+                FROM container
+                GROUP BY CNTR_NO, alram_oid
+                ORDER BY STATUS_DT, STATUS_TM DESC
+          ) AS A
+          WHERE A.alram_oid = alram.oid
+        ) AS conCount,
       FROM subscription_alram AS alram
       LEFT 
       JOIN berthStat_schedule AS berth 
@@ -73,15 +85,27 @@ export class AlramRepository {
         usr.manager_tel AS managerTel,
         usr.manager_name AS managerName,
         (
-          SELECT COUNT(*) FROM (SELECT * FROM container WHERE container_status = 1 GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
-          WHERE TRUE
-          AND alram_oid = alram.oid
+          SELECT COUNT(*) 
+          FROM 
+			(
+				SELECT * 
+                FROM container 
+                WHERE container_status = 1 
+                GROUP BY CNTR_NO, alram_oid ORDER BY STATUS_DT, STATUS_TM DESC
+			) AS A
+            where A.alram_oid = alram.oid
         ) AS finishCount,
         (
-          SELECT COUNT(*) FROM (SELECT * FROM container GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A
-          WHERE TRUE
-		      AND alram_oid = alram.oid
-        ) AS conCount
+          SELECT COUNT(*)
+          FROM
+			(
+				SELECT *
+                FROM container
+                GROUP BY CNTR_NO, alram_oid
+                ORDER BY STATUS_DT, STATUS_TM DESC
+          ) AS A
+          WHERE A.alram_oid = alram.oid
+        ) AS conCount,
       FROM subscription_alram AS alram
       LEFT 
       JOIN berthStat_schedule AS berth 
