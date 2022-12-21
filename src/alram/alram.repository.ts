@@ -44,7 +44,7 @@ export class AlramRepository {
                 ORDER BY STATUS_DT, STATUS_TM DESC
           ) AS A
           WHERE A.alram_oid = alram.oid
-        ) AS conCount,
+        ) AS conCount
       FROM subscription_alram AS alram
       LEFT 
       JOIN berthStat_schedule AS berth 
@@ -91,7 +91,8 @@ export class AlramRepository {
 				SELECT * 
                 FROM container 
                 WHERE container_status = 1 
-                GROUP BY CNTR_NO, alram_oid ORDER BY STATUS_DT, STATUS_TM DESC
+                GROUP BY CNTR_NO, alram_oid
+                ORDER BY STATUS_DT, STATUS_TM DESC
 			) AS A
             where A.alram_oid = alram.oid
         ) AS finishCount,
@@ -105,7 +106,7 @@ export class AlramRepository {
                 ORDER BY STATUS_DT, STATUS_TM DESC
           ) AS A
           WHERE A.alram_oid = alram.oid
-        ) AS conCount,
+        ) AS conCount
       FROM subscription_alram AS alram
       LEFT 
       JOIN berthStat_schedule AS berth 
