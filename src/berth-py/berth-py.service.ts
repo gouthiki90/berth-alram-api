@@ -90,7 +90,7 @@ export class BerthPyService {
         this.httpService.axiosRef.post(
           "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
           {
-            content: `${obj.trminlCode} 터미널의 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+            content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
             receivers: [`${userInfo.contact}`],
           },
           {
