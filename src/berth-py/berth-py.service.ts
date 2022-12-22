@@ -107,6 +107,16 @@ export class BerthPyService {
 
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
+    /** 신항 터미널 리스트 */
+    const NEW_PORT_LIST = [
+      "PNIT",
+      "PNC",
+      "HJNC",
+      "HPNT",
+      "BNCT",
+      "UNCT",
+      "PICT",
+    ];
     try {
       for (const obj of data) {
         // duple check
@@ -116,6 +126,13 @@ export class BerthPyService {
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
         if (berthDupleData) {
+          /** 신항은 1로 대입 */
+          NEW_PORT_LIST.forEach((element: string) => {
+            if (element === obj.trminlCode) {
+              obj.isNewPort = 1;
+            }
+          });
+
           await berthStatSchedule.update(obj, {
             where: { oid: obj.oid },
             transaction: t,

@@ -28,6 +28,7 @@ export interface berthStatScheduleAttributes {
   predBerth?: string;
   shipment?: string;
   shifting?: string;
+  isNewPort?: number;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -114,6 +115,14 @@ export class berthStatSchedule
 
   @Column({ allowNull: true, type: DataType.STRING(100), comment: "S/H" })
   shifting?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "신항/북항 구분",
+    defaultValue: "0",
+  })
+  isNewPort?: number;
 
   @Column({ allowNull: true, type: DataType.DATE, defaultValue: DataType.NOW })
   createDate?: Date;

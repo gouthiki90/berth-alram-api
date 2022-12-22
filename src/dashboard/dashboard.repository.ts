@@ -93,6 +93,7 @@ export class DashBoardRepository {
             WHERE TRUE
             ${this.utils.generator(whereArr, query)}
             LIMIT :offset, 20
+            ORDER BY csdhpPrarnde DESC
           `,
       {
         type: sequelize.QueryTypes.SELECT,
@@ -145,6 +146,7 @@ export class DashBoardRepository {
             berthStat_schedule
             WHERE TRUE
             ${this.utils.generator(whereArr, query)}
+            ORDER BY csdhpPrarnde DESC
           `,
       {
         type: sequelize.QueryTypes.SELECT,
@@ -186,6 +188,7 @@ export class DashBoardRepository {
     berthStat_schedule
     WHERE TRUE
     AND oid = $oid
+    ORDER BY csdhpPrarnde DESC
       `,
       { type: sequelize.QueryTypes.SELECT, bind: { oid: oid } }
     );
