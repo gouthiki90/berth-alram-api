@@ -15,34 +15,36 @@ export class DashBoardRepository {
     return await this.seqeulize.query(
       `
       SELECT 
-          oid,
-          trminlCode,
-          berthCode,
-          trminlVoyg,
-          wtorcmpCode,
-          trminlShipnm,
-          shipRute,
-          csdhpDrc,
-          workStarDay,
-          workFiniDay,
-          carryFiniDay,
-          landngQy,
-          shipngQy,
-          reshmtQy,
-          predBerth,
-          shipment,
-          shifting,
-          createDate,
-          updateDate,
-          IF(LEFT(csdhpPrarnde, 1) = '(',
-              MID(csdhpPrarnde, 2, 16),
-              LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
-          IF(LEFT(tkoffPrarnde, 1) = '(',
-              MID(tkoffPrarnde, 2, 16),
-              LEFT(tkoffPrarnde, 19)) AS tkoffPrarnde
-        FROM
-        berthStat_schedule
-        WHERE TRUE
+        berth.oid,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
+        berth.berthCode,
+        berth.trminlVoyg,
+        berth.wtorcmpCode,
+        berth.trminlShipnm,
+        berth.shipRute,
+        berth.csdhpDrc,
+        berth.workStarDay,
+        berth.workFiniDay,
+        berth.carryFiniDay,
+        berth.landngQy,
+        berth.shipngQy,
+        berth.reshmtQy,
+        berth.predBerth,
+        berth.shipment,
+        berth.shifting,
+        berth.createDate,
+        berth.updateDate,
+        info.is_new_port,
+        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
+            MID(berth.csdhpPrarnde, 2, 16),
+            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
+        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+            MID(berth.tkoffPrarnde, 2, 16),
+            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+    FROM
+    berthStat_schedule AS berth
+    LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+    WHERE TRUE
       `,
       { type: sequelize.QueryTypes.SELECT }
     );
@@ -50,51 +52,53 @@ export class DashBoardRepository {
 
   async findForPageInfo(offset: number, query: BerthQueryDto) {
     const whereArr = [
-      ["AND trminlCode = :trminlCode", query.trminlCode],
+      ["AND berth.trminlCode = :trminlCode", query.trminlCode],
       [
-        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 10), LEFT(csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
         query.searchType === "1",
       ],
       [
-        "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 10), LEFT(tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
         query.searchType === "2",
       ],
     ];
     return await this.seqeulize.query(
       `
-          SELECT 
-              oid,
-              trminlCode,
-              berthCode,
-              trminlVoyg,
-              wtorcmpCode,
-              trminlShipnm,
-              shipRute,
-              csdhpDrc,
-              workStarDay,
-              workFiniDay,
-              carryFiniDay,
-              landngQy,
-              shipngQy,
-              reshmtQy,
-              predBerth,
-              shipment,
-              shifting,
-              createDate,
-              updateDate,
-              IF(LEFT(csdhpPrarnde, 1) = '(',
-                  MID(csdhpPrarnde, 2, 16),
-                  LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
-              IF(LEFT(tkoffPrarnde, 1) = '(',
-                  MID(tkoffPrarnde, 2, 16),
-                  LEFT(tkoffPrarnde, 19)) AS tkoffPrarnde
-            FROM
-            berthStat_schedule
-            WHERE TRUE
-            ${this.utils.generator(whereArr, query)}
-            LIMIT :offset, 20
-            ORDER BY csdhpPrarnde DESC
-          `,
+      SELECT 
+        berth.oid,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
+        berth.berthCode,
+        berth.trminlVoyg,
+        berth.wtorcmpCode,
+        berth.trminlShipnm,
+        berth.shipRute,
+        berth.csdhpDrc,
+        berth.workStarDay,
+        berth.workFiniDay,
+        berth.carryFiniDay,
+        berth.landngQy,
+        berth.shipngQy,
+        berth.reshmtQy,
+        berth.predBerth,
+        berth.shipment,
+        berth.shifting,
+        berth.createDate,
+        berth.updateDate,
+        info.is_new_port,
+        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
+            MID(berth.csdhpPrarnde, 2, 16),
+            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
+        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+            MID(berth.tkoffPrarnde, 2, 16),
+            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+      FROM
+      berthStat_schedule AS berth
+      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+      WHERE TRUE
+      ${this.utils.generator(whereArr, query)}
+      ORDER BY berth.csdhpPrarnde DESC
+      LIMIT :offset, 20
+      `,
       {
         type: sequelize.QueryTypes.SELECT,
         replacements: { offset: offset, ...query },
@@ -104,50 +108,52 @@ export class DashBoardRepository {
 
   async findForPageInfoAll(query: BerthQueryDto) {
     const whereArr = [
-      ["AND trminlCode = :trminlCode", query.trminlCode],
+      ["AND berth.trminlCode = :trminlCode", query.trminlCode],
       [
-        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 10), LEFT(csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
         query.searchType === "1",
       ],
       [
-        "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 10), LEFT(tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
         query.searchType === "2",
       ],
     ];
     return await this.seqeulize.query(
       `
-          SELECT 
-              oid,
-              trminlCode,
-              berthCode,
-              trminlVoyg,
-              wtorcmpCode,
-              trminlShipnm,
-              shipRute,
-              csdhpDrc,
-              workStarDay,
-              workFiniDay,
-              carryFiniDay,
-              landngQy,
-              shipngQy,
-              reshmtQy,
-              predBerth,
-              shipment,
-              shifting,
-              createDate,
-              updateDate,
-              IF(LEFT(csdhpPrarnde, 1) = '(',
-                  MID(csdhpPrarnde, 2, 16),
-                  LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
-              IF(LEFT(tkoffPrarnde, 1) = '(',
-                  MID(tkoffPrarnde, 2, 16),
-                  LEFT(tkoffPrarnde, 19)) AS tkoffPrarnde
-            FROM
-            berthStat_schedule
-            WHERE TRUE
-            ${this.utils.generator(whereArr, query)}
-            ORDER BY csdhpPrarnde DESC
-          `,
+      SELECT 
+        berth.oid,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
+        berth.berthCode,
+        berth.trminlVoyg,
+        berth.wtorcmpCode,
+        berth.trminlShipnm,
+        berth.shipRute,
+        berth.csdhpDrc,
+        berth.workStarDay,
+        berth.workFiniDay,
+        berth.carryFiniDay,
+        berth.landngQy,
+        berth.shipngQy,
+        berth.reshmtQy,
+        berth.predBerth,
+        berth.shipment,
+        berth.shifting,
+        berth.createDate,
+        berth.updateDate,
+        info.is_new_port,
+        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
+            MID(berth.csdhpPrarnde, 2, 16),
+            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
+        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+            MID(berth.tkoffPrarnde, 2, 16),
+            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+        FROM
+        berthStat_schedule AS berth
+        LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+        WHERE TRUE
+        ${this.utils.generator(whereArr, query)}
+        ORDER BY berth.csdhpPrarnde DESC
+      `,
       {
         type: sequelize.QueryTypes.SELECT,
         replacements: { ...query },
@@ -159,36 +165,38 @@ export class DashBoardRepository {
     return await this.seqeulize.query(
       `
       SELECT 
-      oid,
-      trminlCode,
-      berthCode,
-      trminlVoyg,
-      wtorcmpCode,
-      trminlShipnm,
-      shipRute,
-      csdhpDrc,
-      workStarDay,
-      workFiniDay,
-      carryFiniDay,
-      landngQy,
-      shipngQy,
-      reshmtQy,
-      predBerth,
-      shipment,
-      shifting,
-      createDate,
-      updateDate,
-      IF(LEFT(csdhpPrarnde, 1) = '(',
-          MID(csdhpPrarnde, 2, 16),
-          LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
-      IF(LEFT(tkoffPrarnde, 1) = '(',
-          MID(tkoffPrarnde, 2, 16),
-          LEFT(tkoffPrarnde, 19)) AS tkoffPrarnde
-    FROM
-    berthStat_schedule
-    WHERE TRUE
-    AND oid = $oid
-    ORDER BY csdhpPrarnde DESC
+        berth.oid,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
+        berth.berthCode,
+        berth.trminlVoyg,
+        berth.wtorcmpCode,
+        berth.trminlShipnm,
+        berth.shipRute,
+        berth.csdhpDrc,
+        berth.workStarDay,
+        berth.workFiniDay,
+        berth.carryFiniDay,
+        berth.landngQy,
+        berth.shipngQy,
+        berth.reshmtQy,
+        berth.predBerth,
+        berth.shipment,
+        berth.shifting,
+        berth.createDate,
+        berth.updateDate,
+        info.is_new_port,
+        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
+            MID(berth.csdhpPrarnde, 2, 16),
+            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
+        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+            MID(berth.tkoffPrarnde, 2, 16),
+            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+      FROM
+      berthStat_schedule AS berth
+      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+      WHERE TRUE
+      AND berth.oid = $oid
+      ORDER BY berth.csdhpPrarnde DESC
       `,
       { type: sequelize.QueryTypes.SELECT, bind: { oid: oid } }
     );
