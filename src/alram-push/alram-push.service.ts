@@ -53,6 +53,22 @@ export class AlramPushService {
       new Date(TODAY.setDate(TODAY.getDate() - 3)).getDate(),
       "3일",
     ];
+    const FOUR_DAYS_AGO = [
+      new Date(TODAY.setDate(TODAY.getDate() - 4)).getDate(),
+      "4일",
+    ];
+    const FIVE_DAYS_AGO = [
+      new Date(TODAY.setDate(TODAY.getDate() - 5)).getDate(),
+      "5일",
+    ];
+    const SIX_DAYS_AGO = [
+      new Date(TODAY.setDate(TODAY.getDate() - 6)).getDate(),
+      "6일",
+    ];
+    const SEVEN_DAYS_AGO = [
+      new Date(TODAY.setDate(TODAY.getDate() - 7)).getDate(),
+      "7일",
+    ];
     const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
 
     const sendMessage = async (contact: string, comment: any) => {
@@ -93,6 +109,26 @@ export class AlramPushService {
         Logger.warn("3일 남음");
         for (const userInfo of userInfoList) {
           await sendMessage(userInfo.contact, THREE_DAYS_AGO[1]);
+        }
+      } else if (FOUR_DAYS_AGO[0] === BERTH_DAY) {
+        Logger.warn("4일 남음");
+        for (const userInfo of userInfoList) {
+          await sendMessage(userInfo.contact, FOUR_DAYS_AGO[1]);
+        }
+      } else if (FIVE_DAYS_AGO[0] === BERTH_DAY) {
+        Logger.warn("5일 남음");
+        for (const userInfo of userInfoList) {
+          await sendMessage(userInfo.contact, FIVE_DAYS_AGO[1]);
+        }
+      } else if (SIX_DAYS_AGO[0] === BERTH_DAY) {
+        Logger.warn("6일 남음");
+        for (const userInfo of userInfoList) {
+          await sendMessage(userInfo.contact, SIX_DAYS_AGO[1]);
+        }
+      } else if (SEVEN_DAYS_AGO[0] === BERTH_DAY) {
+        Logger.warn("7일 남음");
+        for (const userInfo of userInfoList) {
+          await sendMessage(userInfo.contact, SEVEN_DAYS_AGO[1]);
         }
       }
     } catch (error) {
