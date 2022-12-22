@@ -141,6 +141,12 @@ export class BerthPyService {
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
             console.log(`csdhpPrarnde=${obj.csdhpPrarnde} ::: is change! :::`);
 
+            /** 이전 접안일 데이터 update */
+            await berthStatSchedule.update(
+              { previousCsdhpPrarnde: berthDupleData.csdhpPrarnde },
+              { where: { oid: obj.oid }, transaction: t }
+            );
+
             /** 문자 전송 */
             await this.sendAlramOfcsdhpPrarnde(
               userInfoList,
