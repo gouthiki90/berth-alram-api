@@ -58,10 +58,12 @@ export class AlramPushService {
     for (const berthInfo of truminalTimingList) {
       if (berthInfo.turminalCode === obj.trminlCode) {
         const D_DAY = new Date(
-          TODAY.setDate(BERTH_DAY - berthInfo.carryTiming)
+          TODAY.setDate(TODAY.getDate() - BERTH_DAY)
         ).getDate();
 
-        CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
+        if (D_DAY <= berthInfo.carryTiming) {
+          CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
+        }
       }
     }
 
