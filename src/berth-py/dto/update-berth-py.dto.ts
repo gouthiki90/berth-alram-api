@@ -21,4 +21,5 @@ export class UpdateBerthPyDto extends PartialType(CreateBerthPyDto) {
   predBerth?: string;
   shipment?: string;
   shifting?: string;
+  isNewPort?: number;
 }

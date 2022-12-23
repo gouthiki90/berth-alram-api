@@ -17,6 +17,7 @@ export interface berthStatScheduleAttributes {
   trminlShipnm?: string;
   shipRute?: string;
   csdhpPrarnde?: string;
+  previousCsdhpPrarnde?: string;
   tkoffPrarnde?: string;
   csdhpDrc?: string;
   workStarDay?: string;
@@ -69,6 +70,13 @@ export class berthStatSchedule
 
   @Column({ allowNull: true, type: DataType.STRING(100), comment: "입항일시" })
   csdhpPrarnde?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "이전 접안예정일시",
+  })
+  previousCsdhpPrarnde?: string;
 
   @Column({ allowNull: true, type: DataType.STRING(100), comment: "출항일시" })
   tkoffPrarnde?: string;
