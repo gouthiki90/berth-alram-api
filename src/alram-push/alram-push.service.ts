@@ -57,14 +57,15 @@ export class AlramPushService {
 
     for (const berthInfo of truminalTimingList) {
       if (berthInfo.turminalCode === obj.trminlCode) {
-        CARRY_TIMING.push(
-          new Date(
-            TODAY.setDate(TODAY.getDate() - berthInfo.carryTiming)
-          ).getDate(),
-          `${berthInfo.carryTiming}일`
-        );
+        const D_DAY = new Date(
+          TODAY.setDate(BERTH_DAY - berthInfo.carryTiming)
+        ).getDate();
+
+        CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
       }
     }
+
+    console.log({ CARRY_TIMING });
 
     const sendMessage = async (contact: string, comment: any) => {
       await this.httpService.axiosRef.post(
@@ -133,7 +134,7 @@ export class AlramPushService {
     }
   }
 
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM, {
+  @Cron(CronExpression.EVERY_10_SECONDS, {
     name: "alramDayOfAgoSchedule",
   })
   async alramDayOfAgoSchedule() {
