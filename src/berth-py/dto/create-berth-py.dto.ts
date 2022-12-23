@@ -20,4 +20,5 @@ export class CreateBerthPyDto {
   shifting?: string;
   createDate?: Date;
   updateDate?: Date;
+  isNewPort?: number;
 }
