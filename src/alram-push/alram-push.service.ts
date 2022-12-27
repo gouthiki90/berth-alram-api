@@ -3,7 +3,7 @@ import sequelize from "sequelize";
 import { BerthPyDto } from "../alram-push/dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
 import { Sequelize } from "sequelize-typescript";
-import { berthStatSchedule, user } from "src/models";
+import { berthInfo, berthStatSchedule, user } from "src/models";
 import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
@@ -13,6 +13,8 @@ export class AlramPushService {
     private readonly seqeulize: Sequelize,
     private readonly schedulerRegistry: SchedulerRegistry
   ) {}
+
+  /* #region common functions */
 
   /** 해당 모선항차를 구독한 유저들 */
   async findUserInfoListForAlram(obj: BerthPyDto) {
@@ -38,25 +40,36 @@ export class AlramPushService {
     }
   }
 
+  async findTurminalCarryTiming() {
+    try {
+      return await berthInfo.findAll();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   /** 날짜에 따른 알람 푸쉬 */
   async sendAlramOfDayAgo(userInfoList: Array<user>, obj: BerthPyDto) {
     const TODAY = new Date();
-    const ONE_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 1)).getDate(),
-      "1일",
-    ];
-    const TOW_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 2)).getDate(),
-      "2일",
-    ];
-    const THREE_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 3)).getDate(),
-      "3일",
-    ];
     const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
+    const CARRY_TIMING = [];
+    const truminalTimingList = await this.findTurminalCarryTiming();
+
+    for (const berthInfo of truminalTimingList) {
+      if (berthInfo.turminalCode === obj.trminlCode) {
+        const D_DAY = new Date(
+          TODAY.setDate(TODAY.getDate() - BERTH_DAY)
+        ).getDate();
+
+        if (D_DAY <= berthInfo.carryTiming) {
+          CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
+        }
+      }
+    }
+
+    console.log({ CARRY_TIMING });
 
     const sendMessage = async (contact: string, comment: any) => {
-      console.log(contact);
       await this.httpService.axiosRef.post(
         `${process.env.MESSAGE_URL}`,
         {
@@ -72,33 +85,23 @@ export class AlramPushService {
     };
 
     console.log("::: compare Date :::", {
-      ONE_DAYS_AGO,
-      TOW_DAYS_AGO,
-      THREE_DAYS_AGO,
+      CARRY_TIMING,
       BERTH_DAY,
     });
 
     try {
-      if (ONE_DAYS_AGO[0] === BERTH_DAY) {
-        Logger.warn("1일 남음");
+      if (CARRY_TIMING[0] === BERTH_DAY) {
+        Logger.warn(`${CARRY_TIMING[0]}일 남음`);
         for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, ONE_DAYS_AGO[1]);
-        }
-      } else if (TOW_DAYS_AGO[0] === BERTH_DAY) {
-        Logger.warn("2일 남음");
-        for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
-        }
-      } else if (THREE_DAYS_AGO[0] === BERTH_DAY) {
-        Logger.warn("3일 남음");
-        for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, THREE_DAYS_AGO[1]);
+          await sendMessage(userInfo.contact, CARRY_TIMING[1]);
         }
       }
     } catch (error) {
       console.log(error);
     }
   }
+
+  /* #endregion */
 
   /** alramDayOfAgoSchedule 스케줄 Job */
   async checkBerthDaysAndAlramPush() {
@@ -133,7 +136,7 @@ export class AlramPushService {
     }
   }
 
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM, {
+  @Cron(CronExpression.EVERY_10_SECONDS, {
     name: "alramDayOfAgoSchedule",
   })
   async alramDayOfAgoSchedule() {
