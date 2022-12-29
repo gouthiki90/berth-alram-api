@@ -96,7 +96,7 @@ export class DashBoardRepository {
       LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       ${this.utils.generator(whereArr, query)}
-      ORDER BY berth.csdhpPrarnde DESC
+      ORDER BY berth.csdhpPrarnde ASC
       LIMIT :offset, 20
       `,
       {
@@ -152,7 +152,7 @@ export class DashBoardRepository {
         LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
         WHERE TRUE
         ${this.utils.generator(whereArr, query)}
-        ORDER BY berth.csdhpPrarnde DESC
+        ORDER BY berth.csdhpPrarnde ASC
       `,
       {
         type: sequelize.QueryTypes.SELECT,
@@ -196,7 +196,7 @@ export class DashBoardRepository {
       LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       AND berth.oid = $oid
-      ORDER BY berth.csdhpPrarnde DESC
+      ORDER BY berth.csdhpPrarnde ASC
       `,
       { type: sequelize.QueryTypes.SELECT, bind: { oid: oid } }
     );
