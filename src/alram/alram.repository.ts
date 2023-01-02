@@ -116,6 +116,7 @@ export class AlramRepository {
         ON alram.user_oid = usr.oid
       WHERE TRUE
       AND usr.oid = '${oid}'
+      AND berth.trminlCode IN ()
         `,
         {
           type: seqeulize.QueryTypes.SELECT,

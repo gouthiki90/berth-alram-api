@@ -14,6 +14,7 @@ import { ErrorHandler } from "src/error-handler/error-handler";
 import { AlramService } from "./alram.service";
 import { CreateAlramDto } from "./dto/create-alram.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
+import { TrminalCodeListDto } from "./dto/trminal-code-list.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
 
 @UseGuards(JwtAuthGuard)
@@ -28,8 +29,16 @@ export class AlramController {
   }
 
   @Post("/page-info/:oid")
-  findOne(@Param("oid") oid: string, @Body() pageInfo: OffsetPagingInfoDto) {
-    return this.alramService.makePageInfoForAlramList(pageInfo, oid);
+  findOne(
+    @Param("oid") oid: string,
+    @Body() pageInfo: OffsetPagingInfoDto,
+    trminlCodeList: TrminalCodeListDto
+  ) {
+    return this.alramService.makePageInfoForAlramList(
+      pageInfo,
+      oid,
+      trminlCodeList
+    );
   }
 
   @Put("/")

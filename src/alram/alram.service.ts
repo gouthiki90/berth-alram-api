@@ -9,6 +9,7 @@ import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { CreateAlramDto } from "./dto/create-alram.dto";
 import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-state-data.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
+import { TrminalCodeListDto } from "./dto/trminal-code-list.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
 
 @UseFilters(ErrorHandler)
@@ -79,11 +80,17 @@ export class AlramService {
     }
   }
 
-  async makePageInfoForAlramList(data: OffsetPagingInfoDto, oid: string) {
+  async makePageInfoForAlramList(
+    data: OffsetPagingInfoDto,
+    oid: string,
+    trminlCodeList: TrminalCodeListDto
+  ) {
     /** 20개로 최대 고정값 */
     const PAGE_ITEM_COUNT = 20;
+    /** OFFSET 계산값 */
     const OFFSET = PAGE_ITEM_COUNT * data.pageIndex;
-    const itmes = new Array<OffsetAlramDto>();
+    /** 선석 데이터 리스트 */
+    const BERTH_ITEMS = new Array<OffsetAlramDto>();
 
     if ("number" !== typeof data.pageIndex) {
       throw new NotFoundException("Is not number or this value is undefined");
@@ -92,6 +99,8 @@ export class AlramService {
     if (typeof null === typeof data.pageIndex) {
       throw new NotFoundException("Is null");
     }
+
+    /** 터미널 코드 받아서 for문 돌고 각 값을 받아내기 */
 
     try {
       const userAlramListForPaging = await this.alramRepository.findOne(
@@ -110,10 +119,10 @@ export class AlramService {
         const PAGE_INFO = { ...data };
 
         userAlramListForPaging.map((value: OffsetAlramDto) => {
-          itmes.push(value);
+          BERTH_ITEMS.push(value);
         });
 
-        this.pageInfoDto.items = itmes;
+        this.pageInfoDto.items = BERTH_ITEMS;
         this.pageInfoDto.pageInfo = PAGE_INFO;
 
         return this.pageInfoDto;
