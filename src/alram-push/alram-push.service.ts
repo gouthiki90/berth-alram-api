@@ -136,7 +136,7 @@ export class AlramPushService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS, {
+  @Cron(CronExpression.EVERY_2ND_HOUR_FROM_1AM_THROUGH_11PM, {
     name: "alramDayOfAgoSchedule",
   })
   async alramDayOfAgoSchedule() {

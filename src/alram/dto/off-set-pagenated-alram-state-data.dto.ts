@@ -1,5 +1,5 @@
-import { OffsetPagingInfoDto } from "src/dashboard/dto/offset-page-info.dto";
 import { OffsetAlramDto } from "./alram-offset-dto";
+import { OffsetPagingInfoDto } from "./offset-page-info.dto";
 
 export class OffsetPagenatedAlramStateDataDto {
   /** 선석 데이터 리스트 */

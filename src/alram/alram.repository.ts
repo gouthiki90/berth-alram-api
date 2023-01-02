@@ -6,7 +6,7 @@ import seqeulize from "sequelize";
 export class AlramRepository {
   constructor(private readonly sequelize: Sequelize) {}
 
-  async findOne(oid: string, offset: number) {
+  async findOne(oid: string, offset: number, trminlCode: string) {
     try {
       const list = await this.sequelize.query(
         `
@@ -54,6 +54,7 @@ export class AlramRepository {
         ON alram.user_oid = usr.oid
       WHERE TRUE
       AND usr.oid = '${oid}'
+      AND berth.trminlCode IN ('${trminlCode}')
         LIMIT ${offset}, 20
         `,
         {
@@ -67,7 +68,7 @@ export class AlramRepository {
     }
   }
 
-  async findAll(oid: string) {
+  async findAll(oid: string, trminlCode: string) {
     try {
       const list = await this.sequelize.query(
         `
@@ -116,7 +117,7 @@ export class AlramRepository {
         ON alram.user_oid = usr.oid
       WHERE TRUE
       AND usr.oid = '${oid}'
-      AND berth.trminlCode IN ()
+      AND berth.trminlCode IN ('${trminlCode}')
         `,
         {
           type: seqeulize.QueryTypes.SELECT,

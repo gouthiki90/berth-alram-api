@@ -1,15 +1,14 @@
 import { Injectable, NotFoundException, UseFilters } from "@nestjs/common";
 import { randomUUID } from "crypto";
 import { Sequelize } from "sequelize-typescript";
-import { OffsetPagingInfoDto } from "src/dashboard/dto/offset-page-info.dto";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { container, subscriptionAlram } from "src/models";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { CreateAlramDto } from "./dto/create-alram.dto";
 import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-state-data.dto";
+import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
-import { TrminalCodeListDto } from "./dto/trminal-code-list.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
 
 @UseFilters(ErrorHandler)
@@ -80,35 +79,35 @@ export class AlramService {
     }
   }
 
-  async makePageInfoForAlramList(
-    data: OffsetPagingInfoDto,
-    oid: string,
-    trminlCodeList: TrminalCodeListDto
-  ) {
+  async makePageInfoForAlramList(data: OffsetPagingInfoDto, oid: string) {
     /** 20개로 최대 고정값 */
     const PAGE_ITEM_COUNT = 20;
     /** OFFSET 계산값 */
     const OFFSET = PAGE_ITEM_COUNT * data.pageIndex;
     /** 선석 데이터 리스트 */
     const BERTH_ITEMS = new Array<OffsetAlramDto>();
-
-    if ("number" !== typeof data.pageIndex) {
-      throw new NotFoundException("Is not number or this value is undefined");
-    }
-
-    if (typeof null === typeof data.pageIndex) {
-      throw new NotFoundException("Is null");
-    }
-
-    /** 터미널 코드 받아서 for문 돌고 각 값을 받아내기 */
+    /** IN에 넣을 터미널 코드 */
+    const TRMINAL_CODES = data.trminlCodeList.join("','");
 
     try {
+      if ("number" !== typeof data.pageIndex) {
+        throw new NotFoundException("Is not number or this value is undefined");
+      }
+
+      if (typeof null === typeof data.pageIndex) {
+        throw new NotFoundException("Is null");
+      }
+
       const userAlramListForPaging = await this.alramRepository.findOne(
         oid,
-        OFFSET
+        OFFSET,
+        TRMINAL_CODES
       );
 
-      const userAlramListForPagingAll = await this.alramRepository.findAll(oid);
+      const userAlramListForPagingAll = await this.alramRepository.findAll(
+        oid,
+        TRMINAL_CODES
+      );
 
       if (userAlramListForPaging.length !== 0) {
         data.pageItemCount = PAGE_ITEM_COUNT;
