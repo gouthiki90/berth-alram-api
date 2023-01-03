@@ -45,13 +45,22 @@ export class AlramHistoryService {
 
   /** 알람 히스토리 삭제 function for schedule */
   async removeScheduleFuntion() {
+    const t = await this.seqeulize.transaction();
     try {
       const REMOVE_DATA = await this.findAllForRemoveAlramHistory();
-      for (const obj of REMOVE_DATA) {
-        await alramHistory.destroy({ where: { oid: obj.oid } });
+
+      if (REMOVE_DATA.length === 0) {
+        return;
       }
+
+      for (const obj of REMOVE_DATA) {
+        await alramHistory.destroy({ where: { oid: obj.oid }, transaction: t });
+      }
+
+      await t.commit();
     } catch (error) {
       console.log(error);
+      await t.rollback();
       throw new InternalServerErrorException(`${error} DELETE Error!`);
     }
   }
