@@ -14,9 +14,12 @@ export class DashboardService {
     private readonly pageInfoDto: OffsetPagenatedBerthStateDataDto
   ) {}
   async makePageInfo(data: OffsetPagingInfoDto, query: BerthQueryDto) {
+    /** 페이징 카운트의 디폴트값 */
     const PAGE_ITEM_COUNT = 20;
+    /** OFFSET 계산 */
     const OFFSET = PAGE_ITEM_COUNT * data.pageIndex;
-    const itmes = new Array<BerthStatDto>();
+    /** 매번 새로운 객체의 선석 데이터 */
+    const BERTH_PAGING_ITEMS = new Array<BerthStatDto>();
 
     if ("number" !== typeof data.pageIndex) {
       throw new NotFoundException("Is not number or this value is undefined");
@@ -27,8 +30,11 @@ export class DashboardService {
     }
 
     try {
+      /** 페이징을 위한 SELECT */
       const berthStatListForPage =
         await this.dashBoardRepository.findForPageInfo(OFFSET, query);
+
+      /** 페이징 계산을 위한 SELECT */
       const berthStatListForPageAll =
         await this.dashBoardRepository.findForPageInfoAll(query);
 
@@ -38,13 +44,14 @@ export class DashboardService {
         data.totalPageCount = Math.ceil(berthStatListForPageAll.length / 20);
         data.currentItemCount = berthStatListForPage.length;
 
+        /** 페이징 계산 데이터 */
         const PAGE_INFO = { ...data };
 
         berthStatListForPage.map((value: BerthStatDto) => {
-          itmes.push(value);
+          BERTH_PAGING_ITEMS.push(value);
         });
 
-        this.pageInfoDto.items = itmes;
+        this.pageInfoDto.items = BERTH_PAGING_ITEMS;
         this.pageInfoDto.pageInfo = PAGE_INFO;
 
         return this.pageInfoDto;
