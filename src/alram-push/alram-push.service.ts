@@ -77,7 +77,7 @@ export class AlramPushService {
       }
     }
 
-    console.log({ CARRY_TIMING });
+    Logger.debug({ CARRY_TIMING });
 
     const sendMessage = async (contact: string, comment: any) => {
       await this.httpService.axiosRef.post(
@@ -94,7 +94,7 @@ export class AlramPushService {
       );
     };
 
-    console.log("::: compare Date :::", {
+    Logger.debug("::: compare Date :::", {
       CARRY_TIMING,
       BERTH_DAY,
     });
@@ -107,7 +107,7 @@ export class AlramPushService {
         }
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException("메시지 전송에 실패했습니다.");
     }
   }
@@ -143,7 +143,7 @@ export class AlramPushService {
         }
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException(
         "알람을 전송하는 데에 실패했습니다."
       );
