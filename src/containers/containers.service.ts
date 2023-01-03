@@ -166,10 +166,13 @@ export class ContainersService {
   ) {
     const t = await this.seqeulize.transaction();
     try {
-      await container.update(containerData, {
-        where: { oid: containerData.oid },
-        transaction: t,
-      });
+      await container.update(
+        { ...containerData },
+        {
+          where: { oid: containerData.oid },
+          transaction: t,
+        }
+      );
 
       const result = await t.commit();
       return result;
