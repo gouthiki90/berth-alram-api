@@ -159,6 +159,16 @@ export class ContainersService {
     }
   }
 
+  async dynamicUpdateContainerStatus() {
+    try {
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `${error}\ncontainer status change error!`
+      );
+    }
+  }
+
   /** 컨테이너 스케줄링을 위해 Python으로 요청 */
   async sendConInfoToPython(dto: PostContainerListResponseDto) {
     const t = await this.seqeulize.transaction();
