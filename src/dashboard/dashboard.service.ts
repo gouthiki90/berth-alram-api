@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, UseFilters } from "@nestjs/common";
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UseFilters,
+} from "@nestjs/common";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { DashBoardRepository } from "./dashboard.repository";
 import { BerthQueryDto } from "./dto/berth-query.dto";
@@ -21,15 +26,15 @@ export class DashboardService {
     /** 매번 새로운 객체의 선석 데이터 */
     const BERTH_PAGING_ITEMS = new Array<BerthStatDto>();
 
-    if ("number" !== typeof data.pageIndex) {
-      throw new NotFoundException("Is not number or this value is undefined");
-    }
-
-    if (typeof null === typeof data.pageIndex) {
-      throw new NotFoundException("Is null");
-    }
-
     try {
+      if ("number" !== typeof data.pageIndex) {
+        throw new NotFoundException("Is not number or this value is undefined");
+      }
+
+      if (typeof null === typeof data.pageIndex) {
+        throw new NotFoundException("Is null");
+      }
+
       /** 페이징을 위한 SELECT */
       const berthStatListForPage =
         await this.dashBoardRepository.findForPageInfo(OFFSET, query);
@@ -57,7 +62,7 @@ export class DashboardService {
         return this.pageInfoDto;
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 }
