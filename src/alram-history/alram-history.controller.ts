@@ -2,10 +2,10 @@ import {
   Controller,
   Get,
   Body,
-  Patch,
   Param,
   Delete,
   UseFilters,
+  Put,
 } from "@nestjs/common";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { AlramHistoryRepository } from "./alram-history.repository";
@@ -20,17 +20,14 @@ export class AlramHistoryController {
     private readonly alramHistoryRepository: AlramHistoryRepository
   ) {}
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.alramHistoryService.findOne(+id);
+  @Get("/:oid")
+  findOne(@Param("oid") oid: string) {
+    return this.alramHistoryRepository.findOneOfUserAlramHistory(oid);
   }
 
-  @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateAlramHistoryDto: UpdateAlramHistoryDto
-  ) {
-    return this.alramHistoryService.update(+id, updateAlramHistoryDto);
+  @Put("/")
+  update(@Body() updateAlramHistoryDto: UpdateAlramHistoryDto) {
+    return this.alramHistoryService.update(updateAlramHistoryDto);
   }
 
   @Delete(":id")
