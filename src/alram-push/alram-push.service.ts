@@ -80,18 +80,22 @@ export class AlramPushService {
     Logger.debug({ CARRY_TIMING });
 
     const sendMessage = async (contact: string, comment: any) => {
-      await this.httpService.axiosRef.post(
-        `${process.env.MESSAGE_URL}`,
-        {
-          content: `${obj.trminlCode} 터미널의 ${obj.oid}(${obj.csdhpPrarnde}) 모선항차 입항시간이 ${comment} 전입니다.`,
-          receivers: [`${contact}`],
-        },
-        {
-          headers: {
-            "x-api-key": `${process.env.MESSAGE_KEY}`,
+      await this.httpService.axiosRef
+        .post(
+          `${process.env.MESSAGE_URL}`,
+          {
+            content: `${obj.trminlCode} 터미널의 ${obj.oid}(${obj.csdhpPrarnde}) 모선항차 입항시간이 ${comment} 전입니다.`,
+            receivers: [`${contact}`],
           },
-        }
-      );
+          {
+            headers: {
+              "x-api-key": `${process.env.MESSAGE_KEY}`,
+            },
+          }
+        )
+        .catch((error) => {
+          Logger.error(error);
+        });
     };
 
     Logger.debug("::: compare Date :::", {
