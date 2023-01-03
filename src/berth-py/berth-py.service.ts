@@ -221,21 +221,21 @@ export class BerthPyService {
     }
   }
 
-  // @Cron(CronExpression.EVERY_WEEKEND, {
-  //   name: "deleteOldBerthDataSchedule",
-  // })
-  // async deleteOldBerthDataSchedule() {
-  //   try {
-  //     Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
-  //     await this.deleteOldBerthData();
-  //     Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
-  //   } catch (error) {
-  //     Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
-  //     console.log(error);
-  //     const GET_JOB = this.schedulerRegistry.getCronJob(
-  //       "deleteOldBerthDataSchedule"
-  //     );
-  //     GET_JOB.stop();
-  //   }
-  // }
+  @Cron(CronExpression.EVERY_2ND_MONTH, {
+    name: "deleteOldBerthDataSchedule",
+  })
+  async deleteOldBerthDataSchedule() {
+    try {
+      Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
+      await this.deleteOldBerthData();
+      Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
+    } catch (error) {
+      Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
+      console.log(error);
+      const GET_JOB = this.schedulerRegistry.getCronJob(
+        "deleteOldBerthDataSchedule"
+      );
+      GET_JOB.stop();
+    }
+  }
 }
