@@ -13,6 +13,7 @@ import { HttpModule } from "@nestjs/axios";
 import { AlramPushModule } from "./alram-push/alram-push.module";
 import { ContainersModule } from "./containers/containers.module";
 import { BerthInfoModule } from "./berth-info/berth-info.module";
+import { AlramHistoryModule } from "./alram-history/alram-history.module";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { BerthInfoModule } from "./berth-info/berth-info.module";
     AlramPushModule,
     ContainersModule,
     BerthInfoModule,
+    AlramHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
