@@ -1,34 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AlramHistoryService } from './alram-history.service';
-import { CreateAlramHistoryDto } from './dto/create-alram-history.dto';
-import { UpdateAlramHistoryDto } from './dto/update-alram-history.dto';
+import { Controller, Get, Body, Param, UseFilters, Put } from "@nestjs/common";
+import { ErrorHandler } from "src/error-handler/error-handler";
+import { AlramHistoryRepository } from "./alram-history.repository";
+import { AlramHistoryService } from "./alram-history.service";
+import { UpdateAlramHistoryDto } from "./dto/update-alram-history.dto";
 
-@Controller('alram-history')
+@UseFilters(ErrorHandler)
+@Controller("alram-history")
 export class AlramHistoryController {
-  constructor(private readonly alramHistoryService: AlramHistoryService) {}
+  constructor(
+    private readonly alramHistoryService: AlramHistoryService,
+    private readonly alramHistoryRepository: AlramHistoryRepository
+  ) {}
 
-  @Post()
-  create(@Body() createAlramHistoryDto: CreateAlramHistoryDto) {
-    return this.alramHistoryService.create(createAlramHistoryDto);
+  @Get("/:oid")
+  findOne(@Param("oid") oid: string) {
+    return this.alramHistoryRepository.findOneOfUserAlramHistory(oid);
   }
 
-  @Get()
-  findAll() {
-    return this.alramHistoryService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.alramHistoryService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlramHistoryDto: UpdateAlramHistoryDto) {
-    return this.alramHistoryService.update(+id, updateAlramHistoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.alramHistoryService.remove(+id);
+  @Put("/")
+  update(@Body() updateAlramHistoryDto: UpdateAlramHistoryDto) {
+    return this.alramHistoryService.update(updateAlramHistoryDto);
   }
 }

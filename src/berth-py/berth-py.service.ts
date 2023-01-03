@@ -1,18 +1,27 @@
-import { Injectable, Logger } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { berthStatSchedule, user } from "src/models";
+import { alramHistory, berthStatSchedule } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
 import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
+import { Utils } from "src/util/common.utils";
+import { GetUserInfoListDto } from "./dto/get-user-info-list.dto";
 
 @Injectable()
 export class BerthPyService {
   constructor(
     private readonly seqeulize: Sequelize,
     private readonly httpService: HttpService,
-    private readonly schedulerRegistry: SchedulerRegistry
+    private readonly schedulerRegistry: SchedulerRegistry,
+    private readonly util: Utils
   ) {}
+
+  /* #region common functions */
 
   /** 입항 시간 compare를 위한 SELECT */
   async findOneForDupleData(oid: string) {
@@ -29,8 +38,10 @@ export class BerthPyService {
       const userInfoList = await this.seqeulize.query(
         `
         SELECT
+          users.oid AS userOid,
           users.contact,
-          berth.oid
+          berth.oid AS berthOid,
+          alram.oid AS alramOid
         FROM subscription_alram AS alram
         LEFT JOIN user AS users ON alram.user_oid = users.oid
         LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid
@@ -39,8 +50,6 @@ export class BerthPyService {
         `,
         {
           type: sequelize.QueryTypes.SELECT,
-          mapToModel: true,
-          model: user,
         }
       );
       return userInfoList;
@@ -70,7 +79,7 @@ export class BerthPyService {
         )
         BETWEEN (
           SELECT 
-            DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 5 DAY), '%Y-%m-%d')
+            DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 7 DAY), '%Y-%m-%d')
           FROM DUAL)
         AND
         (SELECT DATE_FORMAT(NOW(), '%Y-%m-%d') FROM DUAL)
@@ -81,7 +90,7 @@ export class BerthPyService {
 
   /** 입항 시간에 따른 알람 푸쉬 */
   async sendAlramOfcsdhpPrarnde(
-    userInfoList: Array<user>,
+    userInfoList: Array<GetUserInfoListDto>,
     obj: CreateBerthPyDto,
     berthDupleData: berthStatSchedule
   ) {
@@ -109,6 +118,35 @@ export class BerthPyService {
     }
   }
 
+  /** 웹 알람 기록을 위한 create */
+  async sendWebAlramOfcsdhpPrarnde(
+    userInfoList: Array<GetUserInfoListDto>,
+    berthObj: CreateBerthPyDto,
+    berthDupleData: berthStatSchedule
+  ) {
+    try {
+      userInfoList.map(async (userInfo) => {
+        const ALRAM_HISTORY_OID = await this.util.getOid(
+          alramHistory,
+          "alramHistory"
+        );
+        const makeAlramHistoryObj = {
+          oid: ALRAM_HISTORY_OID,
+          userOid: userInfo.userOid,
+          alramOid: userInfo.alramOid,
+          content: `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
+        };
+
+        await alramHistory.create({ ...makeAlramHistoryObj });
+      });
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException("메시지 전송 실패");
+    }
+  }
+
+  /* #endregion */
+
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
 
@@ -126,6 +164,7 @@ export class BerthPyService {
             transaction: t,
           });
 
+          /** 입항예정일 변경 */
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
             Logger.warn(`csdhpPrarnde=${obj.csdhpPrarnde} ::: is change! :::`);
 
@@ -137,6 +176,13 @@ export class BerthPyService {
 
             /** 입항일자 변경으로 인한 문자 전송 */
             await this.sendAlramOfcsdhpPrarnde(
+              userInfoList,
+              obj,
+              berthDupleData
+            );
+
+            /** 알람 메시지 create */
+            await this.sendWebAlramOfcsdhpPrarnde(
               userInfoList,
               obj,
               berthDupleData
@@ -162,7 +208,10 @@ export class BerthPyService {
       const getAllBerthOldDataList = await this.findAllBerthOldDataList();
 
       for (const obj of getAllBerthOldDataList) {
-        await berthStatSchedule.destroy({ where: { oid: obj } });
+        await berthStatSchedule.destroy({
+          where: { oid: obj },
+          transaction: t,
+        });
       }
 
       await t.commit();
@@ -172,7 +221,7 @@ export class BerthPyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEKEND, {
+  @Cron(CronExpression.EVERY_2ND_MONTH, {
     name: "deleteOldBerthDataSchedule",
   })
   async deleteOldBerthDataSchedule() {

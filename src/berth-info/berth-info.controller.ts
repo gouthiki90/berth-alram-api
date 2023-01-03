@@ -1,6 +1,9 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, UseFilters } from "@nestjs/common";
+import { ErrorHandler } from "src/error-handler/error-handler";
 import { BerthInfoRepository } from "./berth-info.repository";
 import { BerthInfoService } from "./berth-info.service";
+
+@UseFilters(ErrorHandler)
 @Controller("berth-info")
 export class BerthInfoController {
   constructor(

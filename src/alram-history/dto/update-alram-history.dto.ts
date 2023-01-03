@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAlramHistoryDto } from './create-alram-history.dto';
+import { Injectable } from "@nestjs/common";
 
-export class UpdateAlramHistoryDto extends PartialType(CreateAlramHistoryDto) {}
+@Injectable()
+export class UpdateAlramHistoryDto {
+  historyOid?: string;
+  isRead?: number;
+}
