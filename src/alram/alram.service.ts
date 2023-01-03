@@ -4,7 +4,6 @@ import {
   NotFoundException,
   UseFilters,
 } from "@nestjs/common";
-import { randomUUID } from "crypto";
 import { Sequelize } from "sequelize-typescript";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { container, subscriptionAlram } from "src/models";
