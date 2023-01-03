@@ -87,18 +87,22 @@ export class BerthPyService {
   ) {
     try {
       for (const userInfo of userInfoList) {
-        this.httpService.axiosRef.post(
-          "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
-          {
-            content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
-            receivers: [`${userInfo.contact}`],
-          },
-          {
-            headers: {
-              "x-api-key": `${process.env.MESSAGE_KEY}`,
+        this.httpService.axiosRef
+          .post(
+            "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
+            {
+              content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+              receivers: [`${userInfo.contact}`],
             },
-          }
-        );
+            {
+              headers: {
+                "x-api-key": `${process.env.MESSAGE_KEY}`,
+              },
+            }
+          )
+          .catch((error) => {
+            Logger.error(error);
+          });
       }
     } catch (error) {
       console.log(error);
@@ -107,9 +111,10 @@ export class BerthPyService {
 
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
+
     try {
       for (const obj of data) {
-        // duple check
+        /** 모선항차의 중복을 찾기 위한 data */
         const berthDupleData = await this.findOneForDupleData(obj.oid);
 
         /** 알람을 구독한 유저 리스트 */
@@ -130,7 +135,7 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            /** 문자 전송 */
+            /** 입항일자 변경으로 인한 문자 전송 */
             await this.sendAlramOfcsdhpPrarnde(
               userInfoList,
               obj,
@@ -145,6 +150,7 @@ export class BerthPyService {
       await t.commit();
     } catch (error) {
       console.log(error);
+      await t.rollback();
     }
   }
 
