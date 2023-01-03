@@ -58,7 +58,7 @@ export class AlramPushService {
     for (const berthInfo of truminalTimingList) {
       if (berthInfo.turminalCode === obj.trminlCode) {
         const D_DAY = new Date(
-          TODAY.setDate(TODAY.getDate() - BERTH_DAY)
+          TODAY.setDate(TODAY.getDate() + BERTH_DAY)
         ).getDate();
 
         if (D_DAY <= berthInfo.carryTiming) {
@@ -136,7 +136,7 @@ export class AlramPushService {
     }
   }
 
-  @Cron(CronExpression.EVERY_2ND_HOUR_FROM_1AM_THROUGH_11PM, {
+  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM, {
     name: "alramDayOfAgoSchedule",
   })
   async alramDayOfAgoSchedule() {
