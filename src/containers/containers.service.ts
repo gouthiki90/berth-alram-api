@@ -5,6 +5,7 @@ import { berthStatSchedule, container } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { ContainersReposiotry } from "./containers.repository";
 import { DeleteContainerDto } from "./dto/delete-container.dto";
+import { DynamicUpdateContainerStatus } from "./dto/dynamic-update-container-status.dto";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
@@ -159,10 +160,22 @@ export class ContainersService {
     }
   }
 
-  async dynamicUpdateContainerStatus() {
+  /** 컨테이너의 반입/대기 status 사용자화 로직 */
+  async dynamicUpdateContainerStatus(
+    containerData: DynamicUpdateContainerStatus
+  ) {
+    const t = await this.seqeulize.transaction();
     try {
+      await container.update(containerData, {
+        where: { oid: containerData.oid },
+        transaction: t,
+      });
+
+      const result = await t.commit();
+      return result;
     } catch (error) {
       console.log(error);
+      await t.rollback();
       throw new InternalServerErrorException(
         `${error}\ncontainer status change error!`
       );
