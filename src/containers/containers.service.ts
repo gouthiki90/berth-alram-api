@@ -145,6 +145,7 @@ export class ContainersService {
     }
   }
 
+  /** 컨테이너 삭제 */
   async deleteContainers(data: DeleteContainerDto) {
     const t = await this.seqeulize.transaction();
     try {
@@ -158,6 +159,7 @@ export class ContainersService {
     }
   }
 
+  /** 컨테이너 스케줄링을 위해 Python으로 요청 */
   async sendConInfoToPython(dto: PostContainerListResponseDto) {
     const t = await this.seqeulize.transaction();
     try {
