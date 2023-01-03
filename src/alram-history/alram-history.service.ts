@@ -31,7 +31,7 @@ export class AlramHistoryService {
     try {
       await alramHistory.update(
         { isRead: dto.isRead },
-        { where: { oid: dto.historyOid }, transaction: t }
+        { where: { oid: dto.oid }, transaction: t }
       );
 
       const result = await t.commit();
@@ -54,7 +54,10 @@ export class AlramHistoryService {
       }
 
       for (const obj of REMOVE_DATA) {
-        await alramHistory.destroy({ where: { oid: obj.oid }, transaction: t });
+        await alramHistory.destroy({
+          where: { oid: obj.oid, isRead: 1 },
+          transaction: t,
+        });
       }
 
       await t.commit();

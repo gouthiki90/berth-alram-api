@@ -2,6 +2,6 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UpdateAlramHistoryDto {
-  historyOid?: string;
+  oid?: Array<string>;
   isRead?: number;
 }
