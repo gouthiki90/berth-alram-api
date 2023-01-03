@@ -82,10 +82,8 @@ export class UserService {
         .update(createUserDto.password)
         .digest("hex");
 
-      // const USER_OID = await this.util.getOid(user, "User");
-      // createUserDto.oid = USER_OID;
-
-      createUserDto.oid = crypto.randomUUID().toString();
+      const USER_OID = await this.util.getOid(user, "User");
+      createUserDto.oid = USER_OID;
 
       await user.create(createUserDto, { transaction: t });
 

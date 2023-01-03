@@ -8,6 +8,7 @@ import { randomUUID } from "crypto";
 import { Sequelize } from "sequelize-typescript";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { container, subscriptionAlram } from "src/models";
+import { Utils } from "src/util/common.utils";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { CreateAlramDto } from "./dto/create-alram.dto";
@@ -22,13 +23,19 @@ export class AlramService {
   constructor(
     private readonly seqeulize: Sequelize,
     private readonly pageInfoDto: OffsetPagenatedAlramStateDataDto,
-    private readonly alramRepository: AlramRepository
+    private readonly alramRepository: AlramRepository,
+    private readonly util: Utils
   ) {}
   async create(data: Array<CreateAlramDto>) {
     const t = await this.seqeulize.transaction();
     try {
       for (const obj of data) {
-        obj.oid = randomUUID().toString();
+        const ALRAM_OID = await this.util.getOid(
+          subscriptionAlram,
+          "subscriptionAlram"
+        );
+        obj.oid = ALRAM_OID;
+
         await subscriptionAlram.create({ ...obj }, { transaction: t });
       }
       const result = await t.commit();
