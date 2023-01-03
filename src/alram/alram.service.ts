@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, UseFilters } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UseFilters,
+} from "@nestjs/common";
 import { randomUUID } from "crypto";
 import { Sequelize } from "sequelize-typescript";
 import { ErrorHandler } from "src/error-handler/error-handler";
@@ -98,12 +103,14 @@ export class AlramService {
         throw new NotFoundException("Is null");
       }
 
+      /** 페이징 적용 SELECT */
       const userAlramListForPaging = await this.alramRepository.findOne(
         oid,
         OFFSET,
         TRMINAL_CODES
       );
 
+      /** 페이징 값을 구하기 위한 SELECT */
       const userAlramListForPagingAll = await this.alramRepository.findAll(
         oid,
         TRMINAL_CODES
@@ -128,6 +135,7 @@ export class AlramService {
       }
     } catch (error) {
       console.log(error);
+      throw new InternalServerErrorException("백엔드 로직 중 에러");
     }
   }
 }
