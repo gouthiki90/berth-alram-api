@@ -1,4 +1,8 @@
-import { Injectable, Logger } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
 import sequelize from "sequelize";
 import { BerthPyDto } from "../alram-push/dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
@@ -50,17 +54,23 @@ export class AlramPushService {
 
   /** 날짜에 따른 알람 푸쉬 */
   async sendAlramOfDayAgo(userInfoList: Array<user>, obj: BerthPyDto) {
+    /** 오늘 날짜 */
     const TODAY = new Date();
+    /** 선석 입항예정일 날짜에서 일자만 가져옴 */
     const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
+    /** 각 터미널의 사전입항예정일 */
     const CARRY_TIMING = [];
+    /** 터미널마다 가지고 있는 사전입항예정일 find */
     const truminalTimingList = await this.findTurminalCarryTiming();
 
     for (const berthInfo of truminalTimingList) {
       if (berthInfo.turminalCode === obj.trminlCode) {
+        /** 사전입항예정일에 따른 입항예정일 D-day 구하기 */
         const D_DAY = new Date(
           TODAY.setDate(TODAY.getDate() + BERTH_DAY)
         ).getDate();
 
+        /** 같거나 사전입항예정일이 커야 함, 이전 것은 이미 지난 일 */
         if (D_DAY <= berthInfo.carryTiming) {
           CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
         }
@@ -98,6 +108,7 @@ export class AlramPushService {
       }
     } catch (error) {
       console.log(error);
+      throw new InternalServerErrorException("메시지 전송에 실패했습니다.");
     }
   }
 
@@ -133,6 +144,9 @@ export class AlramPushService {
       }
     } catch (error) {
       console.log(error);
+      throw new InternalServerErrorException(
+        "알람을 전송하는 데에 실패했습니다."
+      );
     }
   }
 
