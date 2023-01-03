@@ -21,6 +21,8 @@ export class BerthPyService {
     private readonly util: Utils
   ) {}
 
+  /* #region common functions */
+
   /** 입항 시간 compare를 위한 SELECT */
   async findOneForDupleData(oid: string) {
     try {
@@ -143,6 +145,8 @@ export class BerthPyService {
     }
   }
 
+  /* #endregion */
+
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
 
@@ -160,6 +164,7 @@ export class BerthPyService {
             transaction: t,
           });
 
+          /** 입항예정일 변경 */
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
             Logger.warn(`csdhpPrarnde=${obj.csdhpPrarnde} ::: is change! :::`);
 
