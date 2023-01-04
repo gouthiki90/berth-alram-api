@@ -17,7 +17,7 @@ export class AlramHistoryController {
     return this.alramHistoryRepository.findOneOfUserAlramHistory(oid);
   }
 
-  @Get("/history-count/:oid")
+  @Get("/count/:oid")
   findAlramHistoryCount(@Param("oid") oid: string) {
     return this.alramHistoryRepository.findOneAlramHistoryCount(oid);
   }

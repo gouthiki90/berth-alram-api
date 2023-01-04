@@ -30,7 +30,7 @@ export class AlramHistoryRepository {
       const alramHistoryCountData = await this.seqeulize.query(
         `
         SELECT
-          COUNT(*)
+          COUNT(*) AS alramLength
         FROM alram_history
         WHERE TRUE
         AND user_oid = $oid
@@ -38,11 +38,7 @@ export class AlramHistoryRepository {
         { type: seqeulize.QueryTypes.SELECT, bind: { oid: userOid } }
       );
 
-      if (alramHistoryCountData.length === 0) {
-        return 0;
-      } else {
-        return alramHistoryCountData;
-      }
+      return alramHistoryCountData[0];
     } catch (error) {
       console.log(error);
       throw new NotFoundException("데이터를 찾을 수 없습니다.");
