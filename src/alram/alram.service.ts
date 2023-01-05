@@ -26,6 +26,7 @@ export class AlramService {
     private readonly util: Utils
   ) {}
 
+  /** 중복된 알람을 찾기 위한 SELECT */
   async getAlramOfBerthOidDupleData(obj: CreateAlramDto) {
     try {
       return await subscriptionAlram.findOne({
@@ -40,6 +41,7 @@ export class AlramService {
     const t = await this.seqeulize.transaction();
     try {
       for (const obj of data) {
+        /** 중복된 알람을 찾기 위한 data */
         const alramOfBerthOidDupleData = await this.getAlramOfBerthOidDupleData(
           obj
         );
