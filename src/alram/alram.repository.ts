@@ -13,6 +13,7 @@ export class AlramRepository {
         SELECT
         alram.oid AS alramOid,
         berth.*,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
         IF(LEFT(csdhpPrarnde, 1) = '(',
         MID(csdhpPrarnde, 2, 16),
         LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
@@ -52,6 +53,7 @@ export class AlramRepository {
       LEFT 
       JOIN user AS usr 
         ON alram.user_oid = usr.oid
+      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       AND usr.oid = '${oid}'
       AND berth.trminlCode IN ('${trminlCode}')
@@ -75,6 +77,7 @@ export class AlramRepository {
         SELECT
         alram.oid AS alramOid,
         berth.*,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
         IF(LEFT(csdhpPrarnde, 1) = '(',
         MID(csdhpPrarnde, 2, 16),
         LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
@@ -115,6 +118,7 @@ export class AlramRepository {
       LEFT 
       JOIN user AS usr 
         ON alram.user_oid = usr.oid
+      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       AND usr.oid = '${oid}'
       AND berth.trminlCode IN ('${trminlCode}')
