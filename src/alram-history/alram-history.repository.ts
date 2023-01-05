@@ -34,6 +34,7 @@ export class AlramHistoryRepository {
         FROM alram_history
         WHERE TRUE
         AND user_oid = $oid
+        AND is_read = '0'
         `,
         { type: seqeulize.QueryTypes.SELECT, bind: { oid: userOid } }
       );
