@@ -46,7 +46,9 @@ export class AlramService {
 
         if (alramOfBerthOidDupleData) {
           await t.rollback();
-          return { message: "이미 구독한 알람입니다." };
+          return {
+            message: `${alramOfBerthOidDupleData?.scheduleOid} 해당 모선항차는 이미 구독한 알람입니다.`,
+          };
         } else {
           const ALRAM_OID = await this.util.getOid(
             subscriptionAlram,
