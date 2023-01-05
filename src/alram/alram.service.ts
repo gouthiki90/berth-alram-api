@@ -38,6 +38,7 @@ export class AlramService {
   }
 
   async create(data: Array<CreateAlramDto>) {
+    console.log(data.length);
     const t = await this.seqeulize.transaction();
     try {
       for (const obj of data) {
@@ -56,13 +57,13 @@ export class AlramService {
             subscriptionAlram,
             "subscriptionAlram"
           );
-
           obj.oid = ALRAM_OID;
           await subscriptionAlram.create({ ...obj }, { transaction: t });
-          const result = await t.commit();
-          return result;
         }
       }
+
+      const result = await t.commit();
+      return result;
     } catch (error) {
       console.log(error);
       await t.rollback();
