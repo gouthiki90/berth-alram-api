@@ -200,10 +200,9 @@ export class ContainersService {
         });
 
         for (const obj of getContainerList) {
-          const CON_OID = await this.utils.getOid(container, "container");
-          await container.upsert(
-            { ...obj, ...dto, oid: CON_OID },
-            { transaction: t }
+          await container.update(
+            { ...obj },
+            { where: { CNTR_NO: obj.CNTR_NO }, transaction: t }
           );
         }
 
