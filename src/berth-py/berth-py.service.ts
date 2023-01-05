@@ -40,11 +40,10 @@ export class BerthPyService {
         SELECT
           users.oid AS userOid,
           users.contact,
-          berth.oid AS berthOid,
+          (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
         FROM subscription_alram AS alram
         LEFT JOIN user AS users ON alram.user_oid = users.oid
-        LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
@@ -126,7 +125,7 @@ export class BerthPyService {
     t: any
   ) {
     try {
-      userInfoList.map(async (userInfo) => {
+      for (const userInfo of userInfoList) {
         const ALRAM_HISTORY_OID = await this.util.getOid(
           alramHistory,
           "alramHistory"
@@ -142,7 +141,7 @@ export class BerthPyService {
           { ...makeAlramHistoryObj },
           { transaction: t }
         );
-      });
+      }
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException("메시지 전송 실패");
