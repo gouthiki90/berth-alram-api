@@ -122,7 +122,8 @@ export class BerthPyService {
   async sendWebAlramOfcsdhpPrarnde(
     userInfoList: Array<GetUserInfoListDto>,
     berthObj: CreateBerthPyDto,
-    berthDupleData: berthStatSchedule
+    berthDupleData: berthStatSchedule,
+    t: any
   ) {
     try {
       userInfoList.map(async (userInfo) => {
@@ -137,7 +138,10 @@ export class BerthPyService {
           content: `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
         };
 
-        await alramHistory.create({ ...makeAlramHistoryObj });
+        await alramHistory.create(
+          { ...makeAlramHistoryObj },
+          { transaction: t }
+        );
       });
     } catch (error) {
       Logger.error(error);
@@ -185,7 +189,8 @@ export class BerthPyService {
             await this.sendWebAlramOfcsdhpPrarnde(
               userInfoList,
               obj,
-              berthDupleData
+              berthDupleData,
+              t
             );
           }
         } else {
