@@ -6,13 +6,14 @@ import seqeulize from "sequelize";
 export class AlramRepository {
   constructor(private readonly sequelize: Sequelize) {}
 
-  async findOne(oid: string, offset: number) {
+  async findOne(oid: string, offset: number, trminlCode: string) {
     try {
       const list = await this.sequelize.query(
         `
         SELECT
         alram.oid AS alramOid,
         berth.*,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
         IF(LEFT(csdhpPrarnde, 1) = '(',
         MID(csdhpPrarnde, 2, 16),
         LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
@@ -52,8 +53,10 @@ export class AlramRepository {
       LEFT 
       JOIN user AS usr 
         ON alram.user_oid = usr.oid
+      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       AND usr.oid = '${oid}'
+      AND berth.trminlCode IN ('${trminlCode}')
         LIMIT ${offset}, 20
         `,
         {
@@ -67,13 +70,14 @@ export class AlramRepository {
     }
   }
 
-  async findAll(oid: string) {
+  async findAll(oid: string, trminlCode: string) {
     try {
       const list = await this.sequelize.query(
         `
         SELECT
         alram.oid AS alramOid,
         berth.*,
+        CONCAT(trminlCode, '(', info.turminal_korea, ')') AS trminlCode,
         IF(LEFT(csdhpPrarnde, 1) = '(',
         MID(csdhpPrarnde, 2, 16),
         LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
@@ -114,8 +118,10 @@ export class AlramRepository {
       LEFT 
       JOIN user AS usr 
         ON alram.user_oid = usr.oid
+      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       AND usr.oid = '${oid}'
+      AND berth.trminlCode IN ('${trminlCode}')
         `,
         {
           type: seqeulize.QueryTypes.SELECT,

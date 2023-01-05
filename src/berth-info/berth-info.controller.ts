@@ -1,34 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BerthInfoService } from './berth-info.service';
-import { CreateBerthInfoDto } from './dto/create-berth-info.dto';
-import { UpdateBerthInfoDto } from './dto/update-berth-info.dto';
+import { Body, Controller, Get, Put, UseFilters } from "@nestjs/common";
+import { ErrorHandler } from "src/error-handler/error-handler";
+import { BerthInfoRepository } from "./berth-info.repository";
+import { BerthInfoService } from "./berth-info.service";
+import { EditTimingFromAdminDto } from "./dto/edit-timing-from-user.dto";
 
-@Controller('berth-info')
+@UseFilters(ErrorHandler)
+@Controller("berth-info")
 export class BerthInfoController {
-  constructor(private readonly berthInfoService: BerthInfoService) {}
+  constructor(
+    private readonly berthInfoService: BerthInfoService,
+    private readonly berthInfoRepository: BerthInfoRepository
+  ) {}
 
-  @Post()
-  create(@Body() createBerthInfoDto: CreateBerthInfoDto) {
-    return this.berthInfoService.create(createBerthInfoDto);
-  }
-
-  @Get()
+  @Get("/")
   findAll() {
-    return this.berthInfoService.findAll();
+    return this.berthInfoRepository.findAllBerthInfo();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.berthInfoService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBerthInfoDto: UpdateBerthInfoDto) {
-    return this.berthInfoService.update(+id, updateBerthInfoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.berthInfoService.remove(+id);
+  @Put("/")
+  editTimingFromAdmin(@Body() editTimingFromAdminDto: EditTimingFromAdminDto) {
+    return this.berthInfoService.editTiming(editTimingFromAdminDto);
   }
 }

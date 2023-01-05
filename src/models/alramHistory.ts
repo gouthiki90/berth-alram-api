@@ -14,11 +14,16 @@ export interface alramHistoryAttributes {
   userOid?: string;
   title?: string;
   content?: string;
+  isRead?: number;
   createDate?: Date;
   updateDate?: Date;
 }
 
-@Table({ tableName: "alram_history", timestamps: false, comment: "알람 기록" })
+@Table({
+  tableName: "alram_history",
+  timestamps: false,
+  comment: "웹 알람 기록",
+})
 export class alramHistory
   extends Model<alramHistoryAttributes, alramHistoryAttributes>
   implements alramHistoryAttributes
@@ -48,6 +53,15 @@ export class alramHistory
 
   @Column({ allowNull: true, type: DataType.STRING(150), comment: "문자 내용" })
   content?: string;
+
+  @Column({
+    field: "is_read",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "알람 읽음/읽지 않음 구분",
+    defaultValue: "0",
+  })
+  isRead?: number;
 
   @Column({
     field: "create_date",

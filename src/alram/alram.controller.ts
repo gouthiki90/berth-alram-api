@@ -29,6 +29,7 @@ export class AlramController {
 
   @Post("/page-info/:oid")
   findOne(@Param("oid") oid: string, @Body() pageInfo: OffsetPagingInfoDto) {
+    console.log({ pageInfo });
     return this.alramService.makePageInfoForAlramList(pageInfo, oid);
   }
 

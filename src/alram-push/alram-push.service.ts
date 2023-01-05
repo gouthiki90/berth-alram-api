@@ -1,9 +1,13 @@
-import { Injectable, Logger } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
 import sequelize from "sequelize";
 import { BerthPyDto } from "../alram-push/dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
 import { Sequelize } from "sequelize-typescript";
-import { berthStatSchedule, user } from "src/models";
+import { berthInfo, berthStatSchedule, user } from "src/models";
 import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
@@ -13,6 +17,8 @@ export class AlramPushService {
     private readonly seqeulize: Sequelize,
     private readonly schedulerRegistry: SchedulerRegistry
   ) {}
+
+  /* #region common functions */
 
   /** 해당 모선항차를 구독한 유저들 */
   async findUserInfoListForAlram(obj: BerthPyDto) {
@@ -38,67 +44,79 @@ export class AlramPushService {
     }
   }
 
-  /** 날짜에 따른 알람 푸쉬 */
-  async sendAlramOfDayAgo(userInfoList: Array<user>, obj: BerthPyDto) {
-    const TODAY = new Date();
-    const ONE_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 1)).getDate(),
-      "1일",
-    ];
-    const TOW_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 2)).getDate(),
-      "2일",
-    ];
-    const THREE_DAYS_AGO = [
-      new Date(TODAY.setDate(TODAY.getDate() - 3)).getDate(),
-      "3일",
-    ];
-    const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
-
-    const sendMessage = async (contact: string, comment: any) => {
-      console.log(contact);
-      await this.httpService.axiosRef.post(
-        `${process.env.MESSAGE_URL}`,
-        {
-          content: `${obj.trminlCode} 터미널의 ${obj.oid}(${obj.csdhpPrarnde}) 모선항차 입항시간이 ${comment} 전입니다.`,
-          receivers: [`${contact}`],
-        },
-        {
-          headers: {
-            "x-api-key": `${process.env.MESSAGE_KEY}`,
-          },
-        }
-      );
-    };
-
-    console.log("::: compare Date :::", {
-      ONE_DAYS_AGO,
-      TOW_DAYS_AGO,
-      THREE_DAYS_AGO,
-      BERTH_DAY,
-    });
-
+  async findTurminalCarryTiming() {
     try {
-      if (ONE_DAYS_AGO[0] === BERTH_DAY) {
-        Logger.warn("1일 남음");
-        for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, ONE_DAYS_AGO[1]);
-        }
-      } else if (TOW_DAYS_AGO[0] === BERTH_DAY) {
-        Logger.warn("2일 남음");
-        for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, TOW_DAYS_AGO[1]);
-        }
-      } else if (THREE_DAYS_AGO[0] === BERTH_DAY) {
-        Logger.warn("3일 남음");
-        for (const userInfo of userInfoList) {
-          await sendMessage(userInfo.contact, THREE_DAYS_AGO[1]);
-        }
-      }
+      return await berthInfo.findAll();
     } catch (error) {
       console.log(error);
     }
   }
+
+  /** 날짜에 따른 알람 푸쉬 */
+  async sendAlramOfDayAgo(userInfoList: Array<user>, obj: BerthPyDto) {
+    /** 오늘 날짜 */
+    const TODAY = new Date();
+    /** 선석 입항예정일 날짜에서 일자만 가져옴 */
+    const BERTH_DAY = new Date(obj.csdhpPrarnde).getDate();
+    /** 각 터미널의 사전입항예정일 */
+    const CARRY_TIMING = [];
+    /** 터미널마다 가지고 있는 사전입항예정일 find */
+    const truminalTimingList = await this.findTurminalCarryTiming();
+
+    for (const berthInfo of truminalTimingList) {
+      if (berthInfo.turminalCode === obj.trminlCode) {
+        /** 사전입항예정일에 따른 입항예정일 D-day 구하기 */
+        const D_DAY = new Date(
+          TODAY.setDate(TODAY.getDate() + BERTH_DAY)
+        ).getDate();
+
+        /** 같거나 사전입항예정일이 커야 함, 이전 것은 이미 지난 일 */
+        if (D_DAY <= berthInfo.carryTiming) {
+          CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
+        }
+      }
+    }
+
+    Logger.debug({ CARRY_TIMING });
+
+    const sendMessage = async (contact: string, comment: any) => {
+      await this.httpService.axiosRef
+        .post(
+          `${process.env.MESSAGE_URL}`,
+          {
+            content: `${obj.trminlCode} 터미널의 ${obj.oid}(${obj.csdhpPrarnde}) 모선항차 입항시간이 ${comment} 전입니다.`,
+            receivers: [`${contact}`],
+          },
+          {
+            headers: {
+              "x-api-key": `${process.env.MESSAGE_KEY}`,
+            },
+          }
+        )
+        .catch((error) => {
+          Logger.error(error);
+        });
+    };
+
+    Logger.debug("::: compare Date :::", {
+      CARRY_TIMING,
+      BERTH_DAY,
+    });
+
+    try {
+      if (CARRY_TIMING[0] === BERTH_DAY) {
+        Logger.warn(`${CARRY_TIMING[0]}일 남음`);
+        for (const userInfo of userInfoList) {
+          await sendMessage(userInfo.contact, CARRY_TIMING[1]);
+        }
+      }
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException("메시지 전송에 실패했습니다.");
+    }
+  }
+
+  /* #endregion */
 
   /** alramDayOfAgoSchedule 스케줄 Job */
   async checkBerthDaysAndAlramPush() {
@@ -129,7 +147,10 @@ export class AlramPushService {
         }
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
+      throw new InternalServerErrorException(
+        "알람을 전송하는 데에 실패했습니다."
+      );
     }
   }
 
