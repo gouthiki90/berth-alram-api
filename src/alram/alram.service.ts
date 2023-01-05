@@ -46,7 +46,7 @@ export class AlramService {
 
         if (alramOfBerthOidDupleData) {
           await t.rollback();
-          return { message: "모선항차가 중복되게 알람을 구독할 수 없습니다." };
+          return { message: "이미 구독한 알람입니다." };
         } else {
           const ALRAM_OID = await this.util.getOid(
             subscriptionAlram,
