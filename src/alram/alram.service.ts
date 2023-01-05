@@ -25,20 +25,40 @@ export class AlramService {
     private readonly alramRepository: AlramRepository,
     private readonly util: Utils
   ) {}
+
+  async getAlramOfBerthOidDupleData(obj: CreateAlramDto) {
+    try {
+      return await subscriptionAlram.findOne({
+        where: { scheduleOid: obj.scheduleOid, userOid: obj.userOid },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async create(data: Array<CreateAlramDto>) {
     const t = await this.seqeulize.transaction();
     try {
       for (const obj of data) {
-        const ALRAM_OID = await this.util.getOid(
-          subscriptionAlram,
-          "subscriptionAlram"
+        const alramOfBerthOidDupleData = await this.getAlramOfBerthOidDupleData(
+          obj
         );
-        obj.oid = ALRAM_OID;
 
-        await subscriptionAlram.create({ ...obj }, { transaction: t });
+        if (alramOfBerthOidDupleData) {
+          await t.rollback();
+          return { message: "이미 구독한 알람입니다." };
+        } else {
+          const ALRAM_OID = await this.util.getOid(
+            subscriptionAlram,
+            "subscriptionAlram"
+          );
+
+          obj.oid = ALRAM_OID;
+          await subscriptionAlram.create({ ...obj }, { transaction: t });
+          const result = await t.commit();
+          return result;
+        }
       }
-      const result = await t.commit();
-      return result;
     } catch (error) {
       console.log(error);
       await t.rollback();
