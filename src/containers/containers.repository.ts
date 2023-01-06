@@ -31,7 +31,7 @@ export class ContainersReposiotry {
       con.STATUS_TM,
       con.container_status,
       (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS B) AS conCount,
-      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND container_status = 1 AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS A) AS finishCount
+      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS A) AS finishCount
     FROM container AS con
     LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
     WHERE TRUE
@@ -67,7 +67,7 @@ export class ContainersReposiotry {
       con.STATUS_TM,
       con.container_status,
       (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS B) AS conCount,
-      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND container_status = 1 AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A) AS finishCount
+      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A) AS finishCount
     FROM container AS con
     LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
     WHERE TRUE
