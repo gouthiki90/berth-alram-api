@@ -41,6 +41,16 @@ export class ContainersService {
       if (containerDataResult.rsMsg.statusCode === "S") {
         const getContainerList = containerDataResult.dma_tracking;
 
+        if (getContainerList.length === 0) {
+          const CON_OID = await this.utils.getOid(container, "container");
+          await container.create(
+            { oid: CON_OID, ...dto, CNTR_NO: dto.postInfo },
+            { transaction: t }
+          );
+          const result = await t.commit();
+          return result;
+        }
+
         /** 상태값 바꾸기 전에 접안예정일 조건 추가하기 */
         const berthData = await berthStatSchedule.findOne({
           where: { oid: dto.berthOid },
@@ -129,10 +139,6 @@ export class ContainersService {
           berthOid: dto.berthOid,
           alramOid: dto.alramOid,
         });
-
-        if (newContainerList.length === 0) {
-          return { message: "조회된 데이터가 없습니다." };
-        }
 
         return newContainerList;
       } else {
