@@ -153,22 +153,4 @@ export class AlramPushService {
       );
     }
   }
-
-  // @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM, {
-  //   name: "alramDayOfAgoSchedule",
-  // })
-  // async alramDayOfAgoSchedule() {
-  //   try {
-  //     Logger.warn("::: alramDayOfAgoSchedule start... :::");
-  //     await this.checkBerthDaysAndAlramPush();
-  //     Logger.warn("::: alramDayOfAgoSchedule end... :::");
-  //   } catch (error) {
-  //     Logger.error(`::: alramDayOfAgoSchedule Error! :::`);
-  //     console.log(error);
-  //     const GET_JOB = this.schedulerRegistry.getCronJob(
-  //       "alramDayOfAgoSchedule"
-  //     );
-  //     GET_JOB.stop();
-  //   }
-  // }
 }
