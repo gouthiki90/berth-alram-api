@@ -177,12 +177,12 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            /** 입항일자 변경으로 인한 문자 전송 */
-            await this.sendAlramOfcsdhpPrarnde(
-              userInfoList,
-              obj,
-              berthDupleData
-            );
+            // /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
+            // await this.sendAlramOfcsdhpPrarnde(
+            //   userInfoList,
+            //   obj,
+            //   berthDupleData
+            // );
 
             /** 알람 메시지 create */
             await this.sendWebAlramOfcsdhpPrarnde(
