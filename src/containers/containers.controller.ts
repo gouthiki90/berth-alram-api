@@ -13,6 +13,7 @@ import { ErrorHandler } from "src/error-handler/error-handler";
 import { ContainersReposiotry } from "./containers.repository";
 import { ContainersService } from "./containers.service";
 import { DeleteContainerDto } from "./dto/delete-container.dto";
+import { DynamicUpdateContainerDangerStatusDto } from "./dto/dynamic-update-container-danger-status.dto";
 import { DynamicUpdateContainerStatus } from "./dto/dynamic-update-container-status.dto";
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
@@ -49,5 +50,12 @@ export class ContainersController {
   @Put("/container-status")
   changeContainerStatus(@Body() data: DynamicUpdateContainerStatus) {
     return this.containersService.dynamicUpdateContainerStatus(data);
+  }
+
+  @Put("/container-danger-status")
+  changeContainerIsDangerStatus(
+    @Body() data: DynamicUpdateContainerDangerStatusDto
+  ) {
+    return this.containersService.dynamicUpdateContainerIsDangerStatus(data);
   }
 }
