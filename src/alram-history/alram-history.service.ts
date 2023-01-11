@@ -22,28 +22,24 @@ export class AlramHistoryService {
       return await this.seqeulize.query(
         `
         SELECT 
-          his.oid
+          oid
         FROM
-          alram_history AS his
-              LEFT JOIN
-          subscription_alram AS alram ON alram.oid = his.alram_oid
-              LEFT JOIN
-          berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
+          berthStat_schedule
         WHERE
-        TRUE
-        -- 출항일이 지난 것만
-          AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-                  MID(berth.tkoffPrarnde, 2, 16),
-                  LEFT(berth.tkoffPrarnde, 19)),
-              '%Y-%m-%d %H:%i') IN (IF(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-                      MID(berth.tkoffPrarnde, 2, 16),
-                      LEFT(berth.tkoffPrarnde, 19)),
-                  '%Y-%m-%d %H:%i') <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
-          DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-                      MID(berth.tkoffPrarnde, 2, 16),
-                      LEFT(berth.tkoffPrarnde, 19)),
-                  '%Y-%m-%d %H:%i'),
-          NULL))
+          TRUE
+          -- 출항일이 3일 지난 것만
+            AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                MID(tkoffPrarnde, 2, 16),
+                LEFT(tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) < DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+            DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i'),
+            NULL))
         `,
         {
           type: seqeulize.QueryTypes.SELECT,
