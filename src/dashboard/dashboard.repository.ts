@@ -35,12 +35,14 @@ export class DashBoardRepository {
         berth.createDate,
         berth.updateDate,
         info.is_new_port,
-        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
-            MID(berth.csdhpPrarnde, 2, 16),
-            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
-        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-            MID(berth.tkoffPrarnde, 2, 16),
-            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+        DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
+          MID(csdhpPrarnde, 2, 16),
+          LEFT(csdhpPrarnde, 19)),
+        '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+          MID(tkoffPrarnde, 2, 16),
+          LEFT(tkoffPrarnde, 19)),
+        '%Y-%m-%d %H:%i') AS tkoffPrarnde
     FROM
     berthStat_schedule AS berth
     LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
@@ -54,11 +56,11 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", query.trminlCode],
       [
-        "AND IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)), '%Y-%m-%d %H:%i') BETWEEN :startDate AND :endDate",
         query.searchType === "1",
       ],
       [
-        "AND IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)), '%Y-%m-%d %H:%i')  BETWEEN :startDate AND :endDate",
         query.searchType === "2",
       ],
     ];
@@ -85,12 +87,14 @@ export class DashBoardRepository {
         berth.createDate,
         berth.updateDate,
         info.is_new_port,
-        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
-            MID(berth.csdhpPrarnde, 2, 16),
-            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
-        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-            MID(berth.tkoffPrarnde, 2, 16),
-            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+        DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
+          MID(csdhpPrarnde, 2, 16),
+          LEFT(csdhpPrarnde, 19)),
+          '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+      DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+        MID(tkoffPrarnde, 2, 16),
+        LEFT(tkoffPrarnde, 19)),
+        '%Y-%m-%d %H:%i') AS tkoffPrarnde
       FROM
       berthStat_schedule AS berth
       LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
@@ -110,11 +114,11 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", query.trminlCode],
       [
-        "AND IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)), '%Y-%m-%d %H:%i') BETWEEN :startDate AND :endDate",
         query.searchType === "1",
       ],
       [
-        "AND IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
+        "AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)), '%Y-%m-%d %H:%i')  BETWEEN :startDate AND :endDate",
         query.searchType === "2",
       ],
     ];
@@ -141,12 +145,14 @@ export class DashBoardRepository {
         berth.createDate,
         berth.updateDate,
         info.is_new_port,
-        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
-            MID(berth.csdhpPrarnde, 2, 16),
-            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
-        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-            MID(berth.tkoffPrarnde, 2, 16),
-            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+        DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
+          MID(csdhpPrarnde, 2, 16),
+          LEFT(csdhpPrarnde, 19)),
+          '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+          MID(tkoffPrarnde, 2, 16),
+          LEFT(tkoffPrarnde, 19)),
+          '%Y-%m-%d %H:%i') AS tkoffPrarnde
         FROM
         berthStat_schedule AS berth
         LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
@@ -185,12 +191,14 @@ export class DashBoardRepository {
         berth.createDate,
         berth.updateDate,
         info.is_new_port,
-        IF(LEFT(berth.csdhpPrarnde, 1) = '(',
-            MID(berth.csdhpPrarnde, 2, 16),
-            LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde,
-        IF(LEFT(berth.tkoffPrarnde, 1) = '(',
-            MID(berth.tkoffPrarnde, 2, 16),
-            LEFT(berth.tkoffPrarnde, 19)) AS tkoffPrarnde
+        DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
+          MID(csdhpPrarnde, 2, 16),
+          LEFT(csdhpPrarnde, 19)),
+          '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+          MID(tkoffPrarnde, 2, 16),
+          LEFT(tkoffPrarnde, 19)),
+          '%Y-%m-%d %H:%i') AS tkoffPrarnde
       FROM
       berthStat_schedule AS berth
       LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
