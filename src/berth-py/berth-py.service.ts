@@ -57,7 +57,6 @@ export class BerthPyService {
     }
   }
 
-  // 출항일이 지나는 것으로 조건 바꾸기
   /** 이전 데이터 삭제를 위한 SELECT */
   async findAllBerthOldDataList() {
     return await this.seqeulize.query(

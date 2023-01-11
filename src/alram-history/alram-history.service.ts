@@ -71,7 +71,6 @@ export class AlramHistoryService {
     }
   }
 
-  // 출항일 지났을 때 하기
   /** 알람 히스토리 삭제 function for schedule */
   async removeScheduleFuntion() {
     const t = await this.seqeulize.transaction();
