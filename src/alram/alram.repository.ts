@@ -66,16 +66,17 @@ export class AlramRepository {
         TRUE
         -- 출항일이 지나면 제외
         AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)), '%Y-%m-%d %H:%i') IN (IF(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)),
-                '%Y-%m-%d %H:%i') <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
-        NULL,
-        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)),
-                '%Y-%m-%d %H:%i')))
+        MID(tkoffPrarnde, 2, 16),
+        LEFT(tkoffPrarnde, 19)),
+    '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+            MID(tkoffPrarnde, 2, 16),
+            LEFT(tkoffPrarnde, 19)),
+        '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+    NULL,
+    DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                MID(tkoffPrarnde, 2, 16),
+                LEFT(tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i')))
 
             AND berth.trminlCode IN ('${trminlCode}')
             AND usr.oid = '${oid}'
@@ -152,16 +153,17 @@ export class AlramRepository {
             TRUE
             -- 출항일이 지나면 제외
             AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                        MID(tkoffPrarnde, 2, 16),
-                        LEFT(tkoffPrarnde, 19)), '%Y-%m-%d %H:%i') IN (IF(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                        MID(tkoffPrarnde, 2, 16),
-                        LEFT(tkoffPrarnde, 19)),
-                    '%Y-%m-%d %H:%i') <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
-            NULL,
-            DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                        MID(tkoffPrarnde, 2, 16),
-                        LEFT(tkoffPrarnde, 19)),
-                    '%Y-%m-%d %H:%i')))
+            MID(tkoffPrarnde, 2, 16),
+            LEFT(tkoffPrarnde, 19)),
+        '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                MID(tkoffPrarnde, 2, 16),
+                LEFT(tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+        NULL,
+        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i')))
 
                 AND berth.trminlCode IN ('${trminlCode}')
                 AND usr.oid = '${oid}'

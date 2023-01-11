@@ -8,14 +8,12 @@ import { BerthPyDto } from "../alram-push/dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
 import { Sequelize } from "sequelize-typescript";
 import { berthInfo, berthStatSchedule, user } from "src/models";
-import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
 export class AlramPushService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly seqeulize: Sequelize,
-    private readonly schedulerRegistry: SchedulerRegistry
+    private readonly seqeulize: Sequelize
   ) {}
 
   /* #region common functions */
