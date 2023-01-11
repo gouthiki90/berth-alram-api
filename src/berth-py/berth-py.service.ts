@@ -57,6 +57,7 @@ export class BerthPyService {
     }
   }
 
+  // 출항일이 지나는 것으로 조건 바꾸기
   /** 이전 데이터 삭제를 위한 SELECT */
   async findAllBerthOldDataList() {
     return await this.seqeulize.query(
@@ -95,7 +96,7 @@ export class BerthPyService {
   ) {
     try {
       for (const userInfo of userInfoList) {
-        this.httpService.axiosRef
+        await this.httpService.axiosRef
           .post(
             "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
             {
@@ -161,15 +162,17 @@ export class BerthPyService {
         /** 알람을 구독한 유저 리스트 */
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
-        if (berthDupleData) {
-          await berthStatSchedule.update(obj, {
-            where: { oid: obj.oid },
-            transaction: t,
-          });
+        await berthStatSchedule.update(obj, {
+          where: { oid: obj.oid },
+          transaction: t,
+        });
 
+        if (berthDupleData) {
           /** 입항예정일 변경 */
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
-            Logger.warn(`csdhpPrarnde=${obj.csdhpPrarnde} ::: is change! :::`);
+            Logger.warn(
+              `csdhpPrarnde=${obj.oid} - ${obj.csdhpPrarnde} ::: is change! :::`
+            );
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
@@ -177,12 +180,12 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            // /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
-            // await this.sendAlramOfcsdhpPrarnde(
-            //   userInfoList,
-            //   obj,
-            //   berthDupleData
-            // );
+            /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
+            await this.sendAlramOfcsdhpPrarnde(
+              userInfoList,
+              obj,
+              berthDupleData
+            );
 
             /** 알람 메시지 create */
             await this.sendWebAlramOfcsdhpPrarnde(
@@ -192,8 +195,6 @@ export class BerthPyService {
               t
             );
           }
-        } else {
-          await berthStatSchedule.upsert(obj, { transaction: t });
         }
       }
 
