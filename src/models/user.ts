@@ -19,6 +19,7 @@ export interface userAttributes {
   managerTel?: string;
   managerName?: string;
   contactOption?: number;
+  isNofitication?: number;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -93,6 +94,15 @@ export class user
     defaultValue: "0",
   })
   contactOption?: number;
+
+  @Column({
+    field: "is_nofitication",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "알람 ON/OFF 여부",
+    defaultValue: "0",
+  })
+  isNofitication?: number;
 
   @Column({
     field: "create_date",

@@ -62,28 +62,30 @@ export class BerthPyService {
     return await this.seqeulize.query(
       `
       SELECT 
-       oid
+        oid
       FROM
-      berthStat_schedule
+          berthStat_schedule
       WHERE
-        IF(
-          LEFT(tkoffPrarnde, 1
-          )
-        = '(',
-        MID(
-          tkoffPrarnde, 2, 16
-        ),
-        LEFT(
-          tkoffPrarnde, 19)
-        )
-        BETWEEN (
-          SELECT 
-            DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 7 DAY), '%Y-%m-%d')
-          FROM DUAL)
-        AND
-        (SELECT DATE_FORMAT(NOW(), '%Y-%m-%d') FROM DUAL)
+        TRUE
+        -- 출항일이 3일 지난 것만
+        AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                MID(tkoffPrarnde, 2, 16),
+                LEFT(tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) < DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i'),
+        NULL))
       `,
-      { type: sequelize.QueryTypes.SELECT }
+      {
+        type: sequelize.QueryTypes.SELECT,
+        model: berthStatSchedule,
+        mapToModel: true,
+      }
     );
   }
 
@@ -95,7 +97,7 @@ export class BerthPyService {
   ) {
     try {
       for (const userInfo of userInfoList) {
-        this.httpService.axiosRef
+        await this.httpService.axiosRef
           .post(
             "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
             {
@@ -161,15 +163,17 @@ export class BerthPyService {
         /** 알람을 구독한 유저 리스트 */
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
-        if (berthDupleData) {
-          await berthStatSchedule.update(obj, {
-            where: { oid: obj.oid },
-            transaction: t,
-          });
+        await berthStatSchedule.update(obj, {
+          where: { oid: obj.oid },
+          transaction: t,
+        });
 
+        if (berthDupleData) {
           /** 입항예정일 변경 */
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
-            Logger.warn(`csdhpPrarnde=${obj.csdhpPrarnde} ::: is change! :::`);
+            Logger.warn(
+              `csdhpPrarnde=${obj.oid} - ${obj.csdhpPrarnde} ::: is change! :::`
+            );
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
@@ -177,7 +181,7 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            /** 입항일자 변경으로 인한 문자 전송 */
+            /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
             await this.sendAlramOfcsdhpPrarnde(
               userInfoList,
               obj,
@@ -192,8 +196,6 @@ export class BerthPyService {
               t
             );
           }
-        } else {
-          await berthStatSchedule.upsert(obj, { transaction: t });
         }
       }
 
@@ -211,9 +213,14 @@ export class BerthPyService {
       /** 삭제할 선석 데이터 */
       const getAllBerthOldDataList = await this.findAllBerthOldDataList();
 
+      if (getAllBerthOldDataList.length === 0) {
+        await t.rollback();
+        return;
+      }
+
       for (const obj of getAllBerthOldDataList) {
         await berthStatSchedule.destroy({
-          where: { oid: obj },
+          where: { oid: obj.oid },
           transaction: t,
         });
       }

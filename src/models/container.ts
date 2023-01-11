@@ -24,6 +24,9 @@ export interface containerAttributes {
   CNTR_STATUS?: string;
   TERMINAL_NAME?: string;
   STATUS_TM?: string;
+  isFreeze?: number;
+  isDanger?: number;
+  remark?: string;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -148,6 +151,30 @@ export class container
     comment: "해당 데이터 기준의 시간",
   })
   STATUS_TM?: string;
+
+  @Column({
+    field: "is_fressze",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "냉동물 여부",
+  })
+  isFreeze?: number;
+
+  @Column({
+    field: "is_danger",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "위험물 여부",
+  })
+  isDanger?: number;
+
+  @Column({
+    field: "remark",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "컨테이너에 따른 메모",
+  })
+  remark?: string;
 
   @Column({
     field: "create_date",

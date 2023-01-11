@@ -8,14 +8,12 @@ import { BerthPyDto } from "../alram-push/dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
 import { Sequelize } from "sequelize-typescript";
 import { berthInfo, berthStatSchedule, user } from "src/models";
-import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
 export class AlramPushService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly seqeulize: Sequelize,
-    private readonly schedulerRegistry: SchedulerRegistry
+    private readonly seqeulize: Sequelize
   ) {}
 
   /* #region common functions */
@@ -151,24 +149,6 @@ export class AlramPushService {
       throw new InternalServerErrorException(
         "알람을 전송하는 데에 실패했습니다."
       );
-    }
-  }
-
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM, {
-    name: "alramDayOfAgoSchedule",
-  })
-  async alramDayOfAgoSchedule() {
-    try {
-      Logger.warn("::: alramDayOfAgoSchedule start... :::");
-      await this.checkBerthDaysAndAlramPush();
-      Logger.warn("::: alramDayOfAgoSchedule end... :::");
-    } catch (error) {
-      Logger.error(`::: alramDayOfAgoSchedule Error! :::`);
-      console.log(error);
-      const GET_JOB = this.schedulerRegistry.getCronJob(
-        "alramDayOfAgoSchedule"
-      );
-      GET_JOB.stop();
     }
   }
 }

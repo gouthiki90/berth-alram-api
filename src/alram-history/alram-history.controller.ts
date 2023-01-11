@@ -1,9 +1,19 @@
-import { Controller, Get, Body, Param, UseFilters, Put } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  UseFilters,
+  Put,
+  UseGuards,
+} from "@nestjs/common";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { AlramHistoryRepository } from "./alram-history.repository";
 import { AlramHistoryService } from "./alram-history.service";
 import { UpdateAlramHistoryDto } from "./dto/update-alram-history.dto";
 
+@UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("alram-history")
 export class AlramHistoryController {

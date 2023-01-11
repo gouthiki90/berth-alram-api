@@ -7,6 +7,7 @@ import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Sequelize } from "sequelize-typescript";
 import { alramHistory } from "src/models";
 import { UpdateAlramHistoryDto } from "./dto/update-alram-history.dto";
+import seqeulize from "sequelize";
 
 @Injectable()
 export class AlramHistoryService {
@@ -18,7 +19,34 @@ export class AlramHistoryService {
   /** DELETE를 위한 SELECT */
   async findAllForRemoveAlramHistory() {
     try {
-      return await alramHistory.findAll();
+      return await this.seqeulize.query(
+        `
+        SELECT 
+          oid
+        FROM
+          berthStat_schedule
+        WHERE
+          TRUE
+          -- 출항일이 3일 지난 것만
+            AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                MID(tkoffPrarnde, 2, 16),
+                LEFT(tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) < DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+            DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i'),
+            NULL))
+        `,
+        {
+          type: seqeulize.QueryTypes.SELECT,
+          model: alramHistory,
+          mapToModel: true,
+        }
+      );
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException("조회 실패");
@@ -47,13 +75,13 @@ export class AlramHistoryService {
   async removeScheduleFuntion() {
     const t = await this.seqeulize.transaction();
     try {
-      const REMOVE_DATA = await this.findAllForRemoveAlramHistory();
+      const historyRemoveOidList = await this.findAllForRemoveAlramHistory();
 
-      if (REMOVE_DATA.length === 0) {
+      if (historyRemoveOidList.length === 0) {
         return;
       }
 
-      for (const obj of REMOVE_DATA) {
+      for (const obj of historyRemoveOidList) {
         await alramHistory.destroy({
           where: { oid: obj.oid, isRead: 1 },
           transaction: t,
