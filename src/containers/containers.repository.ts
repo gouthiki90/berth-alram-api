@@ -20,15 +20,7 @@ export class ContainersReposiotry {
       `
       SELECT
       con.oid,
-      con.CAR_CODE,
-      con.OUTGATE_CY,
       con.CNTR_NO,
-      con.OUTGATE_TIME,
-      con.STATUS_DT,
-      con.STATUS_NM,
-      con.CNTR_STATUS,
-      con.TERMINAL_NAME,
-      con.STATUS_TM,
       con.container_status,
       (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS B) AS conCount,
       (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS A) AS finishCount
@@ -56,15 +48,7 @@ export class ContainersReposiotry {
       `
       SELECT
       con.oid,
-      con.CAR_CODE,
-      con.OUTGATE_CY,
       con.CNTR_NO,
-      con.OUTGATE_TIME,
-      con.STATUS_DT,
-      con.STATUS_NM,
-      con.CNTR_STATUS,
-      con.TERMINAL_NAME,
-      con.STATUS_TM,
       con.container_status,
       (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS B) AS conCount,
       (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A) AS finishCount
