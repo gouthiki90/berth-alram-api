@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import sequelize from "sequelize";
 import { Utils } from "src/util/common.utils";
+import { container } from "src/models";
 
 @Injectable()
 export class ContainersReposiotry {
@@ -20,20 +21,22 @@ export class ContainersReposiotry {
       `
       SELECT
       con.oid,
-      con.CNTR_NO,
+      con.container_numnber,
       con.container_status,
-      (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS B) AS conCount,
-      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT, STATUS_TM DESC) AS A) AS finishCount
+      con.is_danger,
+      (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY container_numnber ORDER BY create_date DESC) AS B) AS conCount,
+      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY container_numnber ORDER BY create_date DESC) AS A) AS finishCount
     FROM container AS con
     LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
     WHERE TRUE
     ${this.util.generator(whereArr, query)}
-    GROUP BY CNTR_NO
-    ORDER BY STATUS_DT, STATUS_TM DESC
+    ORDER BY create_date DESC
       `,
       {
         type: sequelize.QueryTypes.SELECT,
         replacements: query,
+        mapToModel: true,
+        model: container,
       }
     );
   }
@@ -48,16 +51,16 @@ export class ContainersReposiotry {
       `
       SELECT
       con.oid,
-      con.CNTR_NO,
+      con.container_numnber,
       con.container_status,
-      (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS B) AS conCount,
-      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY CNTR_NO ORDER BY STATUS_DT DESC) AS A) AS finishCount
+      con.is_danger,
+      (SELECT COUNT(B.cnt) FROM (SELECT COUNT(container.oid) AS cnt FROM container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY container_numnber ORDER BY create_date DESC) AS B) AS conCount,
+      (SELECT COUNT(A.cnt) FROM (SELECT COUNT(container.container_status) AS cnt from container WHERE TRUE AND berth_oid = '${berthOid}' AND alram_oid = '${alramOid}' GROUP BY container_numnber ORDER BY create_date DESC) AS A) AS finishCount
     FROM container AS con
     LEFT JOIN berthStat_schedule AS berth ON con.berth_oid = berth.oid
     WHERE TRUE
     ${this.util.generator(whereArr, query)}
-    GROUP BY CNTR_NO
-    ORDER BY STATUS_DT, STATUS_TM DESC
+    ORDER BY create_date DESC
       `,
       { type: sequelize.QueryTypes.SELECT, replacements: query }
     );
