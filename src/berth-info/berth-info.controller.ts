@@ -12,7 +12,7 @@ import { BerthInfoRepository } from "./berth-info.repository";
 import { BerthInfoService } from "./berth-info.service";
 import { EditTimingFromAdminDto } from "./dto/edit-timing-from-user.dto";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("berth-info")
 export class BerthInfoController {

@@ -17,7 +17,7 @@ import { DynamicUpdateContainerStatus } from "./dto/dynamic-update-container-sta
 import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
 import { PostContainerListDto } from "./dto/post-container-list.dto";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("containers")
 export class ContainersController {
