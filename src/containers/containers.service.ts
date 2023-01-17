@@ -33,7 +33,7 @@ export class ContainersService {
     try {
       const containerOid = await this.utils.getOid(container, "container");
       await container.create(
-        { oid: containerOid, CNTR_NO: dto.postInfo, ...dto },
+        { oid: containerOid, cntrNo: dto.postInfo, ...dto },
         { transaction: t }
       );
 
@@ -208,7 +208,7 @@ export class ContainersService {
         for (const obj of getContainerList) {
           await container.update(
             { ...obj },
-            { where: { CNTR_NO: obj.CNTR_NO }, transaction: t }
+            { where: { cntrNo: obj.CNTR_NO }, transaction: t }
           );
         }
 
