@@ -32,7 +32,10 @@ export class ContainersService {
     // };
     try {
       const containerOid = await this.utils.getOid(container, "container");
-      await container.create({ oid: containerOid, ...dto }, { transaction: t });
+      await container.create(
+        { oid: containerOid, CNTR_NO: dto.postInfo, ...dto },
+        { transaction: t }
+      );
 
       // const response = await this.httpService.axiosRef.post(
       //   URL,
