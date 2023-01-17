@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UseFilters,
 } from "@nestjs/common";
@@ -86,10 +87,12 @@ export class AlramService {
   }
 
   async remove(data: Array<RemoveAlramDto>) {
+    Logger.debug(data);
     const t = await this.seqeulize.transaction();
     try {
       /** alram remove */
       for (const obj of data) {
+        Logger.debug(obj.alramOid);
         await subscriptionAlram.destroy({
           where: { oid: obj.alramOid },
           transaction: t,
@@ -98,11 +101,13 @@ export class AlramService {
 
       /** child container remove */
       for (const obj of data) {
+        Logger.debug(obj.alramOid);
         const havingAlramOidContainers = await container.findAll({
           where: { alramOid: obj.alramOid },
         });
 
         for (const con of havingAlramOidContainers) {
+          Logger.debug(con.oid);
           await container.destroy({ where: { oid: con.oid }, transaction: t });
         }
       }
