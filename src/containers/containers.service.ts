@@ -21,132 +21,129 @@ export class ContainersService {
   /** 새로운 컨테이너 검색 시 create && select */
   async createContainerList(dto: PostContainerListDto) {
     const t = await this.seqeulize.transaction();
-    const TODAY = new Date();
-    const URL = process.env.ETRANS_URL;
-    const TEST_DEFAULT_VALUE = {
-      dma_search: {
-        KLNET_ID: "",
-        SEARCH_DATA: `${dto.postInfo}`,
-        NOTICE_CNT: 25,
-      },
-    };
+    // const TODAY = new Date();
+    // const URL = process.env.ETRANS_URL;
+    // const TEST_DEFAULT_VALUE = {
+    //   dma_search: {
+    //     KLNET_ID: "",
+    //     SEARCH_DATA: `${dto.postInfo}`,
+    //     NOTICE_CNT: 25,
+    //   },
+    // };
     try {
-      const response = await this.httpService.axiosRef.post(
-        URL,
-        TEST_DEFAULT_VALUE
-      );
+      const containerOid = await this.utils.getOid(container, "container");
+      await container.create({ oid: containerOid, ...dto }, { transaction: t });
 
-      const containerDataResult: PostContainerListResponseDto = response.data;
+      // const response = await this.httpService.axiosRef.post(
+      //   URL,
+      //   TEST_DEFAULT_VALUE
+      // );
 
-      if (containerDataResult.rsMsg.statusCode === "S") {
-        const getContainerList = containerDataResult.dma_tracking;
+      // const containerDataResult: PostContainerListResponseDto = response.data;
 
-        if (getContainerList.length === 0) {
-          const CON_OID = await this.utils.getOid(container, "container");
-          await container.create(
-            { oid: CON_OID, ...dto, CNTR_NO: dto.postInfo },
-            { transaction: t }
-          );
-          const result = await t.commit();
-          return result;
-        }
+      // if (containerDataResult.rsMsg.statusCode === "S") {
+      //   const getContainerList = containerDataResult.dma_tracking;
 
-        /** 상태값 바꾸기 전에 접안예정일 조건 추가하기 */
-        const berthData = await berthStatSchedule.findOne({
-          where: { oid: dto.berthOid },
-        });
+      //   if (getContainerList.length === 0) {
+      //     const CON_OID = await this.utils.getOid(container, "container");
+      //     await container.create(
+      //       { oid: CON_OID, ...dto, CNTR_NO: dto.postInfo },
+      //       { transaction: t }
+      //     );
+      //     const result = await t.commit();
+      //     return result;
+      //   }
 
-        const BERTH_DAY = new Date(berthData.csdhpPrarnde).getDate();
+      //   /** 상태값 바꾸기 전에 접안예정일 조건 추가하기 */
+      //   const berthData = await berthStatSchedule.findOne({
+      //     where: { oid: dto.berthOid },
+      //   });
 
-        const ONE_DAYS_AGO = [
-          new Date(TODAY.setDate(BERTH_DAY - 1)).getDate(),
-          "1일",
-        ];
-        const TOW_DAYS_AGO = [
-          new Date(TODAY.setDate(BERTH_DAY - 2)).getDate(),
-          "2일",
-        ];
-        const THREE_DAYS_AGO = [
-          new Date(TODAY.setDate(BERTH_DAY - 3)).getDate(),
-          "3일",
-        ];
-        const FOUR_DAYS_AGO = [
-          new Date(TODAY.setDate(BERTH_DAY - 4)).getDate(),
-          "4일",
-        ];
-        const FIVE_DAYS_AGO = [
-          new Date(TODAY.setDate(BERTH_DAY - 5)).getDate(),
-          "5일",
-        ];
+      //   const BERTH_DAY = new Date(berthData.csdhpPrarnde).getDate();
 
-        /** 상태값을 확인하고 update */
-        getContainerList.map((value) => {
-          const CON_DAY = new Date(value.STATUS_DT).getDate();
-          if (ONE_DAYS_AGO[0] === CON_DAY && value.CNTR_STATUS === "78") {
-            value.containerStatus = 1;
-          } else if (
-            TOW_DAYS_AGO[0] === CON_DAY &&
-            value.CNTR_STATUS === "78"
-          ) {
-            value.containerStatus = 1;
-          } else if (
-            THREE_DAYS_AGO[0] === CON_DAY &&
-            value.CNTR_STATUS === "78"
-          ) {
-            value.containerStatus = 1;
-          } else if (
-            FOUR_DAYS_AGO[0] === CON_DAY &&
-            value.CNTR_STATUS === "78"
-          ) {
-            value.containerStatus = 1;
-          } else if (
-            FIVE_DAYS_AGO[0] === CON_DAY &&
-            value.CNTR_STATUS === "78"
-          ) {
-            value.containerStatus = 1;
-          } else if (value.CNTR_STATUS === "78") {
-            value.containerStatus = 1;
-          }
-        });
+      //   const ONE_DAYS_AGO = [
+      //     new Date(TODAY.setDate(BERTH_DAY - 1)).getDate(),
+      //     "1일",
+      //   ];
+      //   const TOW_DAYS_AGO = [
+      //     new Date(TODAY.setDate(BERTH_DAY - 2)).getDate(),
+      //     "2일",
+      //   ];
+      //   const THREE_DAYS_AGO = [
+      //     new Date(TODAY.setDate(BERTH_DAY - 3)).getDate(),
+      //     "3일",
+      //   ];
+      //   const FOUR_DAYS_AGO = [
+      //     new Date(TODAY.setDate(BERTH_DAY - 4)).getDate(),
+      //     "4일",
+      //   ];
+      //   const FIVE_DAYS_AGO = [
+      //     new Date(TODAY.setDate(BERTH_DAY - 5)).getDate(),
+      //     "5일",
+      //   ];
 
-        /** 중복 데이터 검열 */
-        const containerDupleData = await container.findOne({
-          where: { berthOid: dto.berthOid },
-        });
+      //   /** 상태값을 확인하고 update */
+      //   getContainerList.map((value) => {
+      //     const CON_DAY = new Date(value.STATUS_DT).getDate();
+      //     if (ONE_DAYS_AGO[0] === CON_DAY && value.CNTR_STATUS === "78") {
+      //       value.containerStatus = 1;
+      //     } else if (
+      //       TOW_DAYS_AGO[0] === CON_DAY &&
+      //       value.CNTR_STATUS === "78"
+      //     ) {
+      //       value.containerStatus = 1;
+      //     } else if (
+      //       THREE_DAYS_AGO[0] === CON_DAY &&
+      //       value.CNTR_STATUS === "78"
+      //     ) {
+      //       value.containerStatus = 1;
+      //     } else if (
+      //       FOUR_DAYS_AGO[0] === CON_DAY &&
+      //       value.CNTR_STATUS === "78"
+      //     ) {
+      //       value.containerStatus = 1;
+      //     } else if (
+      //       FIVE_DAYS_AGO[0] === CON_DAY &&
+      //       value.CNTR_STATUS === "78"
+      //     ) {
+      //       value.containerStatus = 1;
+      //     } else if (value.CNTR_STATUS === "78") {
+      //       value.containerStatus = 1;
+      //     }
+      //   });
 
-        for (const obj of getContainerList) {
-          if (
-            !containerDupleData ||
-            containerDupleData.CNTR_NO !== obj.CNTR_NO
-          ) {
-            const CON_OID = await this.utils.getOid(container, "container");
-            await container.create(
-              { ...obj, ...dto, oid: CON_OID },
-              { transaction: t }
-            );
-          } else {
-            await container.update(
-              { ...obj, ...dto },
-              { where: { oid: containerDupleData.oid }, transaction: t }
-            );
-          }
-        }
+      //   /** 중복 데이터 검열 */
+      //   const containerDupleData = await container.findOne({
+      //     where: { berthOid: dto.berthOid },
+      //   });
 
-        await t.commit();
+      //   for (const obj of getContainerList) {
+      //     if (
+      //       !containerDupleData ||
+      //       containerDupleData.CNTR_NO !== obj.CNTR_NO
+      //     ) {
+      //       const CON_OID = await this.utils.getOid(container, "container");
+      //       await container.create(
+      //         { ...obj, ...dto, oid: CON_OID },
+      //         { transaction: t }
+      //       );
+      //     } else {
+      //       await container.update(
+      //         { ...obj, ...dto },
+      //         { where: { oid: containerDupleData.oid }, transaction: t }
+      //       );
+      //     }
+      //   }
 
-        /** 해당 조건으로 데이터 보여주기 */
-        const newContainerList = await this.containersRepository.findAll({
-          berthOid: dto.berthOid,
-          alramOid: dto.alramOid,
-        });
+      await t.commit();
 
-        return newContainerList;
-      } else {
-        await t.rollback();
-        throw new InternalServerErrorException(
-          "데이터를 가져오는 데에 실패했습니다."
-        );
-      }
+      /** 해당 조건으로 데이터 보여주기 */
+      const newContainerList = await this.containersRepository.findAll({
+        berthOid: dto.berthOid,
+        alramOid: dto.alramOid,
+      });
+
+      return newContainerList;
     } catch (error) {
       console.log(error);
     }
