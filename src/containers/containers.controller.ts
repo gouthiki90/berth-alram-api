@@ -48,7 +48,7 @@ export class ContainersController {
     return this.containersService.dynamicUpdateContainerStatus(data);
   }
 
-  @Put("/container-danger-status")
+  @Put("/danger-status")
   changeContainerIsDangerStatus(
     @Body() data: DynamicUpdateContainerDangerStatusDto
   ) {
