@@ -21,23 +21,25 @@ export class AlramHistoryService {
     try {
       return await this.seqeulize.query(
         `
-        SELECT 
-          oid
+        SELECT
+          alram.oid
         FROM
-          berthStat_schedule
+          subscription_alram AS alram
+        LEFT
+			JOIN berthStat_schedule AS berth ON berth.oid = alram.schedule_oid
         WHERE
           TRUE
           -- 출항일이 3일 지난 것만
-            AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                MID(tkoffPrarnde, 2, 16),
-                LEFT(tkoffPrarnde, 19)),
-            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)),
+            AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                MID(berth.tkoffPrarnde, 2, 16),
+                LEFT(berth.tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                    MID(berth.tkoffPrarnde, 2, 16),
+                    LEFT(berth.tkoffPrarnde, 19)),
                 '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) < DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
-            DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)),
+            DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                    MID(berth.tkoffPrarnde, 2, 16),
+                    LEFT(berth.tkoffPrarnde, 19)),
                 '%Y-%m-%d %H:%i'),
             NULL))
         `,
@@ -78,12 +80,13 @@ export class AlramHistoryService {
       const historyRemoveOidList = await this.findAllForRemoveAlramHistory();
 
       if (historyRemoveOidList.length === 0) {
+        await t.rollback();
         return;
       }
 
       for (const obj of historyRemoveOidList) {
         await alramHistory.destroy({
-          where: { oid: obj.oid, isRead: 1 },
+          where: { alramOid: obj.oid, isRead: 1 },
           transaction: t,
         });
       }
