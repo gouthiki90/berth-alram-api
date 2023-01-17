@@ -158,6 +158,7 @@ export class BerthPyService {
     try {
       for (const obj of data) {
         /** 모선항차의 중복을 찾기 위한 data */
+        /** 이전에 가져온 데이터 명시 필요 */
         const berthDupleData = await this.findOneForDupleData(obj.oid);
 
         /** 알람을 구독한 유저 리스트 */

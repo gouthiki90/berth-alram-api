@@ -192,6 +192,7 @@ export class ContainersService {
     }
   }
 
+  /** 위험물/일반 상태값 update */
   async dynamicUpdateContainerIsDangerStatus(
     data: DynamicUpdateContainerDangerStatusDto
   ) {
