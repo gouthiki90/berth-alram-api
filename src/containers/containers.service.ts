@@ -21,9 +21,9 @@ export class ContainersService {
     const t = await this.seqeulize.transaction();
     try {
       for (const containers of containerDto) {
-        const CON_OID = await this.utils.getOid(container, "container");
+        const containerOid = await this.utils.getOid(container, "container");
         await container.create(
-          { oid: CON_OID, ...containers },
+          { oid: containerOid, ...containers },
           { transaction: t }
         );
       }
