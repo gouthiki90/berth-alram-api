@@ -26,7 +26,7 @@ export class AlramPushService {
             SELECT
               users.contact
             FROM subscription_alram AS alram
-            LEFT JOIN user AS users ON alram.user_oid = users.oid
+            INNER JOIN user AS users ON alram.user_oid = users.oid
             WHERE TRUE
             AND alram.schedule_oid = '${obj.oid}'
             `,
@@ -129,7 +129,7 @@ export class AlramPushService {
           MID(berth.csdhpPrarnde, 2, 16),
           LEFT(berth.csdhpPrarnde, 19)) AS csdhpPrarnde
         FROM subscription_alram AS alram
-        LEFT JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
+        INNER JOIN berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
           `,
         {
           type: sequelize.QueryTypes.SELECT,

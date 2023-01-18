@@ -25,7 +25,7 @@ export class AlramHistoryService {
           alram.oid
         FROM
           subscription_alram AS alram
-        LEFT
+        INNER
 			JOIN berthStat_schedule AS berth ON berth.oid = alram.schedule_oid
         WHERE
           TRUE
