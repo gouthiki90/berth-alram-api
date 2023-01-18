@@ -157,8 +157,10 @@ export class AlramService {
         data.totalPageCount = Math.ceil(userAlramListForPagingAll.length / 20);
         data.currentItemCount = userAlramListForPaging.length;
 
+        /** 페이징 data */
         const pageInfo = { ...data };
 
+        /** 페이징에 따른 데이터 push */
         userAlramListForPaging.map((value: OffsetAlramDto) => {
           berthItems.push(value);
         });

@@ -44,8 +44,7 @@ export class AlramRepository {
                     container
                 WHERE
                     container_status = 1
-                GROUP BY CNTR_NO , alram_oid
-                ORDER BY STATUS_DT , STATUS_TM DESC) AS A
+                GROUP BY container_numnber, alram_oid) AS A
             WHERE
                 A.alram_oid = alram.oid) AS finishCount,
         (SELECT 
@@ -55,8 +54,7 @@ export class AlramRepository {
                     *
                 FROM
                     container
-                GROUP BY CNTR_NO , alram_oid
-                ORDER BY STATUS_DT , STATUS_TM DESC) AS A
+                GROUP BY container_numnber, alram_oid) AS A
             WHERE
                 A.alram_oid = alram.oid) AS conCount
     FROM
@@ -89,66 +87,64 @@ export class AlramRepository {
       const list = await this.sequelize.query(
         `
         SELECT 
-            alram.oid AS alramOid,
-            berth.*,
-            CONCAT(trminlCode,
-                    '(',
-                    info.turminal_korea,
-                    ')') AS trminlCode,
-          -- 출항일이랑 입항일 초 단위 빼기
-            DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
-                        MID(csdhpPrarnde, 2, 16),
-                        LEFT(csdhpPrarnde, 19)),
-                    '%Y-%m-%d %H:%i') AS csdhpPrarnde,
-            DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                        MID(tkoffPrarnde, 2, 16),
-                        LEFT(tkoffPrarnde, 19)),
-                    '%Y-%m-%d %H:%i') AS tkoffPrarnde,
-          -- 이전 입항일 초 단위 빼기
-          DATE_FORMAT(IF(LEFT(previousCsdhpPrarnde, 1) = '(',
-                      MID(previousCsdhpPrarnde, 2, 16),
-                      LEFT(previousCsdhpPrarnde, 19)),
-                  '%Y-%m-%d %H:%i') AS previousCsdhpPrarnde,
-            usr.user_id AS userId,
-            usr.biz_name AS bizName,
-            usr.manager_tel AS managerTel,
-            usr.manager_name AS managerName,
-            (SELECT 
-                    COUNT(*)
+        alram.oid AS alramOid,
+        berth.*,
+        CONCAT(trminlCode,
+                '(',
+                info.turminal_korea,
+                ')') AS trminlCode,
+      -- 출항일이랑 입항일 초 단위 빼기
+        DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
+                    MID(csdhpPrarnde, 2, 16),
+                    LEFT(csdhpPrarnde, 19)),
+                '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+        DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
+                    MID(tkoffPrarnde, 2, 16),
+                    LEFT(tkoffPrarnde, 19)),
+                '%Y-%m-%d %H:%i') AS tkoffPrarnde,
+      -- 이전 입항일 초 단위 빼기
+      DATE_FORMAT(IF(LEFT(previousCsdhpPrarnde, 1) = '(',
+                  MID(previousCsdhpPrarnde, 2, 16),
+                  LEFT(previousCsdhpPrarnde, 19)),
+              '%Y-%m-%d %H:%i') AS previousCsdhpPrarnde,
+        usr.user_id AS userId,
+        usr.biz_name AS bizName,
+        usr.manager_tel AS managerTel,
+        usr.manager_name AS managerName,
+        (SELECT 
+                COUNT(*)
+            FROM
+                (SELECT 
+                    *
                 FROM
-                    (SELECT 
-                        *
-                    FROM
-                        container
-                    WHERE
-                        container_status = 1
-                    GROUP BY CNTR_NO , alram_oid
-                    ORDER BY STATUS_DT , STATUS_TM DESC) AS A
+                    container
                 WHERE
-                    A.alram_oid = alram.oid) AS finishCount,
-            (SELECT 
-                    COUNT(*)
+                    container_status = 1
+                GROUP BY container_numnber, alram_oid) AS A
+            WHERE
+                A.alram_oid = alram.oid) AS finishCount,
+        (SELECT 
+                COUNT(*)
+            FROM
+                (SELECT 
+                    *
                 FROM
-                    (SELECT 
-                        *
-                    FROM
-                        container
-                    GROUP BY CNTR_NO , alram_oid
-                    ORDER BY STATUS_DT , STATUS_TM DESC) AS A
-                WHERE
-                    A.alram_oid = alram.oid) AS conCount
-        FROM
-            subscription_alram AS alram
-                LEFT JOIN
-            berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-                LEFT JOIN
-            user AS usr ON alram.user_oid = usr.oid
-                LEFT JOIN
-            berth_info AS info ON berth.trminlCode = info.turminal_code
-        WHERE
-            TRUE
-                AND berth.trminlCode IN ('${trminlCode}')
-                AND usr.oid = '${oid}'
+                    container
+                GROUP BY container_numnber, alram_oid) AS A
+            WHERE
+                A.alram_oid = alram.oid) AS conCount
+    FROM
+        subscription_alram AS alram
+            LEFT JOIN
+        berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
+            LEFT JOIN
+        user AS usr ON alram.user_oid = usr.oid
+            LEFT JOIN
+        berth_info AS info ON berth.trminlCode = info.turminal_code
+    WHERE
+        TRUE
+            AND berth.trminlCode IN ('${trminlCode}')
+            AND usr.oid = '${oid}'
         `,
         {
           type: seqeulize.QueryTypes.SELECT,

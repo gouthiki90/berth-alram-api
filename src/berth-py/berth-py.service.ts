@@ -152,6 +152,7 @@ export class BerthPyService {
 
   /* #endregion */
 
+  /** berth data create and alram push */
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
 
@@ -216,6 +217,7 @@ export class BerthPyService {
     }
   }
 
+  /** delete berth old data */
   async deleteOldBerthData() {
     const t = await this.seqeulize.transaction();
     Logger.warn(`TODAY ::: ${new Date()} :::`);
@@ -243,6 +245,7 @@ export class BerthPyService {
     }
   }
 
+  /** delete berth old data */
   @Cron(CronExpression.EVERY_2ND_MONTH, {
     name: "deleteOldBerthDataSchedule",
   })
