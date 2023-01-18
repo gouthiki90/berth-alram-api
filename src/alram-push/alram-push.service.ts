@@ -102,7 +102,7 @@ export class AlramPushService {
     });
 
     try {
-      if (CARRY_TIMING[0] === BERTH_DAY) {
+      if (CARRY_TIMING.length > 0 && CARRY_TIMING[0] === BERTH_DAY) {
         Logger.warn(`${CARRY_TIMING[0]}일 남음`);
         for (const userInfo of userInfoList) {
           await sendMessage(userInfo.contact, CARRY_TIMING[1]);

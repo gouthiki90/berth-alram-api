@@ -1,8 +1,13 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { container } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { ContainersReposiotry } from "./containers.repository";
+import { ContainerUpdateRemarkDto } from "./dto/container-update-remark.dto";
 import { CreateContainerDto } from "./dto/create-container.dto";
 import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { DynamicUpdateContainerDangerStatusDto } from "./dto/dynamic-update-container-danger-status.dto";
@@ -114,6 +119,23 @@ export class ContainersService {
       throw new InternalServerErrorException(
         `${error}\ncontainer isDanger status change error!`
       );
+    }
+  }
+
+  /** 컨테이너 메모 update */
+  async containerRemarkUpdate(remarkDto: ContainerUpdateRemarkDto) {
+    const t = await this.seqeulize.transaction();
+    try {
+      await container.update(
+        { remark: remarkDto.remark },
+        { where: { oid: remarkDto.oid }, transaction: t }
+      );
+
+      await t.commit();
+    } catch (error) {
+      Logger.error(error);
+      await t.rollback();
+      throw new InternalServerErrorException("failed to update remark");
     }
   }
 }

@@ -12,6 +12,7 @@ import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { ContainersReposiotry } from "./containers.repository";
 import { ContainersService } from "./containers.service";
+import { ContainerUpdateRemarkDto } from "./dto/container-update-remark.dto";
 import { CreateContainerDto } from "./dto/create-container.dto";
 import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { DynamicUpdateContainerDangerStatusDto } from "./dto/dynamic-update-container-danger-status.dto";
@@ -53,5 +54,10 @@ export class ContainersController {
     @Body() data: DynamicUpdateContainerDangerStatusDto
   ) {
     return this.containersService.dynamicUpdateContainerIsDangerStatus(data);
+  }
+
+  @Put("/remark")
+  updateContainerRemark(@Body() containerRemarkDto: ContainerUpdateRemarkDto) {
+    return this.containersService.containerRemarkUpdate(containerRemarkDto);
   }
 }
