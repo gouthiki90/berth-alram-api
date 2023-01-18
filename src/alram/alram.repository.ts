@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import seqeulize from "sequelize";
 
@@ -21,16 +21,16 @@ export class AlramRepository {
         DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
                     MID(csdhpPrarnde, 2, 16),
                     LEFT(csdhpPrarnde, 19)),
-                '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+                '%Y-%m-%d %H:%i') AS csdhpPrarnde, -- 입항예정일
         DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
                     MID(tkoffPrarnde, 2, 16),
                     LEFT(tkoffPrarnde, 19)),
-                '%Y-%m-%d %H:%i') AS tkoffPrarnde,
+                '%Y-%m-%d %H:%i') AS tkoffPrarnde, -- 출항예정일
       -- 이전 입항일 초 단위 빼기
       DATE_FORMAT(IF(LEFT(previousCsdhpPrarnde, 1) = '(',
                   MID(previousCsdhpPrarnde, 2, 16),
                   LEFT(previousCsdhpPrarnde, 19)),
-              '%Y-%m-%d %H:%i') AS previousCsdhpPrarnde,
+              '%Y-%m-%d %H:%i') AS previousCsdhpPrarnde, -- 이전입항예정일
         usr.user_id AS userId,
         usr.biz_name AS bizName,
         usr.manager_tel AS managerTel,
@@ -46,7 +46,7 @@ export class AlramRepository {
                     container_status = 1
                 GROUP BY container_numnber, alram_oid) AS A
             WHERE
-                A.alram_oid = alram.oid) AS finishCount,
+                A.alram_oid = alram.oid) AS finishCount, -- 완료 컨테이너 count
         (SELECT 
                 COUNT(*)
             FROM
@@ -56,14 +56,14 @@ export class AlramRepository {
                     container
                 GROUP BY container_numnber, alram_oid) AS A
             WHERE
-                A.alram_oid = alram.oid) AS conCount
+                A.alram_oid = alram.oid) AS conCount -- 전체 컨테이너 count
     FROM
         subscription_alram AS alram
-            LEFT JOIN
+            INNER JOIN
         berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-            LEFT JOIN
+            INNER JOIN
         user AS usr ON alram.user_oid = usr.oid
-            LEFT JOIN
+            INNER JOIN
         berth_info AS info ON berth.trminlCode = info.turminal_code
     WHERE
         TRUE
@@ -78,7 +78,7 @@ export class AlramRepository {
 
       return list;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -97,16 +97,16 @@ export class AlramRepository {
         DATE_FORMAT(IF(LEFT(csdhpPrarnde, 1) = '(',
                     MID(csdhpPrarnde, 2, 16),
                     LEFT(csdhpPrarnde, 19)),
-                '%Y-%m-%d %H:%i') AS csdhpPrarnde,
+                '%Y-%m-%d %H:%i') AS csdhpPrarnde, -- 입항예정일
         DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
                     MID(tkoffPrarnde, 2, 16),
                     LEFT(tkoffPrarnde, 19)),
-                '%Y-%m-%d %H:%i') AS tkoffPrarnde,
+                '%Y-%m-%d %H:%i') AS tkoffPrarnde, -- 출항예정일
       -- 이전 입항일 초 단위 빼기
       DATE_FORMAT(IF(LEFT(previousCsdhpPrarnde, 1) = '(',
                   MID(previousCsdhpPrarnde, 2, 16),
                   LEFT(previousCsdhpPrarnde, 19)),
-              '%Y-%m-%d %H:%i') AS previousCsdhpPrarnde,
+              '%Y-%m-%d %H:%i') AS previousCsdhpPrarnde, -- 이전입항예정일
         usr.user_id AS userId,
         usr.biz_name AS bizName,
         usr.manager_tel AS managerTel,
@@ -122,7 +122,7 @@ export class AlramRepository {
                     container_status = 1
                 GROUP BY container_numnber, alram_oid) AS A
             WHERE
-                A.alram_oid = alram.oid) AS finishCount,
+                A.alram_oid = alram.oid) AS finishCount, -- 완료 컨테이너 count
         (SELECT 
                 COUNT(*)
             FROM
@@ -132,14 +132,14 @@ export class AlramRepository {
                     container
                 GROUP BY container_numnber, alram_oid) AS A
             WHERE
-                A.alram_oid = alram.oid) AS conCount
+                A.alram_oid = alram.oid) AS conCount -- 전체 컨테이너 count
     FROM
         subscription_alram AS alram
-            LEFT JOIN
+            INNER JOIN
         berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-            LEFT JOIN
+            INNER JOIN
         user AS usr ON alram.user_oid = usr.oid
-            LEFT JOIN
+            INNER JOIN
         berth_info AS info ON berth.trminlCode = info.turminal_code
     WHERE
         TRUE
@@ -153,7 +153,7 @@ export class AlramRepository {
 
       return list;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 }

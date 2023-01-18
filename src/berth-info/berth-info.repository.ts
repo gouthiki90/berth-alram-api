@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { berthInfo } from "src/models";
 
 @Injectable()
@@ -7,7 +7,7 @@ export class BerthInfoRepository {
     try {
       return await berthInfo.findAll();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new NotFoundException("발견한 데이터가 없습니다.");
     }
   }
