@@ -44,7 +44,7 @@ export class ContainersController {
     return this.containersService.deleteContainers(data);
   }
 
-  @Put("/container-status")
+  @Put("/status")
   changeContainerStatus(@Body() data: DynamicUpdateContainerStatus) {
     return this.containersService.dynamicUpdateContainerStatus(data);
   }
