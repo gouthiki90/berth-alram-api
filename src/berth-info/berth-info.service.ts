@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { berthInfo } from "src/models";
 import { EditTimingFromAdminDto } from "./dto/edit-timing-from-user.dto";
@@ -25,7 +29,7 @@ export class BerthInfoService {
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException("사전반입일 데이터 수정 실패");
     }

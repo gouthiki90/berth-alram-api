@@ -54,7 +54,7 @@ export class ContainersService {
         );
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(`${error}`);
     }
@@ -69,7 +69,7 @@ export class ContainersService {
       }
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException("데이터 삭제 실패");
     }
@@ -92,7 +92,7 @@ export class ContainersService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(
         `${error}\ncontainer status change error!`
@@ -114,7 +114,7 @@ export class ContainersService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(
         `${error}\ncontainer isDanger status change error!`

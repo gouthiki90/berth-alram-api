@@ -28,7 +28,7 @@ export class BerthPyService {
     try {
       return await berthStatSchedule.findOne({ where: { oid: oid } });
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -53,7 +53,7 @@ export class BerthPyService {
       );
       return userInfoList;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -115,7 +115,7 @@ export class BerthPyService {
           });
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -210,8 +210,9 @@ export class BerthPyService {
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("error in server");
     }
   }
 
@@ -236,8 +237,9 @@ export class BerthPyService {
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("failed to delete data");
     }
   }
 
@@ -251,7 +253,7 @@ export class BerthPyService {
       Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
     } catch (error) {
       Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
-      console.log(error);
+      Logger.error(error);
       const GET_JOB = this.schedulerRegistry.getCronJob(
         "deleteOldBerthDataSchedule"
       );

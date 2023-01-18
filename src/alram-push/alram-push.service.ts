@@ -46,7 +46,7 @@ export class AlramPushService {
     try {
       return await berthInfo.findAll();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 

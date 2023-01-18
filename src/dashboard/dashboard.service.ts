@@ -63,6 +63,7 @@ export class DashboardService {
       }
     } catch (error) {
       Logger.error(error);
+      throw new NotFoundException("failed to load data");
     }
   }
 }

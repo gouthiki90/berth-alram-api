@@ -50,7 +50,7 @@ export class AlramHistoryService {
         }
       );
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException("조회 실패");
     }
   }
@@ -67,7 +67,7 @@ export class AlramHistoryService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(`${error} UPDATE Error!`);
     }
@@ -93,7 +93,7 @@ export class AlramHistoryService {
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(`${error} DELETE Error!`);
     }
@@ -110,7 +110,7 @@ export class AlramHistoryService {
       Logger.warn("::: removeAlramHistorySchedule end... :::");
     } catch (error) {
       Logger.error(`::: removeAlramHistorySchedule Error! :::`);
-      console.log(error);
+      Logger.error(error);
       const GET_JOB = this.schedulerRegistry.getCronJob(
         "removeAlramHistorySchedule"
       );

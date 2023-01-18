@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UseFilters,
 } from "@nestjs/common";
@@ -33,7 +34,7 @@ export class AlramService {
         where: { scheduleOid: obj.scheduleOid, userOid: obj.userOid },
       });
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException(`${error}`);
     }
   }
@@ -65,8 +66,9 @@ export class AlramService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("faield to create alram data");
     }
   }
 
@@ -80,8 +82,9 @@ export class AlramService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("faield alram update data");
     }
   }
 
@@ -110,8 +113,9 @@ export class AlramService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("failed to delete alram data");
     }
   }
 
@@ -165,7 +169,7 @@ export class AlramService {
         return this.pageInfoDto;
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException("백엔드 로직 중 에러");
     }
   }
