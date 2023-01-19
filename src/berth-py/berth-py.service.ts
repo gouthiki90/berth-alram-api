@@ -28,7 +28,7 @@ export class BerthPyService {
     try {
       return await berthStatSchedule.findOne({ where: { oid: oid } });
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -53,7 +53,7 @@ export class BerthPyService {
       );
       return userInfoList;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -91,12 +91,19 @@ export class BerthPyService {
 
   /** 입항 시간에 따른 알람 푸쉬 */
   async sendAlramOfcsdhpPrarnde(
+    today: string,
     userInfoList: Array<GetUserInfoListDto>,
     obj: CreateBerthPyDto,
     berthDupleData: berthStatSchedule
   ) {
     try {
       for (const userInfo of userInfoList) {
+        Logger.debug("--------------------");
+        Logger.debug("userOid ----", userInfo.userOid);
+        Logger.debug("infoList length ----", userInfoList.length);
+        Logger.debug(today);
+        Logger.debug("userContact ----", userInfo.contact);
+        Logger.debug("--------------------");
         await this.httpService.axiosRef
           .post(
             "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
@@ -115,7 +122,7 @@ export class BerthPyService {
           });
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }
 
@@ -152,12 +159,19 @@ export class BerthPyService {
 
   /* #endregion */
 
+  /** berth data create and alram push */
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
 
     try {
       for (const obj of data) {
+        const today = new Date();
+        Logger.debug("--------------------");
+        Logger.debug(today.toISOString());
+        Logger.debug("berthOid ----", obj.oid);
+        Logger.debug("--------------------");
         /** 모선항차의 중복을 찾기 위한 data */
+        /** 이전에 가져온 데이터 명시 필요 */
         const berthDupleData = await this.findOneForDupleData(obj.oid);
 
         /** 알람을 구독한 유저 리스트 */
@@ -172,7 +186,9 @@ export class BerthPyService {
           /** 입항예정일 변경 */
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
             Logger.warn(
-              `csdhpPrarnde=${obj.oid} - ${obj.csdhpPrarnde} ::: is change! :::`
+              `csdhpPrarnde=::: ${today.toISOString()}\n ${obj.oid} - ${
+                obj.csdhpPrarnde
+              } ::: is change! :::`
             );
 
             /** 이전 접안일 데이터 update */
@@ -183,12 +199,13 @@ export class BerthPyService {
 
             /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
             await this.sendAlramOfcsdhpPrarnde(
+              today.toISOString(),
               userInfoList,
               obj,
               berthDupleData
             );
 
-            /** 알람 메시지 create */
+            /** 알람 메시지 creates */
             await this.sendWebAlramOfcsdhpPrarnde(
               userInfoList,
               obj,
@@ -201,11 +218,13 @@ export class BerthPyService {
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("error in server");
     }
   }
 
+  /** delete berth old data */
   async deleteOldBerthData() {
     const t = await this.seqeulize.transaction();
     Logger.warn(`TODAY ::: ${new Date()} :::`);
@@ -227,11 +246,13 @@ export class BerthPyService {
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("failed to delete data");
     }
   }
 
+  /** delete berth old data */
   @Cron(CronExpression.EVERY_2ND_MONTH, {
     name: "deleteOldBerthDataSchedule",
   })
@@ -242,7 +263,7 @@ export class BerthPyService {
       Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
     } catch (error) {
       Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
-      console.log(error);
+      Logger.error(error);
       const GET_JOB = this.schedulerRegistry.getCronJob(
         "deleteOldBerthDataSchedule"
       );
