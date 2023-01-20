@@ -192,7 +192,10 @@ export class BerthPyService {
           Logger.debug(`"${obj.csdhpPrarnde}"`);
           Logger.debug("-----------------");
 
-          if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
+          if (
+            berthDupleData.trminlCode === obj.trminlCode &&
+            berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
+          ) {
             Logger.warn(
               `csdhpPrarnde=::: ${today.toISOString()}\n ${obj.oid} - ${
                 obj.csdhpPrarnde
