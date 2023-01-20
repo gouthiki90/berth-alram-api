@@ -185,6 +185,7 @@ export class BerthPyService {
         if (berthDupleData) {
           /** 입항예정일 변경 */
           Logger.debug("-----------------");
+          Logger.debug(today.toISOString());
           Logger.debug("-------- before berth data --------");
           Logger.debug(`"${berthDupleData.csdhpPrarnde}"`);
           Logger.debug("-------- after berth data ---------");
