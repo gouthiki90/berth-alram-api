@@ -184,6 +184,13 @@ export class BerthPyService {
 
         if (berthDupleData) {
           /** 입항예정일 변경 */
+          Logger.debug("-----------------");
+          Logger.debug("-------- before berth data --------");
+          Logger.debug(`"${berthDupleData.csdhpPrarnde}"`);
+          Logger.debug("-------- after berth data ---------");
+          Logger.debug(`"${obj.csdhpPrarnde}"`);
+          Logger.debug("-----------------");
+
           if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
             Logger.warn(
               `csdhpPrarnde=::: ${today.toISOString()}\n ${obj.oid} - ${
