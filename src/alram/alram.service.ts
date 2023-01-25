@@ -12,7 +12,6 @@ import { Utils } from "src/util/common.utils";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { CreateAlramDto } from "./dto/create-alram.dto";
-import { IsLastViewDto } from "./dto/is-last-view.dto";
 import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-state-data.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";

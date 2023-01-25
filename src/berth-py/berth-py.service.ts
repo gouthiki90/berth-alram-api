@@ -40,6 +40,7 @@ export class BerthPyService {
         SELECT
           users.oid AS userOid,
           users.contact,
+          users.is_nofitication,
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
         FROM subscription_alram AS alram
@@ -97,22 +98,27 @@ export class BerthPyService {
   ) {
     try {
       for (const userInfo of userInfoList) {
-        await this.httpService.axiosRef
-          .post(
-            "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
-            {
-              content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
-              receivers: [`${userInfo.contact}`],
-            },
-            {
-              headers: {
-                "x-api-key": `${process.env.MESSAGE_KEY}`,
+        /** 문자 옵션이 on일때만 푸쉬하기 */
+        if (userInfo.isNotification === 1) {
+          await this.httpService.axiosRef
+            .post(
+              "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
+              {
+                content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+                receivers: [`${userInfo.contact}`],
               },
-            }
-          )
-          .catch((error) => {
-            Logger.error(error);
-          });
+              {
+                headers: {
+                  "x-api-key": `${process.env.MESSAGE_KEY}`,
+                },
+              }
+            )
+            .catch((error) => {
+              Logger.error(error);
+            });
+        } else {
+          continue;
+        }
       }
     } catch (error) {
       Logger.error(error);
