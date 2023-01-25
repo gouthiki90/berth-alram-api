@@ -14,6 +14,7 @@ import { AuthService } from "src/auth/auth.service";
 import { Utils } from "src/util/common.utils";
 import { Response } from "express";
 import { ErrorHandler } from "src/error-handler/error-handler";
+import { UpdateIsNotificationDto } from "./dto/update-is-notification.dto";
 
 @UseFilters(ErrorHandler)
 @Injectable()
@@ -140,6 +141,22 @@ export class UserService {
       console.log(error);
       await t.rollback();
       throw new InternalServerErrorException("탈퇴 실패");
+    }
+  }
+
+  async updateIsNotification(isNotificationDto: UpdateIsNotificationDto) {
+    const t = await this.seqeulize.transaction();
+    try {
+      await user.update(
+        { isNofitication: isNotificationDto.isNotification },
+        { where: { oid: isNotificationDto.oid }, transaction: t }
+      );
+
+      const result = await t.commit();
+      return result;
+    } catch (error) {
+      await t.rollback();
+      throw new InternalServerErrorException("수정 실패");
     }
   }
 }

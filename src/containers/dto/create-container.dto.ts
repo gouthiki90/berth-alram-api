@@ -16,4 +16,6 @@ export class CreateContainerDto {
   containerNumnber?: string;
   /** 위험/일반 상태값 */
   isDanger?: number;
+  /** 컨테이너 메모 */
+  remark?: string;
 }
