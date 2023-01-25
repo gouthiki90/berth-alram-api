@@ -13,6 +13,7 @@ import { OffsetPagingInfoDto } from "src/dashboard/dto/offset-page-info.dto";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { AlramService } from "./alram.service";
 import { CreateAlramDto } from "./dto/create-alram.dto";
+import { IsLastViewDto } from "./dto/is-last-view.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
 
@@ -28,9 +29,17 @@ export class AlramController {
   }
 
   @Post("/page-info/:oid")
-  findOne(@Param("oid") oid: string, @Body() pageInfo: OffsetPagingInfoDto) {
+  findOne(
+    @Param("oid") oid: string,
+    @Body() pageInfo: OffsetPagingInfoDto,
+    @Body() isLastViewDto: IsLastViewDto
+  ) {
     console.log({ pageInfo });
-    return this.alramService.makePageInfoForAlramList(pageInfo, oid);
+    return this.alramService.makePageInfoForAlramList(
+      pageInfo,
+      oid,
+      isLastViewDto.isLastView
+    );
   }
 
   @Put("/")

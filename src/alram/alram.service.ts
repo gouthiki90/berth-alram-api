@@ -12,6 +12,7 @@ import { Utils } from "src/util/common.utils";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { CreateAlramDto } from "./dto/create-alram.dto";
+import { IsLastViewDto } from "./dto/is-last-view.dto";
 import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-state-data.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
@@ -119,7 +120,11 @@ export class AlramService {
     }
   }
 
-  async makePageInfoForAlramList(data: OffsetPagingInfoDto, oid: string) {
+  async makePageInfoForAlramList(
+    data: OffsetPagingInfoDto,
+    oid: string,
+    isLastView: boolean
+  ) {
     /** 20개로 최대 고정값 */
     const PAGE_ITEM_COUNT = 20;
     /** OFFSET 계산값 */
@@ -142,13 +147,15 @@ export class AlramService {
       const userAlramListForPaging = await this.alramRepository.findOne(
         oid,
         offset,
-        trminalCodes
+        trminalCodes,
+        isLastView
       );
 
       /** 페이징 값을 구하기 위한 SELECT */
       const userAlramListForPagingAll = await this.alramRepository.findAll(
         oid,
-        trminalCodes
+        trminalCodes,
+        isLastView
       );
 
       if (userAlramListForPaging.length !== 0) {

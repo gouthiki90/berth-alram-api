@@ -43,7 +43,7 @@ export class BerthPyService {
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
         FROM subscription_alram AS alram
-        LEFT JOIN user AS users ON alram.user_oid = users.oid
+        INNER JOIN user AS users ON alram.user_oid = users.oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
