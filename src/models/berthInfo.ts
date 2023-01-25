@@ -13,8 +13,9 @@ export interface berthInfoAttributes {
   turminalCode?: string;
   turminalKorea?: string;
   isNewPort?: number;
-  carryTiming?: number;
-  dangerCarryTiming?: number;
+  carryTiming?: string;
+  dangerCarryTiming?: string;
+  remark?: string;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -60,18 +61,21 @@ export class berthInfo
   @Column({
     field: "carry_timing",
     allowNull: true,
-    type: DataType.INTEGER,
+    type: DataType.STRING(100),
     comment: "사전 반입일",
   })
-  carryTiming?: number;
+  carryTiming?: string;
 
   @Column({
     field: "danger_carry_timing",
     allowNull: true,
-    type: DataType.INTEGER,
+    type: DataType.STRING(100),
     comment: "위험물 사전반입일",
   })
-  dangerCarryTiming?: number;
+  dangerCarryTiming?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(300), comment: "비고" })
+  remark?: string;
 
   @Column({ allowNull: true, type: DataType.DATE, defaultValue: DataType.NOW })
   createDate?: Date;
