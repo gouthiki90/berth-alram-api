@@ -8,7 +8,6 @@ import { alramHistory, berthStatSchedule } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
-import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Utils } from "src/util/common.utils";
 import { GetUserInfoListDto } from "./dto/get-user-info-list.dto";
 
@@ -17,7 +16,6 @@ export class BerthPyService {
   constructor(
     private readonly seqeulize: Sequelize,
     private readonly httpService: HttpService,
-    private readonly schedulerRegistry: SchedulerRegistry,
     private readonly util: Utils
   ) {}
 
@@ -252,21 +250,21 @@ export class BerthPyService {
   }
 
   /** delete berth old data */
-  @Cron(CronExpression.EVERY_2ND_MONTH, {
-    name: "deleteOldBerthDataSchedule",
-  })
-  async deleteOldBerthDataSchedule() {
-    try {
-      Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
-      await this.deleteOldBerthData();
-      Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
-    } catch (error) {
-      Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
-      Logger.error(error);
-      const GET_JOB = this.schedulerRegistry.getCronJob(
-        "deleteOldBerthDataSchedule"
-      );
-      GET_JOB.stop();
-    }
-  }
+  // @Cron(CronExpression.EVERY_2ND_MONTH, {
+  //   name: "deleteOldBerthDataSchedule",
+  // })
+  // async deleteOldBerthDataSchedule() {
+  //   try {
+  //     Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
+  //     await this.deleteOldBerthData();
+  //     Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
+  //   } catch (error) {
+  //     Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
+  //     Logger.error(error);
+  //     const GET_JOB = this.schedulerRegistry.getCronJob(
+  //       "deleteOldBerthDataSchedule"
+  //     );
+  //     GET_JOB.stop();
+  //   }
+  // }
 }
