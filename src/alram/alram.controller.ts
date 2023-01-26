@@ -13,7 +13,6 @@ import { OffsetPagingInfoDto } from "src/dashboard/dto/offset-page-info.dto";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { AlramService } from "./alram.service";
 import { CreateAlramDto } from "./dto/create-alram.dto";
-import { IsLastViewDto } from "./dto/is-last-view.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
 

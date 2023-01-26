@@ -56,7 +56,7 @@ export class AlramRepository {
               AND berth.trminlCode IN ('${trminlCode}')
               AND usr.oid = '${oid}'
               -- 출항일이 2일 지난 것만
-              AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+              OR DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                   MID(berth.tkoffPrarnde, 2, 16),
                   LEFT(berth.tkoffPrarnde, 19)),
               '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
@@ -190,7 +190,7 @@ export class AlramRepository {
                   AND berth.trminlCode IN ('${trminlCode}')
                   AND usr.oid = '${oid}'
                   -- 출항일이 2일 지난 것만
-                  AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                  OR DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                       MID(berth.tkoffPrarnde, 2, 16),
                       LEFT(berth.tkoffPrarnde, 19)),
                   '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
