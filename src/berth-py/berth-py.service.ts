@@ -136,6 +136,8 @@ export class BerthPyService {
           alramHistory,
           "alramHistory"
         );
+
+        /** alram history create obj */
         const makeAlramHistoryObj = {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
@@ -188,7 +190,7 @@ export class BerthPyService {
             );
 
             try {
-              /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
+              /** 입항일자 변경으로 인한 문자 전송 */
               await this.sendAlramOfcsdhpPrarnde(
                 userInfoList,
                 obj,

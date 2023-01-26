@@ -25,6 +25,7 @@ export class UserService {
     private readonly util: Utils
   ) {}
 
+  /** 로그인 */
   async login(loginData: LoginDto) {
     try {
       // duple check
@@ -54,6 +55,7 @@ export class UserService {
     }
   }
 
+  /** 유저 생성 */
   async create(createUserDto: CreateUserDto, res: Response) {
     const t = await this.seqeulize.transaction();
     try {
@@ -96,6 +98,7 @@ export class UserService {
     }
   }
 
+  /** 유저 정보 업데이트 */
   async update(oid: string, updateUserDto: UpdateUserDto, res: Response) {
     const t = await this.seqeulize.transaction();
     try {
@@ -131,6 +134,7 @@ export class UserService {
     }
   }
 
+  /** 유저 탈퇴 */
   async remove(oid: string) {
     const t = await this.seqeulize.transaction();
     try {
@@ -144,6 +148,7 @@ export class UserService {
     }
   }
 
+  /** 문자 on-off 옵션 업데이트 */
   async updateIsNotification(isNotificationDto: UpdateIsNotificationDto) {
     const t = await this.seqeulize.transaction();
     try {
@@ -156,7 +161,9 @@ export class UserService {
       return result;
     } catch (error) {
       await t.rollback();
-      throw new InternalServerErrorException("수정 실패");
+      throw new InternalServerErrorException(
+        `failed to update nofitication option :::\n${error}`
+      );
     }
   }
 }

@@ -69,9 +69,9 @@ export class AlramPushService {
         ).getDate();
 
         /** 같거나 사전입항예정일이 커야 함, 이전 것은 이미 지난 일 */
-        if (D_DAY <= berthInfo.carryTiming) {
-          CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
-        }
+        // if (D_DAY <= berthInfo.carryTiming) {
+        //   CARRY_TIMING.push(D_DAY, `${D_DAY}일`);
+        // }
       }
     }
 

@@ -39,6 +39,7 @@ export class AlramService {
     }
   }
 
+  /** 알람 구독 생성 */
   async create(data: Array<CreateAlramDto>) {
     const t = await this.seqeulize.transaction();
     try {
@@ -72,6 +73,7 @@ export class AlramService {
     }
   }
 
+  /** 알람 업데이트 */
   async update(updateAlramDto: UpdateAlramDto) {
     const t = await this.seqeulize.transaction();
     try {
@@ -88,6 +90,7 @@ export class AlramService {
     }
   }
 
+  /** 알람 삭제 */
   async remove(data: Array<RemoveAlramDto>) {
     const t = await this.seqeulize.transaction();
     try {
@@ -119,6 +122,7 @@ export class AlramService {
     }
   }
 
+  /** 알람 대쉬보드 */
   async makePageInfoForAlramList(
     data: OffsetPagingInfoDto,
     oid: string,
