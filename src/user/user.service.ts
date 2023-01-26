@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UseFilters,
 } from "@nestjs/common";
@@ -101,6 +102,7 @@ export class UserService {
   /** 유저 정보 업데이트 */
   async update(oid: string, updateUserDto: UpdateUserDto, res: Response) {
     const t = await this.seqeulize.transaction();
+    Logger.debug(updateUserDto);
     try {
       // duple check
       if (updateUserDto.userId) {
@@ -151,9 +153,10 @@ export class UserService {
   /** 문자 on-off 옵션 업데이트 */
   async updateIsNotification(isNotificationDto: UpdateIsNotificationDto) {
     const t = await this.seqeulize.transaction();
+    Logger.debug(isNotificationDto.isNofitication);
     try {
       await user.update(
-        { isNofitication: isNotificationDto.isNotification },
+        { isNofitication: isNotificationDto.isNofitication },
         { where: { oid: isNotificationDto.oid }, transaction: t }
       );
 

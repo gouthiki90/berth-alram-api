@@ -9,10 +9,10 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
-import { OffsetPagingInfoDto } from "src/dashboard/dto/offset-page-info.dto";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { AlramService } from "./alram.service";
 import { CreateAlramDto } from "./dto/create-alram.dto";
+import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
 
