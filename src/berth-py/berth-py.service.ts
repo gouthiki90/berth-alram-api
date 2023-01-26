@@ -90,7 +90,6 @@ export class BerthPyService {
 
   /** 입항 시간에 따른 알람 푸쉬 */
   async sendAlramOfcsdhpPrarnde(
-    today: string,
     userInfoList: Array<GetUserInfoListDto>,
     obj: CreateBerthPyDto,
     berthDupleData: berthStatSchedule
@@ -166,10 +165,6 @@ export class BerthPyService {
     try {
       for (const obj of data) {
         const today = new Date();
-        Logger.debug("--------------------");
-        Logger.debug(today.toISOString());
-        Logger.debug("berthOid ----", obj.oid);
-        Logger.debug("--------------------");
         /** 모선항차의 중복을 찾기 위한 data */
         /** 이전에 가져온 데이터 명시 필요 */
         const berthDupleData = await this.findOneForDupleData(obj.oid);
@@ -183,15 +178,6 @@ export class BerthPyService {
         });
 
         if (berthDupleData) {
-          /** 입항예정일 변경 */
-          Logger.debug("-----------------");
-          Logger.debug(today.toISOString());
-          Logger.debug("-------- before berth data --------");
-          Logger.debug(`"${berthDupleData.csdhpPrarnde}"`);
-          Logger.debug("-------- after berth data ---------");
-          Logger.debug(`"${obj.csdhpPrarnde}"`);
-          Logger.debug("-----------------");
-
           if (
             berthDupleData.trminlCode === obj.trminlCode &&
             berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
