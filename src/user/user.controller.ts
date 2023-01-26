@@ -18,7 +18,6 @@ import { UserRepository } from "./user.repository";
 import { LoginDto } from "./dto/login.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { Response } from "express";
-import { UpdateIsNotificationDto } from "./dto/update-is-notification.dto";
 
 @UseFilters(ErrorHandler)
 @Controller("user")
@@ -58,12 +57,6 @@ export class UserController {
     @Res() res: Response
   ) {
     return this.userService.update(oid, updateUserDto, res);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Put("/is-notification")
-  updateIsNotification(@Body() isNotificationDto: UpdateIsNotificationDto) {
-    return this.userService.updateIsNotification(isNotificationDto);
   }
 
   @UseGuards(JwtAuthGuard)
