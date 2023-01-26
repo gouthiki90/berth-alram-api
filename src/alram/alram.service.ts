@@ -34,11 +34,12 @@ export class AlramService {
         where: { scheduleOid: obj.scheduleOid, userOid: obj.userOid },
       });
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException(`${error}`);
     }
   }
 
+  /** 알람 구독 생성 */
   async create(data: Array<CreateAlramDto>) {
     const t = await this.seqeulize.transaction();
     try {
@@ -66,11 +67,13 @@ export class AlramService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("faield to create alram data");
     }
   }
 
+  /** 알람 업데이트 */
   async update(updateAlramDto: UpdateAlramDto) {
     const t = await this.seqeulize.transaction();
     try {
@@ -81,11 +84,13 @@ export class AlramService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("faield alram update data");
     }
   }
 
+  /** 알람 삭제 */
   async remove(data: Array<RemoveAlramDto>) {
     Logger.debug(data);
     const t = await this.seqeulize.transaction();
@@ -115,11 +120,13 @@ export class AlramService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException("failed to delete alram data");
     }
   }
 
+  /** 알람 대쉬보드 */
   async makePageInfoForAlramList(data: OffsetPagingInfoDto, oid: string) {
     /** 20개로 최대 고정값 */
     const PAGE_ITEM_COUNT = 20;
@@ -143,13 +150,15 @@ export class AlramService {
       const userAlramListForPaging = await this.alramRepository.findOne(
         oid,
         offset,
-        trminalCodes
+        trminalCodes,
+        data.isLastViewDto.isLastView
       );
 
       /** 페이징 값을 구하기 위한 SELECT */
       const userAlramListForPagingAll = await this.alramRepository.findAll(
         oid,
-        trminalCodes
+        trminalCodes,
+        data.isLastViewDto.isLastView
       );
 
       if (userAlramListForPaging.length !== 0) {
@@ -158,8 +167,10 @@ export class AlramService {
         data.totalPageCount = Math.ceil(userAlramListForPagingAll.length / 20);
         data.currentItemCount = userAlramListForPaging.length;
 
+        /** 페이징 data */
         const pageInfo = { ...data };
 
+        /** 페이징에 따른 데이터 push */
         userAlramListForPaging.map((value: OffsetAlramDto) => {
           berthItems.push(value);
         });
@@ -170,7 +181,7 @@ export class AlramService {
         return this.pageInfoDto;
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException("백엔드 로직 중 에러");
     }
   }

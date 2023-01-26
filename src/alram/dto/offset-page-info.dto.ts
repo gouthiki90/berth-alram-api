@@ -14,4 +14,9 @@ export class OffsetPagingInfoDto {
   totalPageCount: number;
   /** 터미널코드 리스트 */
   trminlCodeList?: Array<string>;
+  /** 이전 출항일도 보기 옵션 dto */
+  isLastViewDto?: {
+    /** 이전 출항일도 보기 옵션 */
+    isLastView?: boolean;
+  };
 }

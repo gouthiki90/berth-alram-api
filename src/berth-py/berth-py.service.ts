@@ -8,7 +8,6 @@ import { alramHistory, berthStatSchedule } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
-import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Utils } from "src/util/common.utils";
 import { GetUserInfoListDto } from "./dto/get-user-info-list.dto";
 
@@ -17,7 +16,6 @@ export class BerthPyService {
   constructor(
     private readonly seqeulize: Sequelize,
     private readonly httpService: HttpService,
-    private readonly schedulerRegistry: SchedulerRegistry,
     private readonly util: Utils
   ) {}
 
@@ -40,10 +38,11 @@ export class BerthPyService {
         SELECT
           users.oid AS userOid,
           users.contact,
+          users.is_nofitication,
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
         FROM subscription_alram AS alram
-        LEFT JOIN user AS users ON alram.user_oid = users.oid
+        INNER JOIN user AS users ON alram.user_oid = users.oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
@@ -98,28 +97,27 @@ export class BerthPyService {
   ) {
     try {
       for (const userInfo of userInfoList) {
-        Logger.debug("--------------------");
-        Logger.debug("userOid ----", userInfo.userOid);
-        Logger.debug("infoList length ----", userInfoList.length);
-        Logger.debug(today);
-        Logger.debug("userContact ----", userInfo.contact);
-        Logger.debug("--------------------");
-        await this.httpService.axiosRef
-          .post(
-            "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
-            {
-              content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
-              receivers: [`${userInfo.contact}`],
-            },
-            {
-              headers: {
-                "x-api-key": `${process.env.MESSAGE_KEY}`,
+        /** 문자 옵션이 on일때만 푸쉬하기 */
+        if (userInfo.isNotification === 1) {
+          await this.httpService.axiosRef
+            .post(
+              "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
+              {
+                content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+                receivers: [`${userInfo.contact}`],
               },
-            }
-          )
-          .catch((error) => {
-            Logger.error(error);
-          });
+              {
+                headers: {
+                  "x-api-key": `${process.env.MESSAGE_KEY}`,
+                },
+              }
+            )
+            .catch((error) => {
+              Logger.error(error);
+            });
+        } else {
+          continue;
+        }
       }
     } catch (error) {
       Logger.error(error);
@@ -139,6 +137,8 @@ export class BerthPyService {
           alramHistory,
           "alramHistory"
         );
+
+        /** alram history create obj */
         const makeAlramHistoryObj = {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
@@ -208,21 +208,28 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            /** 입항일자 변경으로 인한 문자 전송 - 테스트 기간까지는 문자 전송을 하지 않음 */
-            await this.sendAlramOfcsdhpPrarnde(
-              today.toISOString(),
-              userInfoList,
-              obj,
-              berthDupleData
-            );
+            try {
+              /** 입항일자 변경으로 인한 문자 전송 */
+              await this.sendAlramOfcsdhpPrarnde(
+                userInfoList,
+                obj,
+                berthDupleData
+              );
+            } catch (error) {
+              Logger.error(error);
+            }
 
-            /** 알람 메시지 creates */
-            await this.sendWebAlramOfcsdhpPrarnde(
-              userInfoList,
-              obj,
-              berthDupleData,
-              t
-            );
+            try {
+              /** 알람 메시지 create */
+              await this.sendWebAlramOfcsdhpPrarnde(
+                userInfoList,
+                obj,
+                berthDupleData,
+                t
+              );
+            } catch (error) {
+              Logger.error(error);
+            }
           }
         }
       }
@@ -264,21 +271,21 @@ export class BerthPyService {
   }
 
   /** delete berth old data */
-  @Cron(CronExpression.EVERY_2ND_MONTH, {
-    name: "deleteOldBerthDataSchedule",
-  })
-  async deleteOldBerthDataSchedule() {
-    try {
-      Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
-      await this.deleteOldBerthData();
-      Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
-    } catch (error) {
-      Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
-      Logger.error(error);
-      const GET_JOB = this.schedulerRegistry.getCronJob(
-        "deleteOldBerthDataSchedule"
-      );
-      GET_JOB.stop();
-    }
-  }
+  // @Cron(CronExpression.EVERY_2ND_MONTH, {
+  //   name: "deleteOldBerthDataSchedule",
+  // })
+  // async deleteOldBerthDataSchedule() {
+  //   try {
+  //     Logger.warn(`::: deleteOldBerthDataSchedule Start... :::`);
+  //     await this.deleteOldBerthData();
+  //     Logger.warn(`::: deleteOldBerthDataSchedule end... :::`);
+  //   } catch (error) {
+  //     Logger.error(`::: deleteOldBerthDataSchedule Error! :::`);
+  //     Logger.error(error);
+  //     const GET_JOB = this.schedulerRegistry.getCronJob(
+  //       "deleteOldBerthDataSchedule"
+  //     );
+  //     GET_JOB.stop();
+  //   }
+  // }
 }

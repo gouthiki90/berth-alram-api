@@ -5,4 +5,6 @@ export class GetUserInfoListDto {
   contact?: string;
   /** 알람 oid */
   alramOid?: string;
+  /** 문자 on-off 옵션 */
+  isNotification?: number;
 }

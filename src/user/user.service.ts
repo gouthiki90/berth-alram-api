@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UseFilters,
 } from "@nestjs/common";
@@ -24,6 +25,7 @@ export class UserService {
     private readonly util: Utils
   ) {}
 
+  /** 로그인 */
   async login(loginData: LoginDto) {
     try {
       // duple check
@@ -53,6 +55,7 @@ export class UserService {
     }
   }
 
+  /** 유저 생성 */
   async create(createUserDto: CreateUserDto, res: Response) {
     const t = await this.seqeulize.transaction();
     try {
@@ -95,8 +98,10 @@ export class UserService {
     }
   }
 
+  /** 유저 정보 업데이트 */
   async update(oid: string, updateUserDto: UpdateUserDto, res: Response) {
     const t = await this.seqeulize.transaction();
+    Logger.debug(updateUserDto);
     try {
       // duple check
       if (updateUserDto.userId) {
@@ -130,6 +135,7 @@ export class UserService {
     }
   }
 
+  /** 유저 탈퇴 */
   async remove(oid: string) {
     const t = await this.seqeulize.transaction();
     try {

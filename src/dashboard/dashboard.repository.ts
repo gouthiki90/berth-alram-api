@@ -45,7 +45,7 @@ export class DashBoardRepository {
         '%Y-%m-%d %H:%i') AS tkoffPrarnde
     FROM
     berthStat_schedule AS berth
-    LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+    INNER JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
     WHERE TRUE
       `,
       { type: sequelize.QueryTypes.SELECT }
@@ -97,7 +97,7 @@ export class DashBoardRepository {
         '%Y-%m-%d %H:%i') AS tkoffPrarnde
       FROM
       berthStat_schedule AS berth
-      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+      INNER JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       ${this.utils.generator(whereArr, query)}
       ORDER BY berth.csdhpPrarnde ASC
@@ -155,7 +155,7 @@ export class DashBoardRepository {
           '%Y-%m-%d %H:%i') AS tkoffPrarnde
         FROM
         berthStat_schedule AS berth
-        LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+        INNER JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
         WHERE TRUE
         ${this.utils.generator(whereArr, query)}
         ORDER BY berth.csdhpPrarnde ASC
@@ -201,7 +201,7 @@ export class DashBoardRepository {
           '%Y-%m-%d %H:%i') AS tkoffPrarnde
       FROM
       berthStat_schedule AS berth
-      LEFT JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
+      INNER JOIN berth_info AS info ON berth.trminlCode = info.turminal_code
       WHERE TRUE
       AND berth.oid = $oid
       ORDER BY berth.csdhpPrarnde ASC

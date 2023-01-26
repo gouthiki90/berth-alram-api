@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from "@nestjs/common";
-import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Sequelize } from "sequelize-typescript";
 import { alramHistory } from "src/models";
 import { UpdateAlramHistoryDto } from "./dto/update-alram-history.dto";
@@ -11,33 +10,32 @@ import seqeulize from "sequelize";
 
 @Injectable()
 export class AlramHistoryService {
-  constructor(
-    private readonly seqeulize: Sequelize,
-    private readonly schedulerRegistry: SchedulerRegistry
-  ) {}
+  constructor(private readonly seqeulize: Sequelize) {}
 
   /** DELETE를 위한 SELECT */
   async findAllForRemoveAlramHistory() {
     try {
       return await this.seqeulize.query(
         `
-        SELECT 
-          oid
+        SELECT
+          alram.oid
         FROM
-          berthStat_schedule
+          subscription_alram AS alram
+        INNER
+			JOIN berthStat_schedule AS berth ON berth.oid = alram.schedule_oid
         WHERE
           TRUE
           -- 출항일이 3일 지난 것만
-            AND DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                MID(tkoffPrarnde, 2, 16),
-                LEFT(tkoffPrarnde, 19)),
-            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)),
+            AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                MID(berth.tkoffPrarnde, 2, 16),
+                LEFT(berth.tkoffPrarnde, 19)),
+            '%Y-%m-%d %H:%i') IN (IF(DATE_ADD(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                    MID(berth.tkoffPrarnde, 2, 16),
+                    LEFT(berth.tkoffPrarnde, 19)),
                 '%Y-%m-%d %H:%i'), INTERVAL 3 DAY) < DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
-            DATE_FORMAT(IF(LEFT(tkoffPrarnde, 1) = '(',
-                    MID(tkoffPrarnde, 2, 16),
-                    LEFT(tkoffPrarnde, 19)),
+            DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                    MID(berth.tkoffPrarnde, 2, 16),
+                    LEFT(berth.tkoffPrarnde, 19)),
                 '%Y-%m-%d %H:%i'),
             NULL))
         `,
@@ -48,7 +46,7 @@ export class AlramHistoryService {
         }
       );
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException("조회 실패");
     }
   }
@@ -65,7 +63,7 @@ export class AlramHistoryService {
       const result = await t.commit();
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(`${error} UPDATE Error!`);
     }
@@ -78,40 +76,41 @@ export class AlramHistoryService {
       const historyRemoveOidList = await this.findAllForRemoveAlramHistory();
 
       if (historyRemoveOidList.length === 0) {
+        await t.rollback();
         return;
       }
 
       for (const obj of historyRemoveOidList) {
         await alramHistory.destroy({
-          where: { oid: obj.oid, isRead: 1 },
+          where: { alramOid: obj.oid, isRead: 1 },
           transaction: t,
         });
       }
 
       await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException(`${error} DELETE Error!`);
     }
   }
 
   /** 매주 주말마다 삭제 */
-  @Cron(CronExpression.EVERY_WEEKEND, {
-    name: "removeAlramHistorySchedule",
-  })
-  async removeAlramHistorySchedule() {
-    try {
-      Logger.warn("::: removeAlramHistorySchedule start... :::");
-      await this.removeScheduleFuntion();
-      Logger.warn("::: removeAlramHistorySchedule end... :::");
-    } catch (error) {
-      Logger.error(`::: removeAlramHistorySchedule Error! :::`);
-      console.log(error);
-      const GET_JOB = this.schedulerRegistry.getCronJob(
-        "removeAlramHistorySchedule"
-      );
-      GET_JOB.stop();
-    }
-  }
+  // @Cron(CronExpression.EVERY_WEEKEND, {
+  //   name: "removeAlramHistorySchedule",
+  // })
+  // async removeAlramHistorySchedule() {
+  //   try {
+  //     Logger.warn("::: removeAlramHistorySchedule start... :::");
+  //     await this.removeScheduleFuntion();
+  //     Logger.warn("::: removeAlramHistorySchedule end... :::");
+  //   } catch (error) {
+  //     Logger.error(`::: removeAlramHistorySchedule Error! :::`);
+  //     Logger.error(error);
+  //     const GET_JOB = this.schedulerRegistry.getCronJob(
+  //       "removeAlramHistorySchedule"
+  //     );
+  //     GET_JOB.stop();
+  //   }
+  // }
 }

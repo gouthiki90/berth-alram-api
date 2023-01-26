@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class DynamicUpdateContainerStatus {
+export class ContainerUpdateRemarkDto {
   /** container oid */
   oid?: string;
-  /** container status */
-  containerStatus?: number;
+  /** container remark */
+  remark?: string;
 }

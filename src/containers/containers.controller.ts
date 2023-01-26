@@ -12,10 +12,11 @@ import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { ErrorHandler } from "src/error-handler/error-handler";
 import { ContainersReposiotry } from "./containers.repository";
 import { ContainersService } from "./containers.service";
+import { ContainerUpdateRemarkDto } from "./dto/container-update-remark.dto";
+import { CreateContainerDto } from "./dto/create-container.dto";
 import { DeleteContainerDto } from "./dto/delete-container.dto";
+import { DynamicUpdateContainerDangerStatusDto } from "./dto/dynamic-update-container-danger-status.dto";
 import { DynamicUpdateContainerStatus } from "./dto/dynamic-update-container-status.dto";
-import { PostContainerListResponseDto } from "./dto/post-container-list-response.dto";
-import { PostContainerListDto } from "./dto/post-container-list.dto";
 
 // @UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
@@ -32,13 +33,10 @@ export class ContainersController {
   }
 
   @Post("/new-list")
-  getContainerListFormEtrans(@Body() containerListDto: PostContainerListDto) {
-    return this.containersService.createContainerList(containerListDto);
-  }
-
-  @Post("/confirm-list-py")
-  postConCodeToPython(@Body() upsertContainer: PostContainerListResponseDto) {
-    return this.containersService.sendConInfoToPython(upsertContainer);
+  getContainerListFormEtrans(
+    @Body() containerListDto: Array<CreateContainerDto>
+  ) {
+    return this.containersService.createContainers(containerListDto);
   }
 
   @Post("/")
@@ -46,8 +44,20 @@ export class ContainersController {
     return this.containersService.deleteContainers(data);
   }
 
-  @Put("/container-status")
+  @Put("/status")
   changeContainerStatus(@Body() data: DynamicUpdateContainerStatus) {
     return this.containersService.dynamicUpdateContainerStatus(data);
+  }
+
+  @Put("/danger-status")
+  changeContainerIsDangerStatus(
+    @Body() data: DynamicUpdateContainerDangerStatusDto
+  ) {
+    return this.containersService.dynamicUpdateContainerIsDangerStatus(data);
+  }
+
+  @Put("/remark")
+  updateContainerRemark(@Body() containerRemarkDto: ContainerUpdateRemarkDto) {
+    return this.containersService.containerRemarkUpdate(containerRemarkDto);
   }
 }
