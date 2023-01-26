@@ -13,7 +13,7 @@ export class AlramRepository {
     isLastView: boolean
   ) {
     try {
-      if (typeof isLastView === typeof "boolean" && isLastView) {
+      if (typeof isLastView === "boolean" && isLastView) {
         const list = await this.sequelize.query(
           `
           SELECT 
@@ -118,6 +118,19 @@ export class AlramRepository {
           TRUE
               AND berth.trminlCode IN ('${trminlCode}')
               AND usr.oid = '${oid}'
+              -- 현재 날짜 보다 큰 날짜의 출항일만
+              AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                  MID(berth.tkoffPrarnde, 2, 16),
+                  LEFT(berth.tkoffPrarnde, 19)),
+              '%Y-%m-%d %H:%i') IN (IF(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                      MID(berth.tkoffPrarnde, 2, 16),
+                      LEFT(berth.tkoffPrarnde, 19)),
+                  '%Y-%m-%d %H:%i') > DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+              DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                      MID(berth.tkoffPrarnde, 2, 16),
+                      LEFT(berth.tkoffPrarnde, 19)),
+                  '%Y-%m-%d %H:%i'),
+              NULL))
               LIMIT ${offset}, 20
           `,
           {
@@ -134,7 +147,7 @@ export class AlramRepository {
 
   async findAll(oid: string, trminlCode: string, isLastView: boolean) {
     try {
-      if (typeof isLastView === typeof "boolean" && isLastView) {
+      if (typeof isLastView === "boolean" && isLastView) {
         const list = await this.sequelize.query(
           `
           SELECT 
@@ -176,7 +189,7 @@ export class AlramRepository {
               TRUE
                   AND berth.trminlCode IN ('${trminlCode}')
                   AND usr.oid = '${oid}'
-                  -- 출항일이 3일 지난 것만
+                  -- 출항일이 2일 지난 것만
                   AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                       MID(berth.tkoffPrarnde, 2, 16),
                       LEFT(berth.tkoffPrarnde, 19)),
@@ -238,6 +251,19 @@ export class AlramRepository {
               TRUE
                   AND berth.trminlCode IN ('${trminlCode}')
                   AND usr.oid = '${oid}'
+                  -- 현재 날짜 보다 큰 날짜의 출항일만
+                  AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                      MID(berth.tkoffPrarnde, 2, 16),
+                      LEFT(berth.tkoffPrarnde, 19)),
+                  '%Y-%m-%d %H:%i') IN (IF(DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                          MID(berth.tkoffPrarnde, 2, 16),
+                          LEFT(berth.tkoffPrarnde, 19)),
+                      '%Y-%m-%d %H:%i') > DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
+                  DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
+                          MID(berth.tkoffPrarnde, 2, 16),
+                          LEFT(berth.tkoffPrarnde, 19)),
+                      '%Y-%m-%d %H:%i'),
+                  NULL))
           `,
           {
             type: seqeulize.QueryTypes.SELECT,

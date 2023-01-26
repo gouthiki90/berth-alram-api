@@ -123,11 +123,7 @@ export class AlramService {
   }
 
   /** 알람 대쉬보드 */
-  async makePageInfoForAlramList(
-    data: OffsetPagingInfoDto,
-    oid: string,
-    isLastView: boolean
-  ) {
+  async makePageInfoForAlramList(data: OffsetPagingInfoDto, oid: string) {
     /** 20개로 최대 고정값 */
     const PAGE_ITEM_COUNT = 20;
     /** OFFSET 계산값 */
@@ -151,14 +147,14 @@ export class AlramService {
         oid,
         offset,
         trminalCodes,
-        isLastView
+        data.isLastViewDto.isLastView
       );
 
       /** 페이징 값을 구하기 위한 SELECT */
       const userAlramListForPagingAll = await this.alramRepository.findAll(
         oid,
         trminalCodes,
-        isLastView
+        data.isLastViewDto.isLastView
       );
 
       if (userAlramListForPaging.length !== 0) {
