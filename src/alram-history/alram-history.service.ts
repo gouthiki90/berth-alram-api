@@ -7,10 +7,14 @@ import { Sequelize } from "sequelize-typescript";
 import { alramHistory } from "src/models";
 import { UpdateAlramHistoryDto } from "./dto/update-alram-history.dto";
 import seqeulize from "sequelize";
+import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
 export class AlramHistoryService {
-  constructor(private readonly seqeulize: Sequelize) {}
+  constructor(
+    private readonly seqeulize: Sequelize,
+    private readonly schedulerRegistry: SchedulerRegistry
+  ) {}
 
   /** DELETE를 위한 SELECT */
   async findAllForRemoveAlramHistory() {
@@ -96,21 +100,21 @@ export class AlramHistoryService {
   }
 
   /** 매주 주말마다 삭제 */
-  // @Cron(CronExpression.EVERY_WEEKEND, {
-  //   name: "removeAlramHistorySchedule",
-  // })
-  // async removeAlramHistorySchedule() {
-  //   try {
-  //     Logger.warn("::: removeAlramHistorySchedule start... :::");
-  //     await this.removeScheduleFuntion();
-  //     Logger.warn("::: removeAlramHistorySchedule end... :::");
-  //   } catch (error) {
-  //     Logger.error(`::: removeAlramHistorySchedule Error! :::`);
-  //     Logger.error(error);
-  //     const GET_JOB = this.schedulerRegistry.getCronJob(
-  //       "removeAlramHistorySchedule"
-  //     );
-  //     GET_JOB.stop();
-  //   }
-  // }
+  @Cron(CronExpression.EVERY_WEEKEND, {
+    name: "removeAlramHistorySchedule",
+  })
+  async removeAlramHistorySchedule() {
+    try {
+      Logger.warn("::: removeAlramHistorySchedule start... :::");
+      await this.removeScheduleFuntion();
+      Logger.warn("::: removeAlramHistorySchedule end... :::");
+    } catch (error) {
+      Logger.error(`::: removeAlramHistorySchedule Error! :::`);
+      Logger.error(error);
+      const GET_JOB = this.schedulerRegistry.getCronJob(
+        "removeAlramHistorySchedule"
+      );
+      GET_JOB.stop();
+    }
+  }
 }
