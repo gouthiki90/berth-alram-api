@@ -172,11 +172,6 @@ export class BerthPyService {
         /** 알람을 구독한 유저 리스트 */
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
-        await berthStatSchedule.update(obj, {
-          where: { oid: obj.oid },
-          transaction: t,
-        });
-
         if (berthDupleData) {
           if (
             berthDupleData.trminlCode === obj.trminlCode &&
@@ -187,6 +182,12 @@ export class BerthPyService {
                 obj.csdhpPrarnde
               } ::: is change! :::`
             );
+
+            /** 중복 있을 시 update */
+            await berthStatSchedule.update(obj, {
+              where: { oid: obj.oid },
+              transaction: t,
+            });
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
@@ -217,6 +218,10 @@ export class BerthPyService {
               Logger.error(error);
             }
           }
+        } else {
+          await berthStatSchedule.create(obj, {
+            transaction: t,
+          });
         }
       }
 
