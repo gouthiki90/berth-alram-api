@@ -97,7 +97,7 @@ export class BerthPyService {
     try {
       for (const userInfo of userInfoList) {
         /** 문자 옵션이 on일때만 푸쉬하기 */
-        if (userInfo.isNotification === 1) {
+        if (userInfo.isNofitication === 1) {
           await this.httpService.axiosRef
             .post(
               "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
