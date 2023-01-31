@@ -173,6 +173,12 @@ export class BerthPyService {
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
         if (berthDupleData) {
+          /** 중복 있을 시 update */
+          await berthStatSchedule.update(obj, {
+            where: { oid: obj.oid },
+            transaction: t,
+          });
+
           if (
             berthDupleData.trminlCode === obj.trminlCode &&
             berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
@@ -182,12 +188,6 @@ export class BerthPyService {
                 obj.csdhpPrarnde
               } ::: is change! :::`
             );
-
-            /** 중복 있을 시 update */
-            await berthStatSchedule.update(obj, {
-              where: { oid: obj.oid },
-              transaction: t,
-            });
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
@@ -219,9 +219,8 @@ export class BerthPyService {
             }
           }
         } else {
-          await berthStatSchedule.create(obj, {
-            transaction: t,
-          });
+          Logger.debug("::: is upsert :::");
+          await berthStatSchedule.upsert(obj, { transaction: t });
         }
       }
 
