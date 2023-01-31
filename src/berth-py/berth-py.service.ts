@@ -38,7 +38,7 @@ export class BerthPyService {
         SELECT
           users.oid AS userOid,
           users.contact,
-          users.is_nofitication,
+          users.is_nofitication AS isNofitication,
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
         FROM subscription_alram AS alram
@@ -97,7 +97,7 @@ export class BerthPyService {
     try {
       for (const userInfo of userInfoList) {
         /** 문자 옵션이 on일때만 푸쉬하기 */
-        if (userInfo.isNotification === 1) {
+        if (userInfo.isNofitication === 1) {
           await this.httpService.axiosRef
             .post(
               "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
@@ -164,6 +164,7 @@ export class BerthPyService {
 
     try {
       for (const obj of data) {
+        const today = new Date();
         /** 모선항차의 중복을 찾기 위한 data */
         /** 이전에 가져온 데이터 명시 필요 */
         const berthDupleData = await this.findOneForDupleData(obj.oid);
@@ -171,17 +172,22 @@ export class BerthPyService {
         /** 알람을 구독한 유저 리스트 */
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
-        await berthStatSchedule.update(obj, {
-          where: { oid: obj.oid },
-          transaction: t,
-        });
-
         if (berthDupleData) {
-          /** 입항예정일 변경 */
-          if (berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde) {
+          if (
+            berthDupleData.trminlCode === obj.trminlCode &&
+            berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
+          ) {
             Logger.warn(
-              `csdhpPrarnde=${obj.oid} - ${obj.csdhpPrarnde} ::: is change! :::`
+              `csdhpPrarnde=::: ${today.toISOString()}\n ${obj.oid} - ${
+                obj.csdhpPrarnde
+              } ::: is change! :::`
             );
+
+            /** 중복 있을 시 update */
+            await berthStatSchedule.update(obj, {
+              where: { oid: obj.oid },
+              transaction: t,
+            });
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
@@ -212,6 +218,10 @@ export class BerthPyService {
               Logger.error(error);
             }
           }
+        } else {
+          await berthStatSchedule.create(obj, {
+            transaction: t,
+          });
         }
       }
 

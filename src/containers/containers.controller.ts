@@ -18,7 +18,7 @@ import { DeleteContainerDto } from "./dto/delete-container.dto";
 import { DynamicUpdateContainerDangerStatusDto } from "./dto/dynamic-update-container-danger-status.dto";
 import { DynamicUpdateContainerStatus } from "./dto/dynamic-update-container-status.dto";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("containers")
 export class ContainersController {

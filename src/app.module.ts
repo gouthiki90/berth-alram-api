@@ -27,6 +27,7 @@ import { AlramHistoryModule } from "./alram-history/alram-history.module";
       autoLoadModels: true,
       synchronize: true,
       timezone: "+09:00",
+      logging: false,
     }),
     DashboardModule,
     UserModule,

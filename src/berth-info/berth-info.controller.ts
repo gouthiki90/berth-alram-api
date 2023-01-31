@@ -4,7 +4,7 @@ import { ErrorHandler } from "src/error-handler/error-handler";
 import { BerthInfoRepository } from "./berth-info.repository";
 import { BerthInfoService } from "./berth-info.service";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @UseFilters(ErrorHandler)
 @Controller("berth-info")
 export class BerthInfoController {
