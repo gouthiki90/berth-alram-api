@@ -38,7 +38,7 @@ export class BerthPyService {
         SELECT
           users.oid AS userOid,
           users.contact,
-          users.is_nofitication,
+          users.is_nofitication AS isNofitication,
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
         FROM subscription_alram AS alram
