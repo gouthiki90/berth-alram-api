@@ -100,7 +100,7 @@ export class user
     allowNull: true,
     type: DataType.TINYINT,
     comment: "알람 ON/OFF 여부",
-    defaultValue: "0",
+    defaultValue: "1",
   })
   isNofitication?: number;
 
