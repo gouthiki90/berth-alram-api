@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCommonCodeDto } from './dto/create-common-code.dto';
-import { UpdateCommonCodeDto } from './dto/update-common-code.dto';
+import { Injectable } from "@nestjs/common";
+import { CreateCommonCodeDto } from "./dto/create-common-code.dto";
+import { UpdateCommonCodeDto } from "./dto/update-common-code.dto";
 
 @Injectable()
 export class CommonCodeService {
   create(createCommonCodeDto: CreateCommonCodeDto) {
-    return 'This action adds a new commonCode';
+    return "This action adds a new commonCode";
   }
 
   findAll() {
