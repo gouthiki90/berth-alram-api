@@ -11,8 +11,6 @@ import {
 export interface userAttributes {
   id?: number;
   oid?: string;
-  companyGroupCode?: string;
-  authCode?: string;
   userId: string;
   userName?: string;
   password: Uint8Array;
@@ -43,22 +41,6 @@ export class user
 
   @Column({ allowNull: true, type: DataType.STRING(100), comment: "키값(oid)" })
   oid?: string;
-
-  @Column({
-    field: "company_group_code",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "회사 그룹 코드(사업자번호)",
-  })
-  companyGroupCode?: string;
-
-  @Column({
-    field: "auth_code",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "권한 코드",
-  })
-  authCode?: string;
 
   @Column({
     field: "user_id",
