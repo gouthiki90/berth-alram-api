@@ -12,6 +12,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   bizName: string;
   /** 전화번호 */
   contact?: string;
+  /** 연락처 2 */
+  contact_01?: string;
   /** 담당자 전화번호 */
   managerTel?: string;
   /** 담당자 이름 */
