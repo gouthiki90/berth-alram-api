@@ -14,7 +14,6 @@ import { AlramPushModule } from "./alram-push/alram-push.module";
 import { ContainersModule } from "./containers/containers.module";
 import { BerthInfoModule } from "./berth-info/berth-info.module";
 import { AlramHistoryModule } from "./alram-history/alram-history.module";
-import { CommonCodeModule } from './common-code/common-code.module';
 
 @Module({
   imports: [
@@ -40,7 +39,6 @@ import { CommonCodeModule } from './common-code/common-code.module';
     ContainersModule,
     BerthInfoModule,
     AlramHistoryModule,
-    CommonCodeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
