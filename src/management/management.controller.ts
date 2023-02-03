@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { CreateManagementDto } from "./dto/create-management.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
+@UseGuards(JwtAuthGuard)
 @Controller("management")
 export class ManagementController {
   constructor(private readonly managementService: ManagementService) {}
