@@ -16,6 +16,7 @@ export interface userAttributes {
   password: Uint8Array;
   bizName?: string;
   contact?: string;
+  contact_01?: string;
   managerTel?: string;
   managerName?: string;
   contactOption?: number;
@@ -66,9 +67,16 @@ export class user
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: "알람 발송 대상",
+    comment: "알람 발송 대상 1번",
   })
   contact?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "알람 발송 대상2",
+  })
+  contact_01?: string;
 
   @Column({
     field: "manager_tel",
@@ -100,7 +108,7 @@ export class user
     allowNull: true,
     type: DataType.TINYINT,
     comment: "알람 ON/OFF 여부",
-    defaultValue: "0",
+    defaultValue: "1",
   })
   isNofitication?: number;
 
