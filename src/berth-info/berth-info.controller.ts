@@ -17,4 +17,9 @@ export class BerthInfoController {
   findAll() {
     return this.berthInfoRepository.findAllBerthInfo();
   }
+
+  @Get("/number")
+  findAllParseNumber() {
+    return this.berthInfoRepository.findNumberInfo();
+  }
 }
