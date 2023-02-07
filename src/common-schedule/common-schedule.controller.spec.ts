@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommonScheduleController } from './common-schedule.controller';
-import { CommonScheduleService } from './common-schedule.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { CommonScheduleController } from "./common-schedule.controller";
+import { CommonScheduleService } from "./common-schedule.service";
 
-describe('CommonScheduleController', () => {
+describe("CommonScheduleController", () => {
   let controller: CommonScheduleController;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('CommonScheduleController', () => {
     controller = module.get<CommonScheduleController>(CommonScheduleController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { Utils } from "src/util/common.utils";
 import sequelize from "sequelize";
@@ -12,7 +12,7 @@ export class CommonScheduleRepository {
 
   /** 선석 스케줄 모두 select */
   async findAllScheduleToEverySite(query: any) {
-    const { trminlCode, searchType } = query;
+    const { trminlCode, searchType, endDate, startDate } = query;
     try {
       const whereArr = [
         ["AND trminlCode = :trminlCode", trminlCode],
@@ -47,7 +47,6 @@ export class CommonScheduleRepository {
               berth.shifting,
               berth.createDate,
               berth.updateDate,
-              info.is_new_port,
               IF(LEFT(csdhpPrarnde, 1) = '(',
                 MID(csdhpPrarnde, 2, 16),
                 LEFT(csdhpPrarnde, 19)) AS csdhpPrarnde,
@@ -67,6 +66,7 @@ export class CommonScheduleRepository {
       );
     } catch (error) {
       Logger.error(error);
+      throw new NotFoundException("can not found berthSchedule data list");
     }
   }
 }
