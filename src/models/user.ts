@@ -11,11 +11,14 @@ import {
 export interface userAttributes {
   id?: number;
   oid?: string;
+  companyGroupCode?: string;
+  authCode?: string;
   userId: string;
   userName?: string;
   password: Uint8Array;
   bizName?: string;
   contact?: string;
+  contact_01?: string;
   managerTel?: string;
   managerName?: string;
   contactOption?: number;
@@ -42,6 +45,22 @@ export class user
   oid?: string;
 
   @Column({
+    field: "company_group_code",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "회사 그룹 코드(사업자번호)",
+  })
+  companyGroupCode?: string;
+
+  @Column({
+    field: "auth_code",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "권한 코드",
+  })
+  authCode?: string;
+
+  @Column({
     field: "user_id",
     type: DataType.STRING(50),
     comment: "유저 아이디",
@@ -66,9 +85,16 @@ export class user
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: "알람 발송 대상",
+    comment: "알람 발송 대상 1번",
   })
   contact?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "알람 발송 대상2",
+  })
+  contact_01?: string;
 
   @Column({
     field: "manager_tel",
