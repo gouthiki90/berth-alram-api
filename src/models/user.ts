@@ -12,6 +12,7 @@ export interface userAttributes {
   id?: number;
   oid?: string;
   companyGroupCode?: string;
+  principal?: string;
   authCode?: string;
   userId: string;
   userName?: string;
@@ -19,6 +20,7 @@ export interface userAttributes {
   bizName?: string;
   contact?: string;
   contact_01?: string;
+  email?: string;
   managerTel?: string;
   managerName?: string;
   contactOption?: number;
@@ -51,6 +53,13 @@ export class user
     comment: "회사 그룹 코드(사업자번호)",
   })
   companyGroupCode?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(50),
+    comment: "대표자 이름",
+  })
+  principal?: string;
 
   @Column({
     field: "auth_code",
@@ -95,6 +104,9 @@ export class user
     comment: "알람 발송 대상2",
   })
   contact_01?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: "이메일" })
+  email?: string;
 
   @Column({
     field: "manager_tel",
