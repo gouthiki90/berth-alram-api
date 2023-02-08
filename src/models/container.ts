@@ -15,17 +15,10 @@ export interface containerAttributes {
   alramOid?: string;
   containerStatus?: number;
   containerNumnber?: string;
-  carCode?: string;
-  outgateCy?: string;
-  cntrNo?: string;
-  outgateTime?: string;
-  statusDt?: string;
-  statusNm?: string;
-  cntrStatus?: string;
-  terminalName?: string;
-  statusTm?: string;
   isFreeze?: number;
   isDanger?: number;
+  isNewPort?: string;
+  isComplete?: number;
   remark?: string;
   createDate?: Date;
   updateDate?: Date;
@@ -86,78 +79,6 @@ export class container
   containerNumnber?: string;
 
   @Column({
-    field: "CAR_CODE",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "차량번호",
-  })
-  carCode?: string;
-
-  @Column({
-    field: "OUTGATE_CY",
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: "터미널 코드",
-  })
-  outgateCy?: string;
-
-  @Column({
-    field: "CNTR_NO",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "컨테이너 번호",
-  })
-  cntrNo?: string;
-
-  @Column({
-    field: "OUTGATE_TIME",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "반출시간",
-  })
-  outgateTime?: string;
-
-  @Column({
-    field: "STATUS_DT",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "해당 데이터 기준 날짜",
-  })
-  statusDt?: string;
-
-  @Column({
-    field: "STATUS_NM",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "반입/반출 상태",
-  })
-  statusNm?: string;
-
-  @Column({
-    field: "CNTR_STATUS",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "반입/반출 상태 코드",
-  })
-  cntrStatus?: string;
-
-  @Column({
-    field: "TERMINAL_NAME",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "터미널 이름",
-  })
-  terminalName?: string;
-
-  @Column({
-    field: "STATUS_TM",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "해당 데이터 기준의 시간",
-  })
-  statusTm?: string;
-
-  @Column({
     field: "is_freeze",
     allowNull: true,
     type: DataType.TINYINT,
@@ -174,6 +95,23 @@ export class container
     defaultValue: "0",
   })
   isDanger?: number;
+
+  @Column({
+    field: "is_new_port",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "반입/출입 컨테이너 구분값",
+  })
+  isNewPort?: string;
+
+  @Column({
+    field: "is_complete",
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: "완료/미완료 구분값",
+    defaultValue: "0",
+  })
+  isComplete?: number;
 
   @Column({
     allowNull: true,

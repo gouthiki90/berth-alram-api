@@ -18,12 +18,13 @@ export class ManageMentRepository {
         SELECT
           oid, -- 유저 키값
           company_code, -- 회사 코드
-          represent, -- 회사 대표명
+          principal, -- 회사 대표명
           user_id, -- 유저 아이디
           contact, -- 연락처
           contact_01, -- 연락처2
           email, -- 이메일
-          auth_status -- 가입상태
+          auth_status, -- 승인 상태
+          status -- 사용 상태
         FROM user
         `,
         { type: seqelize.QueryTypes.SELECT }
@@ -41,6 +42,7 @@ export class ManageMentRepository {
         SELECT
           oid, -- 유저 키값
           company_code, -- 회사 코드
+          principal, -- 회사 대표명
           user_id, -- 유저 아이디
           password, -- 비밀번호
           manager_name, -- 담당자 이름

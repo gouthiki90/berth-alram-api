@@ -14,6 +14,7 @@ export interface userAttributes {
   companyGroupCode?: string;
   principal?: string;
   authCode?: string;
+  authStatus?: string;
   userId: string;
   userName?: string;
   password: Uint8Array;
@@ -23,6 +24,7 @@ export interface userAttributes {
   email?: string;
   managerTel?: string;
   managerName?: string;
+  status?: string;
   contactOption?: number;
   isNofitication?: number;
   createDate?: Date;
@@ -68,6 +70,14 @@ export class user
     comment: "권한 코드",
   })
   authCode?: string;
+
+  @Column({
+    field: "auth_status",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "가입 승인 상태",
+  })
+  authStatus?: string;
 
   @Column({
     field: "user_id",
@@ -123,6 +133,13 @@ export class user
     comment: "부서 이름",
   })
   managerName?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "유저 사용 상태",
+  })
+  status?: string;
 
   @Column({
     field: "contact_option",
