@@ -21,7 +21,10 @@ export interface userAttributes {
   bizName?: string;
   contact?: string;
   contact_01?: string;
+<<<<<<< HEAD
   email?: string;
+=======
+>>>>>>> main
   managerTel?: string;
   managerName?: string;
   status?: string;
@@ -115,9 +118,12 @@ export class user
   })
   contact_01?: string;
 
+<<<<<<< HEAD
   @Column({ allowNull: true, type: DataType.STRING(50), comment: "이메일" })
   email?: string;
 
+=======
+>>>>>>> main
   @Column({
     field: "manager_tel",
     allowNull: true,

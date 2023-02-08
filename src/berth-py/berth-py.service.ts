@@ -38,6 +38,7 @@ export class BerthPyService {
         SELECT
           users.oid AS userOid,
           users.contact,
+          users.contact_01,
           users.is_nofitication AS isNofitication,
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
           alram.oid AS alramOid
@@ -103,7 +104,7 @@ export class BerthPyService {
               "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
               {
                 content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
-                receivers: [`${userInfo.contact}`],
+                receivers: [`${userInfo.contact}`, `${userInfo.contact_01}`],
               },
               {
                 headers: {
@@ -173,6 +174,12 @@ export class BerthPyService {
         const userInfoList = await this.findUserInfoListForAlram(obj);
 
         if (berthDupleData) {
+          /** 중복 있을 시 update */
+          await berthStatSchedule.update(obj, {
+            where: { oid: obj.oid },
+            transaction: t,
+          });
+
           if (
             berthDupleData.trminlCode === obj.trminlCode &&
             berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
@@ -182,12 +189,6 @@ export class BerthPyService {
                 obj.csdhpPrarnde
               } ::: is change! :::`
             );
-
-            /** 중복 있을 시 update */
-            await berthStatSchedule.update(obj, {
-              where: { oid: obj.oid },
-              transaction: t,
-            });
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
@@ -219,9 +220,8 @@ export class BerthPyService {
             }
           }
         } else {
-          await berthStatSchedule.create(obj, {
-            transaction: t,
-          });
+          Logger.debug("::: is upsert :::");
+          await berthStatSchedule.upsert(obj, { transaction: t });
         }
       }
 
