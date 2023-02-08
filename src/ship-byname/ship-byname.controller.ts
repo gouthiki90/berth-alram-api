@@ -6,14 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { ShipBynameService } from "./ship-byname.service";
 import { CreateShipBynameDto } from "./dto/create-ship-byname.dto";
 import { UpdateShipBynameDto } from "./dto/update-ship-byname.dto";
+import { ShipBynameRepository } from "./ship-byname.repository";
+import { FindShipBynameQueryDto } from "./dto/find-ship-byname-qeury.dto";
 
 @Controller("ship-byname")
 export class ShipBynameController {
-  constructor(private readonly shipBynameService: ShipBynameService) {}
+  constructor(
+    private readonly shipBynameService: ShipBynameService,
+    private readonly shipBynameRepository: ShipBynameRepository
+  ) {}
 
   @Post()
   create(@Body() createShipBynameDto: CreateShipBynameDto) {
@@ -25,9 +31,9 @@ export class ShipBynameController {
     return this.shipBynameService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.shipBynameService.findOne(+id);
+  @Get("/")
+  findOne(@Query() query: FindShipBynameQueryDto) {
+    return this.shipBynameRepository.findOneForSubscripUser(query);
   }
 
   @Patch(":id")
