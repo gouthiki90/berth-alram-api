@@ -15,6 +15,7 @@ import { ContainersModule } from "./containers/containers.module";
 import { BerthInfoModule } from "./berth-info/berth-info.module";
 import { AlramHistoryModule } from "./alram-history/alram-history.module";
 import { CommonScheduleModule } from "./common-schedule/common-schedule.module";
+import { ManagementModule } from "./management/management.module";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CommonScheduleModule } from "./common-schedule/common-schedule.module";
     BerthInfoModule,
     AlramHistoryModule,
     CommonScheduleModule,
+    ManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
