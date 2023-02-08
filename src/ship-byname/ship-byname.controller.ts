@@ -7,13 +7,16 @@ import {
   Delete,
   Query,
   Put,
+  UseGuards,
 } from "@nestjs/common";
 import { ShipBynameService } from "./ship-byname.service";
 import { CreateShipBynameDto } from "./dto/create-ship-byname.dto";
 import { UpdateShipBynameDto } from "./dto/update-ship-byname.dto";
 import { ShipBynameRepository } from "./ship-byname.repository";
 import { FindShipBynameQueryDto } from "./dto/find-ship-byname-qeury.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
+@UseGuards(JwtAuthGuard)
 @Controller("ship-byname")
 export class ShipBynameController {
   constructor(
