@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
+  Put,
 } from "@nestjs/common";
 import { ShipBynameService } from "./ship-byname.service";
 import { CreateShipBynameDto } from "./dto/create-ship-byname.dto";
@@ -21,14 +21,9 @@ export class ShipBynameController {
     private readonly shipBynameRepository: ShipBynameRepository
   ) {}
 
-  @Post()
+  @Post("/")
   create(@Body() createShipBynameDto: CreateShipBynameDto) {
     return this.shipBynameService.create(createShipBynameDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.shipBynameService.findAll();
   }
 
   @Get("/")
@@ -36,16 +31,13 @@ export class ShipBynameController {
     return this.shipBynameRepository.findOneForSubscripUser(query);
   }
 
-  @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateShipBynameDto: UpdateShipBynameDto
-  ) {
-    return this.shipBynameService.update(+id, updateShipBynameDto);
+  @Put("/")
+  update(@Body() updateShipBynameDto: UpdateShipBynameDto) {
+    return this.shipBynameService.update(updateShipBynameDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.shipBynameService.remove(+id);
+  @Delete("/:oid")
+  remove(@Param("oid") oid: string) {
+    return this.shipBynameService.remove(oid);
   }
 }
