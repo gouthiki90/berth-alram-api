@@ -10,19 +10,23 @@ import {
 import { ManagementService } from "./management.service";
 import { CreateManagementDto } from "./dto/create-management.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
+import { ManagementRepository } from "./management.repository";
 
 @Controller("management")
 export class ManagementController {
-  constructor(private readonly managementService: ManagementService) {}
+  constructor(
+    private readonly managementService: ManagementService,
+    private readonly managementRepository: ManagementRepository
+  ) {}
 
   @Post()
   create(@Body() createManagementDto: CreateManagementDto) {
     return this.managementService.create(createManagementDto);
   }
 
-  @Get()
+  @Get("/")
   findAll() {
-    return this.managementService.findAll();
+    return this.managementRepository.findAllUserInfoListForSuperUser();
   }
 
   @Get(":id")
