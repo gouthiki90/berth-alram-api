@@ -15,7 +15,6 @@ export interface containerAttributes {
   alramOid?: string;
   containerStatus?: number;
   containerNumnber?: string;
-  isFreeze?: number;
   isDanger?: number;
   isNewPort?: string;
   isComplete?: number;
@@ -77,15 +76,6 @@ export class container
     comment: "컨테이너 넘버",
   })
   containerNumnber?: string;
-
-  @Column({
-    field: "is_freeze",
-    allowNull: true,
-    type: DataType.TINYINT,
-    comment: "냉동물 여부",
-    defaultValue: "0",
-  })
-  isFreeze?: number;
 
   @Column({
     field: "is_danger",
