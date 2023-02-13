@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { CreateManagementDto } from "./dto/create-management.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 import { ManagementRepository } from "./management.repository";
+import { ManagementFindOneQueryDto } from "./dto/management-find-one-query.dto";
+import { ManagementCompanyInfoDto } from "./dto/management-compay-info.dto";
 
 @Controller("management")
 export class ManagementController {
@@ -24,14 +27,24 @@ export class ManagementController {
     return this.managementService.create(createManagementDto);
   }
 
+  @Post("/company-info")
+  upsertCompanyInfo(@Body() manageCompanyInfoDto: ManagementCompanyInfoDto) {
+    return this.managementService.upsertCompanyInfo(manageCompanyInfoDto);
+  }
+
   @Get("/")
   findAll() {
     return this.managementRepository.findAllUserInfoListForSuperUser();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.managementService.findOne(+id);
+  @Get("/user")
+  findOne(@Query() query: ManagementFindOneQueryDto) {
+    return this.managementRepository.findOneUserInfoForSuperUser(query);
+  }
+
+  @Get("/company")
+  findOneOfCompany() {
+    return this.managementRepository.findAllCompanyInfoForSuper();
   }
 
   @Patch(":id")

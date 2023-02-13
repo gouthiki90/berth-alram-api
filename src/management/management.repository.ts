@@ -63,4 +63,23 @@ export class ManagementRepository {
       throw new NotFoundException(error);
     }
   }
+
+  /** 슈퍼 관리자 페이지에서 업체&업체코드 수정 또는 추가 모달 */
+  async findAllCompanyInfoForSuper() {
+    try {
+      return await this.seqeulize.query(
+        `
+        SELECT
+            biz_name,
+            company_group_code
+        FROM user AS usr
+        GROUP BY biz_name
+        `,
+        { type: sequelize.QueryTypes.SELECT }
+      );
+    } catch (error) {
+      Logger.error(error);
+      throw new NotFoundException(error);
+    }
+  }
 }
