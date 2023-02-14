@@ -9,4 +9,6 @@ export class GetUserInfoListDto {
   alramOid?: string;
   /** 문자 on-off 옵션 */
   isNofitication?: number;
+  /** 유저가 지정한 모선명 별칭 */
+  nickname_01?: string;
 }

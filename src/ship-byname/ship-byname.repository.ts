@@ -28,14 +28,14 @@ export class ShipBynameRepository {
                 user AS usr
                 ON shipName.user_oid = usr.oid -- 유저
             INNER JOIN
-                bertStat_schedule AS berth
+                berthStat_schedule AS berth
                 ON shipName.schedule_oid = berth.oid -- 선석 스케줄
             INNER JOIN
                 subscription_alram AS alram
                 ON shipName.alram_oid = alram.oid -- 알람 구독
             WHERE TRUE
-                AND usr = $userOid
-                AND alram = $alramOid
+                AND usr.oid = $userOid
+                AND alram.oid = $alramOid
         `,
         {
           type: seqelize.QueryTypes.SELECT,

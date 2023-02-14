@@ -36,14 +36,25 @@ export class BerthPyService {
       const userInfoList = await this.seqeulize.query(
         `
         SELECT
+          -- 유저 키값
           users.oid AS userOid,
+          -- 유저 연락처
           users.contact,
+          -- 유저 연락처2
           users.contact_01,
+          -- 알람 on/off
           users.is_nofitication AS isNofitication,
+          -- 스케줄 키값
           (SELECT oid FROM berthStat_schedule WHERE oid = alram.schedule_oid) AS berthOid,
-          alram.oid AS alramOid
+          -- 알람 키값
+          alram.oid AS alramOid,
+          -- 별칭1
+          name.nickname_01
         FROM subscription_alram AS alram
+        -- 알람을 구독한 유저
         INNER JOIN user AS users ON alram.user_oid = users.oid
+        -- 유저가 지정한 모선 별칭
+        INNER JOIN ship_byname AS name ON users.oid = name.user_oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
@@ -101,9 +112,9 @@ export class BerthPyService {
         if (userInfo.isNofitication === 1) {
           await this.httpService.axiosRef
             .post(
-              "https://46fzjva0mk.execute-api.ap-northeast-2.amazonaws.com/dev",
+              `${process.env.MESSAGE_URL}`,
               {
-                content: `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+                content: `${obj.trminlCode} 터미널의 ${obj.oid}(${userInfo.nickname_01}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
                 receivers: [`${userInfo.contact}`, `${userInfo.contact_01}`],
               },
               {
