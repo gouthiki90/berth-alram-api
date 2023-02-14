@@ -9,6 +9,7 @@ import { Utils } from "src/util/common.utils";
 import { CreateManagementDto } from "./dto/create-management.dto";
 import { CreateTempCompanyUserDto } from "./dto/create-temp-company-user.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
+import * as crypto from "crypto";
 
 @Injectable()
 export class ManagementService {
@@ -34,7 +35,29 @@ export class ManagementService {
   ) {
     const t = await this.seqeulize.transaction();
     try {
+      /** userId 중복 체크 */
+      const userData = await user.findOne({
+        where: {
+          userId: createTempCompanyUserDto.userId,
+          password: crypto
+            .createHash("sha512")
+            .update(createTempCompanyUserDto.password)
+            .digest("hex"),
+        },
+      });
+
+      if (userData?.userId) {
+        return { message: "중복된 아이디 입니다." };
+      }
+
+      /** oid 생성 */
       const userOid = await this.util.getOid(user, "user");
+
+      /** password 암호화 */
+      createTempCompanyUserDto.password = crypto
+        .createHash("sha512")
+        .update(createTempCompanyUserDto.password)
+        .digest("hex");
 
       await user.create(
         { oid: userOid, ...createTempCompanyUserDto },
@@ -42,6 +65,8 @@ export class ManagementService {
       );
 
       await t.commit();
+
+      return { message: "성공적으로 계정이 생성되었습니다." };
     } catch (error) {
       await t.rollback();
       Logger.error(error);
