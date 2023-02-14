@@ -8,7 +8,6 @@ import {
   UseFilters,
   Put,
   UseGuards,
-  Res,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -17,7 +16,6 @@ import { ErrorHandler } from "src/error-handler/error-handler";
 import { UserRepository } from "./user.repository";
 import { LoginDto } from "./dto/login.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
-import { Response } from "express";
 
 @UseFilters(ErrorHandler)
 @Controller("user")
@@ -28,8 +26,8 @@ export class UserController {
   ) {}
 
   @Post("/")
-  createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    return this.userService.create(createUserDto, res);
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
   @Post("/login")
@@ -51,12 +49,8 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Put("/:oid")
-  update(
-    @Param("oid") oid: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @Res() res: Response
-  ) {
-    return this.userService.update(oid, updateUserDto, res);
+  update(@Param("oid") oid: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(oid, updateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)

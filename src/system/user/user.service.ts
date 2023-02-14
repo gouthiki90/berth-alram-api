@@ -13,7 +13,6 @@ import * as crypto from "crypto";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "src/auth/auth.service";
 import { Utils } from "src/util/common.utils";
-import { Response } from "express";
 import { ErrorHandler } from "src/error-handler/error-handler";
 
 @UseFilters(ErrorHandler)
@@ -52,12 +51,13 @@ export class UserService {
 
       return userTokenInfo;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
   /** 유저 생성 */
-  async create(createUserDto: CreateUserDto, res: Response) {
+  async create(createUserDto: CreateUserDto) {
     const t = await this.seqeulize.transaction();
     try {
       // duple check
@@ -72,13 +72,7 @@ export class UserService {
       });
 
       if (userData?.userId) {
-        res.status(409).json({
-          statusCode: 409,
-          message: "중복된 아이디 입니다.",
-          path: "/user",
-        });
-
-        throw new Error("중복된 아이디 입니다.");
+        return { message: "중복된 아이디 입니다." };
       }
 
       createUserDto.password = crypto
@@ -91,16 +85,16 @@ export class UserService {
 
       await user.create(createUserDto, { transaction: t });
 
-      const result = await t.commit();
-      res.send({ result });
+      await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException(error);
     }
   }
 
   /** 유저 정보 업데이트 */
-  async update(oid: string, updateUserDto: UpdateUserDto, res: Response) {
+  async update(oid: string, updateUserDto: UpdateUserDto) {
     const t = await this.seqeulize.transaction();
     Logger.debug(updateUserDto);
     try {
@@ -113,13 +107,7 @@ export class UserService {
         });
 
         if (userData?.userId) {
-          res.status(409).json({
-            statusCode: 409,
-            message: "중복된 아이디 입니다.",
-            path: "/user/:oid",
-          });
-
-          throw new Error("중복된 아이디 입니다.");
+          return { message: "중복된 아이디 입니다." };
         }
       }
 
@@ -128,11 +116,11 @@ export class UserService {
         transaction: t,
       });
 
-      const result = await t.commit();
-      res.send({ result });
+      await t.commit();
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -144,7 +132,7 @@ export class UserService {
       const result = await t.commit();
       return { result, message: "성공적으로 탈퇴되었습니다.", code: 1 };
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       await t.rollback();
       throw new InternalServerErrorException("탈퇴 실패");
     }
