@@ -1,3 +1,4 @@
+import { HttpService } from "@nestjs/axios";
 import {
   Injectable,
   InternalServerErrorException,
@@ -18,7 +19,8 @@ export class ContainersService {
   constructor(
     private readonly seqeulize: Sequelize,
     private readonly utils: Utils,
-    private readonly containersRepository: ContainersReposiotry
+    private readonly containersRepository: ContainersReposiotry,
+    private readonly httpService: HttpService
   ) {}
 
   /** 컨테이너 검색 시 create && select */
