@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { CreateManagementDto } from "./dto/create-management.dto";
@@ -14,7 +15,9 @@ import { UpdateManagementDto } from "./dto/update-management.dto";
 import { ManagementRepository } from "./management.repository";
 import { ManagementFindOneQueryDto } from "./dto/management-find-one-query.dto";
 import { CreateTempCompanyUserDto } from "./dto/create-temp-company-user.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
+@UseGuards(JwtAuthGuard)
 @Controller("management")
 export class ManagementController {
   constructor(

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
-import { UserRepository } from "src/user/user.repository";
+import { UserRepository } from "src/system/user/user.repository";
 import { Utils } from "src/util/common.utils";
 import { AuthService } from "./auth.service";
 import { JwtRefreshStrategy } from "./strategies/jwt-refresh.strategy";
