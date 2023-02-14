@@ -13,7 +13,7 @@ import { CreateManagementDto } from "./dto/create-management.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 import { ManagementRepository } from "./management.repository";
 import { ManagementFindOneQueryDto } from "./dto/management-find-one-query.dto";
-import { ManagementCompanyInfoDto } from "./dto/management-compay-info.dto";
+import { CreateTempCompanyUserDto } from "./dto/create-temp-company-user.dto";
 
 @Controller("management")
 export class ManagementController {
@@ -28,8 +28,12 @@ export class ManagementController {
   }
 
   @Post("/company-info")
-  upsertCompanyInfo(@Body() manageCompanyInfoDto: ManagementCompanyInfoDto) {
-    return this.managementService.upsertCompanyInfo(manageCompanyInfoDto);
+  upsertCompanyInfo(
+    @Body() createTempCompanyUserDto: CreateTempCompanyUserDto
+  ) {
+    return this.managementService.createTempCompanyManagement(
+      createTempCompanyUserDto
+    );
   }
 
   @Get("/")

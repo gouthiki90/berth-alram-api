@@ -4,9 +4,10 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
+import { user } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { CreateManagementDto } from "./dto/create-management.dto";
-import { ManagementCompanyInfoDto } from "./dto/management-compay-info.dto";
+import { CreateTempCompanyUserDto } from "./dto/create-temp-company-user.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 
 @Injectable()
@@ -27,10 +28,22 @@ export class ManagementService {
     return `This action removes a #${id} management`;
   }
 
-  /** 관리자 페이지에서 회사 등록/수정 */
-  async upsertCompanyInfo(manageCompanyInfoDto: ManagementCompanyInfoDto) {
+  /** 회사 관리자 등록 */
+  async createTempCompanyManagement(
+    createTempCompanyUserDto: CreateTempCompanyUserDto
+  ) {
+    const t = await this.seqeulize.transaction();
     try {
+      const userOid = await this.util.getOid(user, "user");
+
+      await user.create(
+        { oid: userOid, ...createTempCompanyUserDto },
+        { transaction: t }
+      );
+
+      await t.commit();
     } catch (error) {
+      await t.rollback();
       Logger.error(error);
       throw new InternalServerErrorException(error);
     }
