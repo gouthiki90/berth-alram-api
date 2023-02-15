@@ -11,4 +11,6 @@ export class GetUserInfoListDto {
   isNofitication?: number;
   /** 유저가 지정한 모선명 별칭 */
   nickname_01?: string;
+  /** 별칭 사용 여부 */
+  isUse?: number;
 }

@@ -4,7 +4,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { alramHistory, berthStatSchedule } from "src/models";
+import { alramHistory, berthStatSchedule, user } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
@@ -49,12 +49,14 @@ export class BerthPyService {
           -- 알람 키값
           alram.oid AS alramOid,
           -- 별칭1
-          name.nickname_01
+          name.nickname_01,
+          -- 별칭
+          name.is_use AS isUse
         FROM subscription_alram AS alram
         -- 알람을 구독한 유저
         INNER JOIN user AS users ON alram.user_oid = users.oid
         -- 유저가 지정한 모선 별칭
-        INNER JOIN ship_byname AS name ON users.oid = name.user_oid
+        INNER JOIN ship_byname AS name ON alram.oid = name.alram_oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
@@ -108,13 +110,22 @@ export class BerthPyService {
   ) {
     try {
       for (const userInfo of userInfoList) {
+        /** 별칭 유무에 따른 문자 content 변경 */
+        let content: string;
+
+        if (userInfo?.isUse !== 1) {
+          content = `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
+        } else {
+          content = `${obj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${obj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
+        }
+
         /** 문자 옵션이 on일때만 푸쉬하기 */
         if (userInfo.isNofitication === 1) {
           await this.httpService.axiosRef
             .post(
               `${process.env.MESSAGE_URL}`,
               {
-                content: `${obj.trminlCode} 터미널의 ${obj.oid}(${userInfo.nickname_01}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+                content: content,
                 receivers: [`${userInfo.contact}`, `${userInfo.contact_01}`],
               },
               {
@@ -154,7 +165,7 @@ export class BerthPyService {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
           alramOid: userInfo.alramOid,
-          content: `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
+          content: `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
         };
 
         await alramHistory.create(

@@ -12,7 +12,7 @@ export class CommonScheduleRepository {
 
   /** 선석 스케줄 모두 select */
   async findAllScheduleToEverySite(query: any) {
-    const { trminlCode, searchType, endDate, startDate } = query;
+    const { trminlCode, searchType } = query;
     try {
       const whereArr = [
         ["AND trminlCode = :trminlCode", trminlCode],
