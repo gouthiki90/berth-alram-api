@@ -154,7 +154,7 @@ export class BerthPyService {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
           alramOid: userInfo.alramOid,
-          content: `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
+          content: `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
         };
 
         await alramHistory.create(
