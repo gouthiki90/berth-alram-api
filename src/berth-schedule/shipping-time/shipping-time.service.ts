@@ -16,11 +16,27 @@ export class ShippingTimeService {
     private readonly seqeulize: Sequelize,
     private readonly httpService: HttpService
   ) {}
+  /** TLLU2006874 */
   /** 컨넘버를 받고 양하 시간 크롤링 */
   async crawllingOfShippingTimeFromContainer(
     searchShippingTimeDto: SearchShippingTimeDto
   ) {
     try {
+      const response = await this.httpService.axiosRef.get(
+        `${
+          process.env.BNCT_SHIPPING_URL +
+          `?cntrNo=${searchShippingTimeDto.containerNumber}`
+        }`
+      );
+
+      // Logger.debug(response.data);
+
+      const root = parse(response.data);
+      const selectResult = root.querySelector(".yangha-result");
+
+      Logger.debug(selectResult.text);
+
+      return { message: "test..." };
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException(error);
