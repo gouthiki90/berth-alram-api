@@ -10,14 +10,19 @@ import {
 import { ShippingTimeService } from "./shipping-time.service";
 import { CreateShippingTimeDto } from "./dto/create-shipping-time.dto";
 import { UpdateShippingTimeDto } from "./dto/update-shipping-time.dto";
+import { SearchShippingTimeDto } from "./dto/search-shipping-time.dto";
 
 @Controller("shipping-time")
 export class ShippingTimeController {
   constructor(private readonly shippingTimeService: ShippingTimeService) {}
 
-  @Get("/")
-  create() {
-    return this.shippingTimeService.create();
+  @Post("/")
+  searchOfShippingTimeFromContainer(
+    @Body() searchShippingTimeDto: SearchShippingTimeDto
+  ) {
+    return this.shippingTimeService.crawllingOfShippingTimeFromContainer(
+      searchShippingTimeDto
+    );
   }
 
   @Get()

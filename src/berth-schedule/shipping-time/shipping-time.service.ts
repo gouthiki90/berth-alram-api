@@ -6,17 +6,21 @@ import {
 import { CreateShippingTimeDto } from "./dto/create-shipping-time.dto";
 import { UpdateShippingTimeDto } from "./dto/update-shipping-time.dto";
 import { parse } from "node-html-parser";
+import { Sequelize } from "sequelize-typescript";
+import { HttpService } from "@nestjs/axios";
+import { SearchShippingTimeDto } from "./dto/search-shipping-time.dto";
 
 @Injectable()
 export class ShippingTimeService {
-  create() {
+  constructor(
+    private readonly seqeulize: Sequelize,
+    private readonly httpService: HttpService
+  ) {}
+  /** 컨넘버를 받고 양하 시간 크롤링 */
+  async crawllingOfShippingTimeFromContainer(
+    searchShippingTimeDto: SearchShippingTimeDto
+  ) {
     try {
-      const testing = "<h1>할루</h1>";
-      const root = parse(testing);
-      Logger.debug(root);
-      Logger.debug(root.text);
-
-      return { message: "test..." };
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException(error);
