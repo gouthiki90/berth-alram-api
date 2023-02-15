@@ -54,7 +54,7 @@ export class BerthPyService {
         -- 알람을 구독한 유저
         INNER JOIN user AS users ON alram.user_oid = users.oid
         -- 유저가 지정한 모선 별칭
-        INNER JOIN ship_byname AS name ON users.oid = name.user_oid
+        INNER JOIN ship_byname AS name ON alram.oid = name.alram_oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
@@ -114,7 +114,7 @@ export class BerthPyService {
             .post(
               `${process.env.MESSAGE_URL}`,
               {
-                content: `${obj.trminlCode} 터미널의 ${obj.oid}(${userInfo.nickname_01}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
+                content: `${obj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${obj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`,
                 receivers: [`${userInfo.contact}`, `${userInfo.contact_01}`],
               },
               {
