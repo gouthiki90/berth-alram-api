@@ -6,6 +6,9 @@ import seqeulize from "sequelize";
 export class AlramRepository {
   constructor(private readonly sequelize: Sequelize) {}
 
+  /** 이전 출항일 보기의 true/false에 따른 쿼리문
+   * offset에 따라 findOne
+   */
   async findOne(
     oid: string,
     offset: number,
@@ -145,6 +148,7 @@ export class AlramRepository {
     }
   }
 
+  /** 이전 출항일 보기의 true/false에 따른 쿼리문 */
   async findAll(oid: string, trminlCode: string, isLastView: boolean) {
     try {
       if (typeof isLastView === "boolean" && isLastView) {

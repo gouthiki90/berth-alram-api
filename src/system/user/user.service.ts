@@ -42,6 +42,7 @@ export class UserService {
         throw new NotFoundException("유저 정보를 찾을 수 없습니다.");
       }
 
+      /** 로그인 시 토큰 발급 */
       const userTokenInfo = this.authService.login({
         oid: userData.oid,
         userId: userData.userId,
