@@ -1,16 +1,21 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import seqeulize from "sequelize";
+import { Utils } from "src/util/common.utils";
 
 @Injectable()
 export class AlramRepository {
-  constructor(private readonly sequelize: Sequelize) {}
+  constructor(
+    private readonly sequelize: Sequelize,
+    private readonly util: Utils
+  ) {}
 
   async findOne(
     oid: string,
     offset: number,
     trminlCode: string,
-    isLastView: boolean
+    isLastView: boolean,
+    nicknameSearchKeyword: string
   ) {
     try {
       if (typeof isLastView === "boolean" && isLastView) {
@@ -45,16 +50,19 @@ export class AlramRepository {
           (SELECT COUNT(*) FROM container WHERE container_status = 1 AND alram_oid = alram.oid) AS finishCount
       FROM
           subscription_alram AS alram
-              LEFT JOIN
+              INNER JOIN
           berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-              LEFT JOIN
+              INNER JOIN
           user AS usr ON alram.user_oid = usr.oid
-              LEFT JOIN
+              INNER JOIN
           berth_info AS info ON berth.trminlCode = info.turminal_code
+              INNER JOIN
+          ship_byname AS name ON alram.oid = name.alram_oid
       WHERE
           TRUE
               AND berth.trminlCode IN ('${trminlCode}')
-              AND usr.oid = '${oid}'
+              AND usr.oid = $oid
+              AND name.nickname_01 LIKE $nicknameSearchKeyword
               -- 출항일이 2일 지난 것만
               OR DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                   MID(berth.tkoffPrarnde, 2, 16),
@@ -72,6 +80,7 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
+            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
 
@@ -108,16 +117,19 @@ export class AlramRepository {
           (SELECT COUNT(*) FROM container WHERE container_status = 1 AND alram_oid = alram.oid) AS finishCount
       FROM
           subscription_alram AS alram
-              LEFT JOIN
+              INNER JOIN
           berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-              LEFT JOIN
+              INNER JOIN
           user AS usr ON alram.user_oid = usr.oid
-              LEFT JOIN
+              INNER JOIN
           berth_info AS info ON berth.trminlCode = info.turminal_code
+              INNER JOIN
+          ship_byname AS name ON alram.oid = name.alram_oid
       WHERE
           TRUE
               AND berth.trminlCode IN ('${trminlCode}')
-              AND usr.oid = '${oid}'
+              AND usr.oid = $oid
+              AND name.nickname_01 LIKE $nicknameSearchKeyword
               -- 현재 날짜 보다 큰 날짜의 출항일만
               AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                   MID(berth.tkoffPrarnde, 2, 16),
@@ -135,9 +147,10 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
+            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
-
+        Logger.debug(list);
         return list;
       }
     } catch (error) {
@@ -145,7 +158,12 @@ export class AlramRepository {
     }
   }
 
-  async findAll(oid: string, trminlCode: string, isLastView: boolean) {
+  async findAll(
+    oid: string,
+    trminlCode: string,
+    isLastView: boolean,
+    nicknameSearchKeyword: string
+  ) {
     try {
       if (typeof isLastView === "boolean" && isLastView) {
         const list = await this.sequelize.query(
@@ -179,16 +197,19 @@ export class AlramRepository {
               (SELECT COUNT(*) FROM container WHERE container_status = 1 AND alram_oid = alram.oid) AS finishCount
           FROM
               subscription_alram AS alram
-                  LEFT JOIN
+                  INNER JOIN
               berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-                  LEFT JOIN
+                  INNER JOIN
               user AS usr ON alram.user_oid = usr.oid
-                  LEFT JOIN
+                  INNER JOIN
               berth_info AS info ON berth.trminlCode = info.turminal_code
+                  INNER JOIN
+              ship_byname AS name ON alram.oid = name.alram_oid
           WHERE
               TRUE
                   AND berth.trminlCode IN ('${trminlCode}')
-                  AND usr.oid = '${oid}'
+                  AND usr.oid = $oid
+                  AND nickname_01 LIKE $nicknameSearchKeyword
                   -- 출항일이 2일 지난 것만
                   OR DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                       MID(berth.tkoffPrarnde, 2, 16),
@@ -205,6 +226,7 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
+            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
 
@@ -241,16 +263,19 @@ export class AlramRepository {
               (SELECT COUNT(*) FROM container WHERE container_status = 1 AND alram_oid = alram.oid) AS finishCount
           FROM
               subscription_alram AS alram
-                  LEFT JOIN
+                  INNER JOIN
               berthStat_schedule AS berth ON alram.schedule_oid = berth.oid
-                  LEFT JOIN
+                  INNER JOIN
               user AS usr ON alram.user_oid = usr.oid
-                  LEFT JOIN
+                  INNER JOIN
               berth_info AS info ON berth.trminlCode = info.turminal_code
+                  INNER JOIN
+              ship_byname AS name ON alram.oid = name.alram_oid
           WHERE
               TRUE
                   AND berth.trminlCode IN ('${trminlCode}')
-                  AND usr.oid = '${oid}'
+                  AND usr.oid = $oid
+                  AND name.nickname_01 LIKE $nicknameSearchKeyword
                   -- 현재 날짜 보다 큰 날짜의 출항일만
                   AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                       MID(berth.tkoffPrarnde, 2, 16),
@@ -267,6 +292,7 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
+            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
 

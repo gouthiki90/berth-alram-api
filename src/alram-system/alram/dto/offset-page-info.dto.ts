@@ -19,4 +19,6 @@ export class OffsetPagingInfoDto {
     /** 이전 출항일도 보기 옵션 */
     isLastView?: boolean;
   };
+  /** 별칭(화주) 검색 keyword */
+  nickname_01?: string;
 }
