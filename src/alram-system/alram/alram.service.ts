@@ -107,6 +107,7 @@ export class AlramService {
       /** child container remove */
       for (const obj of data) {
         Logger.debug(obj.alramOid);
+        /** 지워야 할 알람 oid find data list */
         const havingAlramOidContainers = await container.findAll({
           where: { alramOid: obj.alramOid },
         });

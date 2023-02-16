@@ -12,12 +12,17 @@ export class BerthInfoRepository {
     }
   }
 
+  /** 사전반입일 select and return */
   async findNumberInfo() {
     try {
+      /** berthInfo all data list */
       const berthInfoList = await berthInfo.findAll();
+      /** 사전반입일 데이터 중 ~일 전을 빼고 일자를 numbering 해서 return */
       const makeNumberBerthInfoDataList = berthInfoList.map((curr) => {
         if (curr.carryTiming && curr.dangerCarryTiming) {
+          /** 사전반입일 */
           const carryTiming = curr.carryTiming.split("일 전");
+          /** 위험물 사전반입일 */
           const dangerCarryTiming = curr.dangerCarryTiming.split("일 전");
 
           return {

@@ -37,7 +37,7 @@ export class ContainersService {
 
       await t.commit();
 
-      /** 해당 조건으로 데이터 보여주기 */
+      /** create한 container data를 통해 container findAll */
       const newContainerList = containerDto.map(async (value) => {
         const newContainerSelectList = await this.containersRepository.findAll({
           berthOid: value.berthOid,

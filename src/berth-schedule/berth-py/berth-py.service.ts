@@ -4,7 +4,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { alramHistory, berthStatSchedule, user } from "src/models";
+import { alramHistory, berthStatSchedule } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
@@ -181,15 +181,17 @@ export class BerthPyService {
 
   /* #endregion */
 
-  /** berth data create and alram push */
+  /** 선석 스케줄 데이터를 python에서 받아 create
+   * 해당 데이터를 통해 사용자에게 alram push
+   * alram push를 한 content를 기록 create
+   */
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
 
     try {
       for (const obj of data) {
         const today = new Date();
-        /** 모선항차의 중복을 찾기 위한 data */
-        /** 이전에 가져온 데이터 명시 필요 */
+        /** 모선항차의 중복을 찾기 위한 이전 선석 스케줄 data object */
         const berthDupleData = await this.findOneForDupleData(obj.oid);
 
         /** 알람을 구독한 유저 리스트 */
@@ -202,6 +204,7 @@ export class BerthPyService {
             transaction: t,
           });
 
+          /** 터미널 코드와 모선항차 기준으로 입항일 compare */
           if (
             berthDupleData.trminlCode === obj.trminlCode &&
             berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
