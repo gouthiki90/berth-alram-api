@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateShippingTimeDto } from './dto/create-shipping-time.dto';
-import { UpdateShippingTimeDto } from './dto/update-shipping-time.dto';
+import { Injectable } from "@nestjs/common";
+import { CreateShippingTimeDto } from "./dto/create-shipping-time.dto";
+import { UpdateShippingTimeDto } from "./dto/update-shipping-time.dto";
 
 @Injectable()
 export class ShippingTimeService {
   create(createShippingTimeDto: CreateShippingTimeDto) {
-    return 'This action adds a new shippingTime';
+    return "This action adds a new shippingTime";
   }
 
   findAll() {
