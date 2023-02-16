@@ -14,9 +14,7 @@ import { AlramPushModule } from "./alram-system/alram-push/alram-push.module";
 import { ContainersModule } from "./containers/containers.module";
 import { AlramHistoryModule } from "./alram-system/alram-history/alram-history.module";
 import { CommonScheduleModule } from "./berth-schedule/common-schedule/common-schedule.module";
-import { ManagementModule } from "./system/management/management.module";
 import { ShipBynameModule } from "./berth-schedule/ship-byname/ship-byname.module";
-import { ShippingTimeModule } from "./berth-schedule/shipping-time/shipping-time.module";
 import { BerthInfoModule } from "./berth-schedule/berth-info/berth-info.module";
 
 @Module({
@@ -44,9 +42,7 @@ import { BerthInfoModule } from "./berth-schedule/berth-info/berth-info.module";
     BerthInfoModule,
     AlramHistoryModule,
     CommonScheduleModule,
-    ManagementModule,
     ShipBynameModule,
-    ShippingTimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
