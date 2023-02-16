@@ -4,7 +4,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import sequelize from "sequelize";
-import { BerthPyDto } from "../alram-push/dto/berth.dto";
+import { BerthPyDto } from "./dto/berth.dto";
 import { HttpService } from "@nestjs/axios";
 import { Sequelize } from "sequelize-typescript";
 import { berthInfo, berthStatSchedule, user } from "src/models";

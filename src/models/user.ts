@@ -17,8 +17,10 @@ export interface userAttributes {
   bizName?: string;
   contact?: string;
   contact_01?: string;
+  email?: string;
   managerTel?: string;
   managerName?: string;
+  status?: string;
   contactOption?: number;
   isNofitication?: number;
   createDate?: Date;
