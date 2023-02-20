@@ -163,12 +163,24 @@ export class BerthPyService {
           "alramHistory"
         );
 
+        /** 별칭 유무에 따른 문자 content 변경 */
+        let content: string;
+
+        if (
+          userInfo?.isUse !== 1 ||
+          (userInfo?.nickname_01 === null && userInfo?.isUse === null)
+        ) {
+          content = `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`;
+        } else {
+          content = `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`;
+        }
+
         /** alram history create obj */
         const makeAlramHistoryObj = {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
           alramOid: userInfo.alramOid,
-          content: `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
+          content: content,
         };
 
         await alramHistory.create(
