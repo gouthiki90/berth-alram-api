@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from "@nestjs/common";
-import { CreateShippingTimeDto } from "./dto/create-shipping-time.dto";
 import { UpdateShippingTimeDto } from "./dto/update-shipping-time.dto";
 import { parse } from "node-html-parser";
 import { Sequelize } from "sequelize-typescript";
@@ -18,7 +17,7 @@ export class ShippingTimeService {
   ) {}
   /** TLLU2006874 */
   /** 컨넘버를 받고 양하 시간 크롤링 */
-  async crawllingOfShippingTimeFromContainer(
+  async crawllingOfShippingTimeFromContainerBNCT(
     searchShippingTimeDto: SearchShippingTimeDto
   ) {
     try {
@@ -37,6 +36,14 @@ export class ShippingTimeService {
       Logger.debug(selectResult.text);
 
       return { message: "test..." };
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async crawllingOfShippingTimeFromContainerBPTG() {
+    try {
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException(error);
