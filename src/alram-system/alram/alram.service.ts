@@ -135,9 +135,9 @@ export class AlramService {
     /** 선석 데이터 리스트 */
     const berthItems = new Array<OffsetAlramDto>();
     /** IN에 넣을 터미널 코드 */
-    const trminalCodes = data.trminlCodeList.join(",");
+    const trminalCodes = data.trminlCodeList.join("','");
     /** 별칭(화주) 검색 keyword */
-    const nicknameSearchKeyword = "%" + data.nickname_01 + "%";
+    const nicknameSearchKeyword = data.nickname_01;
 
     try {
       if ("number" !== typeof data.pageIndex) {

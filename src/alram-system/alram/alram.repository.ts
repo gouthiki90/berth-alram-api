@@ -17,6 +17,11 @@ export class AlramRepository {
     isLastView: boolean,
     nicknameSearchKeyword: string
   ) {
+    if (!nicknameSearchKeyword) nicknameSearchKeyword = "";
+    else
+      nicknameSearchKeyword =
+        "AND name.nickname_01 LIKE '%" + nicknameSearchKeyword + "%'";
+
     try {
       if (typeof isLastView === "boolean" && isLastView) {
         const list = await this.sequelize.query(
@@ -56,13 +61,13 @@ export class AlramRepository {
           user AS usr ON alram.user_oid = usr.oid
               INNER JOIN
           berth_info AS info ON berth.trminlCode = info.turminal_code
-              INNER JOIN
+              LEFT JOIN
           ship_byname AS name ON alram.oid = name.alram_oid
       WHERE
           TRUE
               AND berth.trminlCode IN ('${trminlCode}')
-              AND usr.oid = $oid
-              AND name.nickname_01 LIKE $nicknameSearchKeyword
+              AND usr.oid = '${oid}'
+              ${nicknameSearchKeyword}
               -- 출항일이 2일 지난 것만
               OR DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                   MID(berth.tkoffPrarnde, 2, 16),
@@ -80,7 +85,6 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
-            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
 
@@ -123,13 +127,13 @@ export class AlramRepository {
           user AS usr ON alram.user_oid = usr.oid
               INNER JOIN
           berth_info AS info ON berth.trminlCode = info.turminal_code
-              INNER JOIN
+              LEFT JOIN
           ship_byname AS name ON alram.oid = name.alram_oid
       WHERE
           TRUE
               AND berth.trminlCode IN ('${trminlCode}')
-              AND usr.oid = $oid
-              AND name.nickname_01 LIKE $nicknameSearchKeyword
+              AND usr.oid = '${oid}'
+              ${nicknameSearchKeyword}
               -- 현재 날짜 보다 큰 날짜의 출항일만
               AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                   MID(berth.tkoffPrarnde, 2, 16),
@@ -147,10 +151,8 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
-            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
-        Logger.debug(list);
         return list;
       }
     } catch (error) {
@@ -164,6 +166,10 @@ export class AlramRepository {
     isLastView: boolean,
     nicknameSearchKeyword: string
   ) {
+    if (!nicknameSearchKeyword) nicknameSearchKeyword = "";
+    else
+      nicknameSearchKeyword =
+        "AND name.nickname_01 LIKE '%" + nicknameSearchKeyword + "%'";
     try {
       if (typeof isLastView === "boolean" && isLastView) {
         const list = await this.sequelize.query(
@@ -203,13 +209,13 @@ export class AlramRepository {
               user AS usr ON alram.user_oid = usr.oid
                   INNER JOIN
               berth_info AS info ON berth.trminlCode = info.turminal_code
-                  INNER JOIN
+                  LEFT JOIN
               ship_byname AS name ON alram.oid = name.alram_oid
           WHERE
               TRUE
                   AND berth.trminlCode IN ('${trminlCode}')
-                  AND usr.oid = $oid
-                  AND nickname_01 LIKE $nicknameSearchKeyword
+                  AND usr.oid = '${oid}'
+                  ${nicknameSearchKeyword}
                   -- 출항일이 2일 지난 것만
                   OR DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                       MID(berth.tkoffPrarnde, 2, 16),
@@ -226,7 +232,6 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
-            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
 
@@ -269,13 +274,13 @@ export class AlramRepository {
               user AS usr ON alram.user_oid = usr.oid
                   INNER JOIN
               berth_info AS info ON berth.trminlCode = info.turminal_code
-                  INNER JOIN
+                  LEFT JOIN
               ship_byname AS name ON alram.oid = name.alram_oid
           WHERE
               TRUE
                   AND berth.trminlCode IN ('${trminlCode}')
-                  AND usr.oid = $oid
-                  AND name.nickname_01 LIKE $nicknameSearchKeyword
+                  AND usr.oid = '${oid}'
+                  ${nicknameSearchKeyword}
                   -- 현재 날짜 보다 큰 날짜의 출항일만
                   AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(',
                       MID(berth.tkoffPrarnde, 2, 16),
@@ -292,7 +297,6 @@ export class AlramRepository {
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
-            bind: { oid: oid, nicknameSearchKeyword: nicknameSearchKeyword },
           }
         );
 
