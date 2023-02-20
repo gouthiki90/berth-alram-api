@@ -56,7 +56,7 @@ export class BerthPyService {
         -- 알람을 구독한 유저
         INNER JOIN user AS users ON alram.user_oid = users.oid
         -- 유저가 지정한 모선 별칭
-        INNER JOIN ship_byname AS name ON alram.oid = name.alram_oid
+        LEFT JOIN ship_byname AS name ON alram.oid = name.alram_oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
