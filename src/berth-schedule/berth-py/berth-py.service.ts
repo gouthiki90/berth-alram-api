@@ -113,7 +113,10 @@ export class BerthPyService {
         /** 별칭 유무에 따른 문자 content 변경 */
         let content: string;
 
-        if (userInfo?.isUse !== 1) {
+        if (
+          userInfo?.isUse !== 1 ||
+          (userInfo?.nickname_01 === null && userInfo?.isUse === null)
+        ) {
           content = `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
         } else {
           content = `${obj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${obj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
