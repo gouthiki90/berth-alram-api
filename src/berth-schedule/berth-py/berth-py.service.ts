@@ -22,9 +22,11 @@ export class BerthPyService {
   /* #region common functions */
 
   /** 입항 시간 compare를 위한 SELECT */
-  async findOneForDupleData(oid: string) {
+  async findOneForDupleData(oid: string, trminlCode: string) {
     try {
-      return await berthStatSchedule.findOne({ where: { oid: oid } });
+      return await berthStatSchedule.findOne({
+        where: { oid: oid, trminlCode: trminlCode },
+      });
     } catch (error) {
       Logger.error(error);
     }
@@ -205,7 +207,10 @@ export class BerthPyService {
         const today = new Date();
         /** 모선항차의 중복을 찾기 위한 data */
         /** 이전에 가져온 데이터 명시 필요 */
-        const berthDupleData = await this.findOneForDupleData(obj.oid);
+        const berthDupleData = await this.findOneForDupleData(
+          obj.oid,
+          obj.trminlCode
+        );
 
         /** 알람을 구독한 유저 리스트 */
         const userInfoList = await this.findUserInfoListForAlram(obj);
