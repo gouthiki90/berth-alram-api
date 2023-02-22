@@ -259,12 +259,13 @@ export class BerthPyService {
             }
           }
         } else {
-          Logger.debug("::: is upsert :::");
+          Logger.debug(`::: is upsert ::: ${today.toISOString()}\n ${obj.oid}`);
           await berthStatSchedule.upsert(obj, { transaction: t });
         }
       }
 
       await t.commit();
+      Logger.debug("::: commit complete :::");
     } catch (error) {
       Logger.error(error);
       await t.rollback();
