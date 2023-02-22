@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Param, Put } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  UseGuards,
+} from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { ManagementRepository } from "./management.repository";
 import { CreateCompanyManagementDto } from "./dto/create-management.dto";
 import { UpdateUserStatusManagementDto } from "./dto/update-management.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
+@UseGuards(JwtAuthGuard)
 @Controller("management")
 export class ManagementController {
   constructor(
