@@ -8,7 +8,6 @@ interface User {
   oid: string;
   userId: string;
   bizName: string;
-  authCode: string;
 }
 
 @Injectable()
@@ -26,13 +25,12 @@ export class AuthService {
       ) &
         User;
 
-      const { userId, bizName, oid, authCode } = payload;
+      const { userId, bizName, oid } = payload;
 
       return {
         oid: oid,
         userId: userId,
         bizName: bizName,
-        authCode: authCode,
       };
     } catch (e) {
       throw new UnauthorizedException();

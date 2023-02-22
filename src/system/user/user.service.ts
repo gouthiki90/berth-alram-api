@@ -47,7 +47,6 @@ export class UserService {
         oid: userData.oid,
         userId: userData.userId,
         bizName: userData.bizName,
-        authCode: userData.authCode,
       });
 
       return userTokenInfo;
