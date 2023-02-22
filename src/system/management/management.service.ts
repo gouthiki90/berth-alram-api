@@ -87,8 +87,4 @@ export class ManagementService {
       throw new InternalServerErrorException(error);
     }
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} management`;
-  }
 }

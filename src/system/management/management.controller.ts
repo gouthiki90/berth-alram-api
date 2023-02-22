@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Put,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Put } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { ManagementRepository } from "./management.repository";
 import { CreateCompanyManagementDto } from "./dto/create-management.dto";
@@ -52,10 +43,5 @@ export class ManagementController {
     return this.managementService.updateUserStatus(
       updateUserStatusManagementDto
     );
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.managementService.remove(+id);
   }
 }
