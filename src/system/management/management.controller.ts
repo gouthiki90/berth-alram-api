@@ -6,12 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
-
-import { UpdateManagementDto } from "./dto/update-management.dto";
 import { ManagementRepository } from "./management.repository";
 import { CreateCompanyManagementDto } from "./dto/create-management.dto";
+import { UpdateUserStatusManagementDto } from "./dto/update-management.dto";
 
 @Controller("management")
 export class ManagementController {
@@ -44,12 +44,14 @@ export class ManagementController {
     return this.managementRepository.findAllCompanyInfoForSuper();
   }
 
-  @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateManagementDto: UpdateManagementDto
+  @Put("/status")
+  updateUserStatus(
+    @Body()
+    updateUserStatusManagementDto: UpdateUserStatusManagementDto
   ) {
-    return this.managementService.update(+id, updateManagementDto);
+    return this.managementService.updateUserStatus(
+      updateUserStatusManagementDto
+    );
   }
 
   @Delete(":id")
