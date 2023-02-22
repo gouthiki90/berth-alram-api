@@ -138,6 +138,7 @@ export class user
     allowNull: true,
     type: DataType.STRING(100),
     comment: "유저 사용 상태",
+    defaultValue: "0aply_using",
   })
   status?: string;
 

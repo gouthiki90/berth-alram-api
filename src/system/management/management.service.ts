@@ -6,10 +6,10 @@ import {
 import { Sequelize } from "sequelize-typescript";
 import { user } from "src/models";
 import { Utils } from "src/util/common.utils";
-import { CreateManagementDto } from "./dto/create-management.dto";
-import { CreateTempCompanyUserDto } from "./dto/create-temp-company-user.dto";
-import { UpdateManagementDto } from "./dto/update-management.dto";
+import { CreateCompanyManagementDto } from "./dto/create-management.dto";
 import * as crypto from "crypto";
+import { AuthCode, UserStatus } from "./interface/auth.enums";
+import { UpdateUserStatusManagementDto } from "./dto/update-management.dto";
 
 @Injectable()
 export class ManagementService {
@@ -17,31 +17,17 @@ export class ManagementService {
     private readonly seqeulize: Sequelize,
     private readonly util: Utils
   ) {}
-  create(createManagementDto: CreateManagementDto) {
-    return "This action adds a new management";
-  }
-
-  update(id: number, updateManagementDto: UpdateManagementDto) {
-    return `This action updates a #${id} management`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} management`;
-  }
-
-  /** 회사 관리자 등록 */
-  async createTempCompanyManagement(
-    createTempCompanyUserDto: CreateTempCompanyUserDto
-  ) {
+  /** 회사 관리자 유저 create */
+  async createCompanyManagementUser(createUserDto: CreateCompanyManagementDto) {
     const t = await this.seqeulize.transaction();
     try {
-      /** userId 중복 체크 */
+      // duple check
       const userData = await user.findOne({
         where: {
-          userId: createTempCompanyUserDto.userId,
+          userId: createUserDto.userId,
           password: crypto
             .createHash("sha512")
-            .update(createTempCompanyUserDto.password)
+            .update(createUserDto.password)
             .digest("hex"),
         },
       });
@@ -50,26 +36,54 @@ export class ManagementService {
         return { message: "중복된 아이디 입니다." };
       }
 
-      /** oid 생성 */
-      const userOid = await this.util.getOid(user, "user");
+      /** 유저 키값 생성 */
+      const USER_OID = await this.util.getOid(user, "User");
+      createUserDto.oid = USER_OID;
 
-      /** password 암호화 */
-      createTempCompanyUserDto.password = crypto
+      /** password encoding */
+      createUserDto.password = crypto
         .createHash("sha512")
-        .update(createTempCompanyUserDto.password)
+        .update(createUserDto.password)
         .digest("hex");
 
-      await user.create(
-        { oid: userOid, ...createTempCompanyUserDto },
-        { transaction: t }
-      );
+      /** 사용 상태, 권한 코드 입력 */
+      createUserDto.authCode = AuthCode.MANAGEMENT;
+      createUserDto.status = UserStatus.USE;
+
+      await user.create(createUserDto, { transaction: t });
+      await t.commit();
+      return { message: "회사관리자 계정을 성공적으로 생성했습니다." };
+    } catch (error) {
+      Logger.error(error);
+      await t.rollback();
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  /** 유저 계정 사용/사용 중지 update */
+  async updateUserStatus(
+    updateUserStatusManagementDto: UpdateUserStatusManagementDto
+  ) {
+    const { code } = updateUserStatusManagementDto;
+
+    if (code === 1) updateUserStatusManagementDto.status = UserStatus.USE;
+    else updateUserStatusManagementDto.status = UserStatus.CLOSE;
+
+    const t = await this.seqeulize.transaction();
+
+    try {
+      await user.update(updateUserStatusManagementDto, {
+        where: { oid: updateUserStatusManagementDto.oid },
+        transaction: t,
+      });
 
       await t.commit();
 
-      return { message: "성공적으로 계정이 생성되었습니다." };
+      if (code === 1) return { message: "사용 상태로 업데이트 되었습니다." };
+      else return { message: "사용 중지 상태로 업데이트 되었습니다." };
     } catch (error) {
-      await t.rollback();
       Logger.error(error);
+      await t.rollback();
       throw new InternalServerErrorException(error);
     }
   }

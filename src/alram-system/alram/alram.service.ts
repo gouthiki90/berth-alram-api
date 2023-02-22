@@ -137,6 +137,8 @@ export class AlramService {
     const berthItems = new Array<OffsetAlramDto>();
     /** IN에 넣을 터미널 코드 */
     const trminalCodes = data.trminlCodeList.join("','");
+    /** 별칭(화주) 검색 keyword */
+    const nicknameSearchKeyword = data.nickname_01;
 
     try {
       if ("number" !== typeof data.pageIndex) {
@@ -152,14 +154,16 @@ export class AlramService {
         oid,
         offset,
         trminalCodes,
-        data.isLastViewDto.isLastView
+        data.isLastViewDto.isLastView,
+        nicknameSearchKeyword
       );
 
       /** 페이징 값을 구하기 위한 SELECT */
       const userAlramListForPagingAll = await this.alramRepository.findAll(
         oid,
         trminalCodes,
-        data.isLastViewDto.isLastView
+        data.isLastViewDto.isLastView,
+        nicknameSearchKeyword
       );
 
       if (userAlramListForPaging.length !== 0) {

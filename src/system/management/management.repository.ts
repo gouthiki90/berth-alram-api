@@ -1,31 +1,26 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import sequelize from "sequelize";
-import { Utils } from "src/util/common.utils";
+import seqeulize from "sequelize";
 
 @Injectable()
 export class ManagementRepository {
-  constructor(
-    private readonly seqeulize: Sequelize,
-    private readonly util: Utils
-  ) {}
+  constructor(private readonly seqeulize: Sequelize) {}
 
-  /** 슈퍼 관리자 페이지 대쉬보드 */
-  async findAllUserInfoListForSuperUser() {
+  /** 관리자 페이지 대쉬보드 SELECT */
+  async findAllUserInfoForSuper() {
     try {
       return await this.seqeulize.query(
         `
         SELECT
-            oid, -- 유저 키값
             company_group_code, -- 회사 그룹 코드
-            principal, -- 대표자 이름
+            principal, -- 회사 대표자
             user_id, -- 유저 아이디
-            manager_tel, -- 담당자 연락처
+            contact, -- 전화번호
             email, -- 이메일
-            (SELECT code_name FROM common_code WHERE oid = usr.status) AS status -- 계정 사용 상태
+            (SELECT code_name FROM common_code WHERE usr.status = oid) AS status -- 가입상태
         FROM user AS usr
         `,
-        { type: sequelize.QueryTypes.SELECT }
+        { type: seqeulize.QueryTypes.SELECT }
       );
     } catch (error) {
       Logger.error(error);
@@ -33,30 +28,23 @@ export class ManagementRepository {
     }
   }
 
-  /** 사용자 정보 모달 */
-  async findOneUserInfoForSuperUser(query: any) {
-    const { oid, companyGroupCode } = query;
-
-    const whereArr = [
-      ["AND oid = :oid", oid],
-      ["AND company_group_code = :companyGroupCode", companyGroupCode],
-    ];
+  /** 사용자정보 모달 SELECT */
+  async findOneUserInfoForSuper(oid: string) {
     try {
       return await this.seqeulize.query(
         `
         SELECT
-            oid, -- 유저 키값
             company_group_code, -- 회사 그룹 코드
-            principal, -- 대표자 이름
+            principal, -- 회사 대표자
             user_id, -- 유저 아이디
-            manager_tel, -- 담당자 연락처
+            contact, -- 전화번호
             email, -- 이메일
-            (SELECT code_name FROM common_code WHERE oid = usr.status) AS status -- 계정 사용 상태
+            (SELECT code_name FROM common_code WHERE usr.status = oid) AS status -- 가입상태
         FROM user AS usr
         WHERE TRUE
-        ${this.util.generator(whereArr, query)}
+        AND usr.oid = $oid
         `,
-        { type: sequelize.QueryTypes.SELECT, replacements: query }
+        { type: seqeulize.QueryTypes.SELECT, bind: { oid: oid } }
       );
     } catch (error) {
       Logger.error(error);
@@ -64,18 +52,20 @@ export class ManagementRepository {
     }
   }
 
-  /** 슈퍼 관리자 페이지에서 업체&업체코드 수정 또는 추가 모달 */
+  /** 업체&업체코드 수정 또는 추가 모달 */
   async findAllCompanyInfoForSuper() {
     try {
       return await this.seqeulize.query(
         `
         SELECT
-            biz_name,
-            company_group_code
+            company_group_code, -- 회사 그룹 코드
+            principal, -- 회사 대표자
+            user_id, -- 유저 아이디
+            password, -- 패스워드
+            bizName -- 상호
         FROM user AS usr
-        GROUP BY biz_name
         `,
-        { type: sequelize.QueryTypes.SELECT }
+        { type: seqeulize.QueryTypes.SELECT }
       );
     } catch (error) {
       Logger.error(error);

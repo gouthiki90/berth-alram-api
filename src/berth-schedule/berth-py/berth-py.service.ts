@@ -56,7 +56,7 @@ export class BerthPyService {
         -- 알람을 구독한 유저
         INNER JOIN user AS users ON alram.user_oid = users.oid
         -- 유저가 지정한 모선 별칭
-        INNER JOIN ship_byname AS name ON alram.oid = name.alram_oid
+        LEFT JOIN ship_byname AS name ON alram.oid = name.alram_oid
         WHERE TRUE
         AND alram.schedule_oid = '${obj.oid}'
         `,
@@ -113,7 +113,10 @@ export class BerthPyService {
         /** 별칭 유무에 따른 문자 content 변경 */
         let content: string;
 
-        if (userInfo?.isUse !== 1) {
+        if (
+          userInfo?.isUse !== 1 ||
+          (userInfo?.nickname_01 === null && userInfo?.isUse === null)
+        ) {
           content = `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
         } else {
           content = `${obj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${obj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
@@ -160,12 +163,24 @@ export class BerthPyService {
           "alramHistory"
         );
 
+        /** 별칭 유무에 따른 문자 content 변경 */
+        let content: string;
+
+        if (
+          userInfo?.isUse !== 1 ||
+          (userInfo?.nickname_01 === null && userInfo?.isUse === null)
+        ) {
+          content = `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`;
+        } else {
+          content = `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`;
+        }
+
         /** alram history create obj */
         const makeAlramHistoryObj = {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
           alramOid: userInfo.alramOid,
-          content: `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이 ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`,
+          content: content,
         };
 
         await alramHistory.create(

@@ -7,6 +7,7 @@ import {
   Put,
   UseFilters,
   UseGuards,
+  Logger,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { ErrorHandler } from "src/error-handler/error-handler";
@@ -29,7 +30,7 @@ export class AlramController {
 
   @Post("/page-info/:oid")
   findOne(@Param("oid") oid: string, @Body() pageInfo: OffsetPagingInfoDto) {
-    console.log({ pageInfo });
+    Logger.debug(pageInfo);
     return this.alramService.makePageInfoForAlramList(pageInfo, oid);
   }
 

@@ -7,7 +7,7 @@ import { ManagementRepository } from "./management.repository";
 import { Utils } from "src/util/common.utils";
 
 @Module({
-  imports: [SequelizeModule.forFeature([commonCode, user])],
+  imports: [SequelizeModule.forFeature([user, commonCode])],
   controllers: [ManagementController],
   providers: [ManagementService, ManagementRepository, Utils],
 })
