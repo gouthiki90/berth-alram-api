@@ -3,11 +3,11 @@ import {
   InternalServerErrorException,
   Logger,
 } from "@nestjs/common";
-import { UpdateShippingTimeDto } from "./dto/update-shipping-time.dto";
 import { parse } from "node-html-parser";
 import { Sequelize } from "sequelize-typescript";
 import { HttpService } from "@nestjs/axios";
 import { SearchShippingTimeDto } from "./dto/search-shipping-time.dto";
+import { TrminlCode } from "./interface/trminlCode.enums";
 
 @Injectable()
 export class ShippingTimeService {
@@ -17,15 +17,46 @@ export class ShippingTimeService {
   ) {}
   /** TLLU2006874 */
   /** 컨넘버를 받고 양하 시간 크롤링 */
-  async crawllingOfShippingTimeFromContainerBNCT(
+  async crawllingOfShippingTimeFromContainer(
     searchShippingTimeDto: SearchShippingTimeDto
   ) {
     try {
+      switch (searchShippingTimeDto.trminlCode) {
+        case TrminlCode.BNCT:
+          await this.crawllingOfShippingTimeFromContainerBNCT(
+            searchShippingTimeDto.containerNumber
+          );
+          break;
+        case TrminlCode.BPTG:
+          break;
+        case TrminlCode.BPTS:
+          break;
+        case TrminlCode.DPCT:
+          break;
+        case TrminlCode.HJNC:
+          break;
+        case TrminlCode.HKT:
+          break;
+        case TrminlCode.HPNT:
+          break;
+        case TrminlCode.PNC:
+          break;
+        case TrminlCode.PNIT:
+          break;
+      }
+
+      return { message: "test..." };
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  /** BNCT */
+  async crawllingOfShippingTimeFromContainerBNCT(containerNumber: string) {
+    try {
       const response = await this.httpService.axiosRef.get(
-        `${
-          process.env.BNCT_SHIPPING_URL +
-          `?cntrNo=${searchShippingTimeDto.containerNumber}`
-        }`
+        `${process.env.BNCT_SHIPPING_URL + `?cntrNo=${containerNumber}`}`
       );
 
       // Logger.debug(response.data);
@@ -34,8 +65,6 @@ export class ShippingTimeService {
       const selectResult = root.querySelector(".yangha-result");
 
       Logger.debug(selectResult.text);
-
-      return { message: "test..." };
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException(error);
@@ -112,13 +141,5 @@ export class ShippingTimeService {
 
   findOne(id: number) {
     return `This action returns a #${id} shippingTime`;
-  }
-
-  update(id: number, updateShippingTimeDto: UpdateShippingTimeDto) {
-    return `This action updates a #${id} shippingTime`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} shippingTime`;
   }
 }
