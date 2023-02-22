@@ -82,12 +82,18 @@ export class ShippingTimeService {
 
   /** HPNT */
   async crawllingOfShippingTimeFromContainerHPNT() {
-    const url = "https://www.hpnt.co.kr/infoservice/vessel/vslStevedoreDtm.jsp";
     const examplePostDataObject = {
       cntrNo: ["emptyCntrNo", "length-equal-11"],
     };
 
     try {
+      const response = await this.httpService.axiosRef.post(
+        process.env.HPNT_SHIPPING_URL,
+        examplePostDataObject
+      );
+
+      const root = response.data;
+      Logger.debug(root);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException(error);
@@ -103,10 +109,35 @@ export class ShippingTimeService {
    * 선사 : txtOpr
    */
 
+  async crawllingOfShippingTimeFromContainerBNMT() {
+    try {
+      const response = await this.httpService.axiosRef.post(
+        process.env.BNMT_SHIPPING_URL,
+        {}
+      );
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   /**
    * DPCT
    * http://www.dpct.co.kr/info/sunsuk/E71W004S.asp?start=ok&txtCntrNo=TLLU2006874
    */
+  async crawllingOfShippingTimeFromContainerDPCT(containerNumber: string) {
+    try {
+      const response = await this.httpService.axiosRef.get(
+        `${process.env.DPCT_SHIPPING_URL + containerNumber}`
+      );
+
+      const root = response.data;
+      Logger.debug(root);
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   /**
    * HJNC
@@ -117,12 +148,40 @@ export class ShippingTimeService {
       CNTR_UID: 
    */
 
+  async crawllingOfShippingTimeFromContainerHJNC(containerNumber: string) {
+    try {
+      const response = await this.httpService.axiosRef.get(
+        `${process.env.HJNC_SHIPPING_URL + containerNumber}`
+      );
+
+      const root = response.data;
+      Logger.debug(root);
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
   /**
    * HKT
    * https://custom.hktl.com/jsp/T03/bonsundtl.jsp
    * POST
    * 컨넘버 cntno
    */
+
+  async crawllingOfShippingTimeFromContainerHKT(containerNumber: string) {
+    try {
+      const response = await this.httpService.axiosRef.post(
+        process.env.HKT_SHIPPING_URL,
+        { contno: containerNumber }
+      );
+
+      const root = response.data;
+      Logger.debug(root);
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   /**
    * PNC
@@ -134,6 +193,21 @@ export class ShippingTimeService {
       TLLU2006874
       mCode: 
    */
+
+  async crawllingOfShippingTimeFromContainerPNC(containerNumber: string) {
+    try {
+      const response = await this.httpService.axiosRef.post(
+        process.env.PNC_SHIPPING_URL,
+        { CONTNO: containerNumber }
+      );
+
+      const root = response.data;
+      Logger.debug(root);
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   findAll() {
     return `This action returns all shippingTime`;
