@@ -11,6 +11,10 @@ import {
 export interface userAttributes {
   id?: number;
   oid?: string;
+  companyGroupCode?: string;
+  principal?: string;
+  authCode?: string;
+  authStatus?: string;
   userId: string;
   userName?: string;
   password: Uint8Array;
@@ -43,6 +47,37 @@ export class user
 
   @Column({ allowNull: true, type: DataType.STRING(100), comment: "키값(oid)" })
   oid?: string;
+
+  @Column({
+    field: "company_group_code",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "회사 그룹 코드(사업자번호)",
+  })
+  companyGroupCode?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(50),
+    comment: "대표자 이름",
+  })
+  principal?: string;
+
+  @Column({
+    field: "auth_code",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "권한 코드",
+  })
+  authCode?: string;
+
+  @Column({
+    field: "auth_status",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "가입 승인 상태",
+  })
+  authStatus?: string;
 
   @Column({
     field: "user_id",
@@ -80,6 +115,9 @@ export class user
   })
   contact_01?: string;
 
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: "이메일" })
+  email?: string;
+
   @Column({
     field: "manager_tel",
     allowNull: true,
@@ -95,6 +133,14 @@ export class user
     comment: "부서 이름",
   })
   managerName?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "유저 사용 상태",
+    defaultValue: "0aply_using",
+  })
+  status?: string;
 
   @Column({
     field: "contact_option",
