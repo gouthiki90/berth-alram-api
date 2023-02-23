@@ -16,13 +16,20 @@ export interface userAttributes {
   password: Uint8Array;
   bizName?: string;
   contact?: string;
-  contact_01?: string;
-  email?: string;
   managerTel?: string;
   managerName?: string;
-  status?: string;
   contactOption?: number;
   isNofitication?: number;
+  contact_01?: string;
+  contact_02?: string;
+  contact_03?: string;
+  contact_04?: string;
+  contact_05?: string;
+  contact_06?: string;
+  contact_07?: string;
+  contact_08?: string;
+  contact_09?: string;
+  contact_10?: string;
   createDate?: Date;
   updateDate?: Date;
 }
@@ -69,16 +76,9 @@ export class user
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: "알람 발송 대상 1번",
+    comment: "알람 발송 대상",
   })
   contact?: string;
-
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "알람 발송 대상2",
-  })
-  contact_01?: string;
 
   @Column({
     field: "manager_tel",
@@ -109,10 +109,40 @@ export class user
     field: "is_nofitication",
     allowNull: true,
     type: DataType.TINYINT,
-    comment: "알람 ON/OFF 여부",
+    comment: " ON/OFF ",
     defaultValue: "1",
   })
   isNofitication?: number;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처1" })
+  contact_01?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처2" })
+  contact_02?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처3" })
+  contact_03?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처4" })
+  contact_04?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처5" })
+  contact_05?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처6" })
+  contact_06?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처7" })
+  contact_07?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처8" })
+  contact_08?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처9" })
+  contact_09?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: "연락처10" })
+  contact_10?: string;
 
   @Column({
     field: "create_date",
