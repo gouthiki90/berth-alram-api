@@ -240,28 +240,20 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            try {
-              /** 입항일자 변경으로 인한 문자 전송 */
-              await this.sendAlramOfcsdhpPrarnde(
-                userInfoList,
-                obj,
-                berthDupleData
-              );
-            } catch (error) {
-              Logger.error(error);
-            }
+            /** 입항일자 변경으로 인한 문자 전송 */
+            await this.sendAlramOfcsdhpPrarnde(
+              userInfoList,
+              obj,
+              berthDupleData
+            );
 
-            try {
-              /** 알람 메시지 create */
-              await this.sendWebAlramOfcsdhpPrarnde(
-                userInfoList,
-                obj,
-                berthDupleData,
-                t
-              );
-            } catch (error) {
-              Logger.error(error);
-            }
+            /** 알람 메시지 create */
+            await this.sendWebAlramOfcsdhpPrarnde(
+              userInfoList,
+              obj,
+              berthDupleData,
+              t
+            );
           }
         } else {
           Logger.debug(`::: is upsert ::: ${today.toISOString()}\n ${obj.oid}`);
