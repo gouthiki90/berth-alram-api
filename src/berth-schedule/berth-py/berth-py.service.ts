@@ -126,6 +126,11 @@ export class BerthPyService {
 
         /** 문자 옵션이 on일때만 푸쉬하기 */
         if (userInfo.isNofitication === 1) {
+          Logger.warn("::: message sending :::");
+          Logger.warn("userOid ----", userInfo.userOid);
+          Logger.warn("contact ----", userInfo.contact);
+          Logger.warn("contact_01 ----", userInfo.contact_01);
+          Logger.warn("::: message sending :::");
           await this.httpService.axiosRef
             .post(
               `${process.env.MESSAGE_URL}`,
