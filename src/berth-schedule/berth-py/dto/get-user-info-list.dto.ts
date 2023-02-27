@@ -13,7 +13,6 @@ export class GetUserInfoListDto {
   contact_07?: string;
   contact_08?: string;
   contact_09?: string;
-  contact_10?: string;
   /** 알람 oid */
   alramOid?: string;
   /** 문자 on-off 옵션 */
