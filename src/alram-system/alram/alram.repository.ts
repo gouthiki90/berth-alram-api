@@ -81,6 +81,7 @@ export class AlramRepository {
                       LEFT(berth.tkoffPrarnde, 19)),
                   '%Y-%m-%d %H:%i'),
               NULL))
+              ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
               LIMIT ${offset}, 20
           `,
           {
@@ -147,6 +148,7 @@ export class AlramRepository {
                       LEFT(berth.tkoffPrarnde, 19)),
                   '%Y-%m-%d %H:%i'),
               NULL))
+              ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
               LIMIT ${offset}, 20
           `,
           {
@@ -229,6 +231,7 @@ export class AlramRepository {
                           LEFT(berth.tkoffPrarnde, 19)),
                       '%Y-%m-%d %H:%i'),
                   NULL))
+                  ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
@@ -294,6 +297,7 @@ export class AlramRepository {
                           LEFT(berth.tkoffPrarnde, 19)),
                       '%Y-%m-%d %H:%i'),
                   NULL))
+                  ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
