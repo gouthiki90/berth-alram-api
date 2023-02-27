@@ -52,7 +52,6 @@ export class BerthPyService {
           users.contact_07,
           users.contact_08,
           users.contact_09,
-          users.contact_10,
           -- 알람 on/off
           users.is_nofitication AS isNofitication,
           -- 스케줄 키값
@@ -151,7 +150,6 @@ export class BerthPyService {
                   `${userInfo.contact_07}`,
                   `${userInfo.contact_08}`,
                   `${userInfo.contact_09}`,
-                  `${userInfo.contact_10}`,
                 ],
               },
               {
