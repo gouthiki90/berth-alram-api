@@ -8,6 +8,7 @@ import {
   UseFilters,
   Put,
   UseGuards,
+  Logger,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -50,6 +51,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Put("/:oid")
   update(@Param("oid") oid: string, @Body() updateUserDto: UpdateUserDto) {
+    Logger.debug(updateUserDto);
     return this.userService.update(oid, updateUserDto);
   }
 

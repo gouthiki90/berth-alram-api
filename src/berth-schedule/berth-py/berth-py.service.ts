@@ -44,6 +44,14 @@ export class BerthPyService {
           users.contact,
           -- 유저 연락처2
           users.contact_01,
+          users.contact_02,
+          users.contact_03,
+          users.contact_04,
+          users.contact_05,
+          users.contact_06,
+          users.contact_07,
+          users.contact_08,
+          users.contact_09,
           -- 알람 on/off
           users.is_nofitication AS isNofitication,
           -- 스케줄 키값
@@ -136,7 +144,18 @@ export class BerthPyService {
               `${process.env.MESSAGE_URL}`,
               {
                 content: content,
-                receivers: [`${userInfo.contact}`, `${userInfo.contact_01}`],
+                receivers: [
+                  `${userInfo.contact}`,
+                  `${userInfo.contact_01}`,
+                  `${userInfo.contact_02}`,
+                  `${userInfo.contact_03}`,
+                  `${userInfo.contact_04}`,
+                  `${userInfo.contact_05}`,
+                  `${userInfo.contact_06}`,
+                  `${userInfo.contact_07}`,
+                  `${userInfo.contact_08}`,
+                  `${userInfo.contact_09}`,
+                ],
               },
               {
                 headers: {

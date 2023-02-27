@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { ErrorHandler } from "src/error-handler/error-handler";
-import { container, subscriptionAlram } from "src/models";
+import { container, shipByname, subscriptionAlram } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
@@ -115,6 +115,18 @@ export class AlramService {
           Logger.debug(con.oid);
           await container.destroy({ where: { oid: con.oid }, transaction: t });
         }
+      }
+
+      /** child shipByName remove */
+      for (const obj of data) {
+        const havingAlramOidShipByName = await shipByname.findAll({
+          where: { alramOid: obj.alramOid },
+        });
+
+        havingAlramOidShipByName.map(async (curr) => {
+          Logger.debug(curr.oid);
+          await shipByname.destroy({ where: { oid: curr.oid } });
+        });
       }
 
       const result = await t.commit();
