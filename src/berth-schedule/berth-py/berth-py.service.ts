@@ -134,6 +134,11 @@ export class BerthPyService {
 
         /** 문자 옵션이 on일때만 푸쉬하기 */
         if (userInfo.isNofitication === 1) {
+          Logger.warn("::: message sending :::");
+          Logger.warn("userOid ----", userInfo.userOid);
+          Logger.warn("contact ----", userInfo.contact);
+          Logger.warn("contact_01 ----", userInfo.contact_01);
+          Logger.warn("::: message sending :::");
           await this.httpService.axiosRef
             .post(
               `${process.env.MESSAGE_URL}`,
@@ -254,28 +259,20 @@ export class BerthPyService {
               { where: { oid: obj.oid }, transaction: t }
             );
 
-            try {
-              /** 입항일자 변경으로 인한 문자 전송 */
-              await this.sendAlramOfcsdhpPrarnde(
-                userInfoList,
-                obj,
-                berthDupleData
-              );
-            } catch (error) {
-              Logger.error(error);
-            }
+            /** 입항일자 변경으로 인한 문자 전송 */
+            await this.sendAlramOfcsdhpPrarnde(
+              userInfoList,
+              obj,
+              berthDupleData
+            );
 
-            try {
-              /** 알람 메시지 create */
-              await this.sendWebAlramOfcsdhpPrarnde(
-                userInfoList,
-                obj,
-                berthDupleData,
-                t
-              );
-            } catch (error) {
-              Logger.error(error);
-            }
+            /** 알람 메시지 create */
+            await this.sendWebAlramOfcsdhpPrarnde(
+              userInfoList,
+              obj,
+              berthDupleData,
+              t
+            );
           }
         } else {
           Logger.debug(`::: is upsert ::: ${today.toISOString()}\n ${obj.oid}`);
