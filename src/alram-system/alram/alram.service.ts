@@ -7,7 +7,12 @@ import {
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { ErrorHandler } from "src/error-handler/error-handler";
-import { container, shipByname, subscriptionAlram } from "src/models";
+import {
+  container,
+  databasesHistory,
+  shipByname,
+  subscriptionAlram,
+} from "src/models";
 import { Utils } from "src/util/common.utils";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
@@ -60,7 +65,31 @@ export class AlramService {
             "subscriptionAlram"
           );
           obj.oid = ALRAM_OID;
-          await subscriptionAlram.create({ ...obj }, { transaction: t });
+          await subscriptionAlram.create(
+            { ...obj },
+            {
+              transaction: t,
+              async logging(sql) {
+                const util = new Utils();
+                try {
+                  /** oid 생성 */
+                  const oid = await util.getOid(
+                    databasesHistory,
+                    "databasesHistory"
+                  );
+
+                  await databasesHistory.create({
+                    oid: oid,
+                    workOid: ALRAM_OID,
+                    tableName: subscriptionAlram.tableName,
+                    queryText: sql,
+                  });
+                } catch (error) {
+                  Logger.error("logging", error);
+                }
+              },
+            }
+          );
         }
       }
 
@@ -101,6 +130,25 @@ export class AlramService {
         await subscriptionAlram.destroy({
           where: { oid: obj.alramOid },
           transaction: t,
+          async logging(sql) {
+            const util = new Utils();
+            try {
+              /** oid 생성 */
+              const oid = await util.getOid(
+                databasesHistory,
+                "databasesHistory"
+              );
+
+              await databasesHistory.create({
+                oid: oid,
+                workOid: obj.alramOid,
+                tableName: subscriptionAlram.tableName,
+                queryText: sql,
+              });
+            } catch (error) {
+              Logger.error("logging", error);
+            }
+          },
         });
       }
 

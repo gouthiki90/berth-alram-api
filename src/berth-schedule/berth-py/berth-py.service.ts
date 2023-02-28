@@ -4,7 +4,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { alramHistory, berthStatSchedule } from "src/models";
+import { alramHistory, berthStatSchedule, databasesHistory } from "src/models";
 import { CreateBerthPyDto } from "./dto/create-berth-py.dto";
 import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
@@ -211,7 +211,28 @@ export class BerthPyService {
 
         await alramHistory.create(
           { ...makeAlramHistoryObj },
-          { transaction: t }
+          {
+            transaction: t,
+            async logging(sql) {
+              const util = new Utils();
+              try {
+                /** oid 생성 */
+                const oid = await util.getOid(
+                  databasesHistory,
+                  "databasesHistory"
+                );
+
+                await databasesHistory.create({
+                  oid: oid,
+                  workOid: ALRAM_HISTORY_OID,
+                  tableName: alramHistory.tableName,
+                  queryText: sql,
+                });
+              } catch (error) {
+                Logger.error("logging", error);
+              }
+            },
+          }
         );
       }
     } catch (error) {
@@ -241,6 +262,25 @@ export class BerthPyService {
           await berthStatSchedule.update(obj, {
             where: { oid: obj.oid },
             transaction: t,
+            async logging(sql) {
+              const util = new Utils();
+              try {
+                /** oid 생성 */
+                const oid = await util.getOid(
+                  databasesHistory,
+                  "databasesHistory"
+                );
+
+                await databasesHistory.create({
+                  oid: oid,
+                  workOid: obj.oid,
+                  tableName: berthStatSchedule.tableName,
+                  queryText: sql,
+                });
+              } catch (error) {
+                Logger.error("logging", error);
+              }
+            },
           });
 
           if (

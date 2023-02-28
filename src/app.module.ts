@@ -30,6 +30,7 @@ import { BerthInfoModule } from "./berth-schedule/berth-info/berth-info.module";
       synchronize: true,
       timezone: "+09:00",
       logging: false,
+      logQueryParameters: true, // bind 해제 옵션
     }),
     DashboardModule,
     UserModule,
