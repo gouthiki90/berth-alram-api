@@ -227,6 +227,7 @@ export class BerthPyService {
                   workOid: ALRAM_HISTORY_OID,
                   tableName: alramHistory.tableName,
                   queryText: sql,
+                  userOid: userInfo.userOid,
                 });
               } catch (error) {
                 Logger.error("logging", error);
