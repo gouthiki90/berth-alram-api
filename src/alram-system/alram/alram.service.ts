@@ -83,6 +83,7 @@ export class AlramService {
                     workOid: ALRAM_OID,
                     tableName: subscriptionAlram.tableName,
                     queryText: sql,
+                    userOid: obj.userOid,
                   });
                 } catch (error) {
                   Logger.error("logging", error);
@@ -144,6 +145,7 @@ export class AlramService {
                 workOid: obj.alramOid,
                 tableName: subscriptionAlram.tableName,
                 queryText: sql,
+                userOid: obj.userOid,
               });
             } catch (error) {
               Logger.error("logging", error);
