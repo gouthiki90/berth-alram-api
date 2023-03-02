@@ -51,7 +51,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Put("/:oid")
   update(@Param("oid") oid: string, @Body() updateUserDto: UpdateUserDto) {
-    Logger.debug(updateUserDto);
     return this.userService.update(oid, updateUserDto);
   }
 
