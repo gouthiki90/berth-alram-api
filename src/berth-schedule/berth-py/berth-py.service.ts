@@ -10,6 +10,7 @@ import { HttpService } from "@nestjs/axios";
 import sequelize from "sequelize";
 import { Utils } from "src/util/common.utils";
 import { GetUserInfoListDto } from "./dto/get-user-info-list.dto";
+import { ForAlramPushMessage } from "./interface/berth-alram-push.interface";
 
 @Injectable()
 export class BerthPyService {
@@ -20,6 +21,17 @@ export class BerthPyService {
   ) {}
 
   /* #region common functions */
+
+  /** 별칭 유무에 따른 메시지 return */
+  dependsShipNameMakePushMessage(forAlramPushInterface: ForAlramPushMessage) {
+    if (forAlramPushInterface?.isUse !== 1) {
+      return `${forAlramPushInterface.trminlCode} 터미널의 ${forAlramPushInterface.oid} 모선항차 입항시간이\n ${forAlramPushInterface.oldCsdhpPrarnde}에서 ${forAlramPushInterface.newCsdhpPrarnde}으로 변경되었습니다.`;
+    } else if (forAlramPushInterface?.nickname_01) {
+      return `${forAlramPushInterface.trminlCode} 터미널의 ${forAlramPushInterface?.nickname_01}(${forAlramPushInterface.oid}) 모선항차 입항시간이\n ${forAlramPushInterface.oldCsdhpPrarnde}에서 ${forAlramPushInterface.newCsdhpPrarnde}으로 변경되었습니다.`;
+    } else {
+      throw new InternalServerErrorException("::: no variable :::");
+    }
+  }
 
   /** 입항 시간 compare를 위한 SELECT */
   async findOneForDupleData(oid: string) {
@@ -115,22 +127,20 @@ export class BerthPyService {
   /** 입항 시간에 따른 알람 푸쉬 */
   async sendAlramOfcsdhpPrarnde(
     userInfoList: Array<GetUserInfoListDto>,
-    obj: CreateBerthPyDto,
-    berthDupleData: berthStatSchedule
+    newBerthData: CreateBerthPyDto,
+    oldBerthDupleData: berthStatSchedule
   ) {
     try {
       for (const userInfo of userInfoList) {
-        /** 별칭 유무에 따른 문자 content 변경 */
-        let content: string;
-
-        if (
-          userInfo?.isUse !== 1 ||
-          (userInfo?.nickname_01 === null && userInfo?.isUse === null)
-        ) {
-          content = `${obj.trminlCode} 터미널의 ${obj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
-        } else {
-          content = `${obj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${obj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${obj.csdhpPrarnde}으로 변경되었습니다.`;
-        }
+        /** 별칭 유무에 따른 문자 content */
+        const messageContent = this.dependsShipNameMakePushMessage({
+          trminlCode: newBerthData.trminlCode,
+          oid: newBerthData.oid,
+          newCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde,
+          oldCsdhpPrarnde: newBerthData.csdhpPrarnde,
+          nickname_01: userInfo.nickname_01,
+          isUse: userInfo.isUse,
+        });
 
         /** 문자 옵션이 on일때만 푸쉬하기 */
         if (userInfo.isNofitication === 1) {
@@ -143,7 +153,7 @@ export class BerthPyService {
             .post(
               `${process.env.MESSAGE_URL}`,
               {
-                content: content,
+                content: messageContent,
                 receivers: [
                   `${userInfo.contact}`,
                   `${userInfo.contact_01}`,
@@ -178,8 +188,8 @@ export class BerthPyService {
   /** 웹 알람 기록을 위한 create */
   async sendWebAlramOfcsdhpPrarnde(
     userInfoList: Array<GetUserInfoListDto>,
-    berthObj: CreateBerthPyDto,
-    berthDupleData: berthStatSchedule,
+    newBerthData: CreateBerthPyDto,
+    oldBerthDupleData: berthStatSchedule,
     t: any
   ) {
     try {
@@ -189,24 +199,22 @@ export class BerthPyService {
           "alramHistory"
         );
 
-        /** 별칭 유무에 따른 문자 content 변경 */
-        let content: string;
-
-        if (
-          userInfo?.isUse !== 1 ||
-          (userInfo?.nickname_01 === null && userInfo?.isUse === null)
-        ) {
-          content = `${berthObj.trminlCode} 터미널의 ${berthObj.oid} 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`;
-        } else {
-          content = `${berthObj.trminlCode} 터미널의 ${userInfo?.nickname_01}(${berthObj.oid}) 모선항차 입항시간이\n ${berthDupleData.csdhpPrarnde}에서 ${berthObj.csdhpPrarnde}으로 변경되었습니다.`;
-        }
+        /** 별칭 유무에 따른 문자 content */
+        const messageContent = this.dependsShipNameMakePushMessage({
+          trminlCode: newBerthData.trminlCode,
+          oid: newBerthData.oid,
+          newCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde,
+          oldCsdhpPrarnde: newBerthData.csdhpPrarnde,
+          nickname_01: userInfo.nickname_01,
+          isUse: userInfo.isUse,
+        });
 
         /** alram history create obj */
         const makeAlramHistoryObj = {
           oid: ALRAM_HISTORY_OID,
           userOid: userInfo.userOid,
           alramOid: userInfo.alramOid,
-          content: content,
+          content: messageContent,
         };
 
         await alramHistory.create(
@@ -247,21 +255,24 @@ export class BerthPyService {
   /** berth data create and alram push */
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
+    const today = new Date();
 
     try {
-      for (const obj of data) {
-        const today = new Date();
+      for (const newBerthDupleData of data) {
         /** 모선항차의 중복을 찾기 위한 data */
-        /** 이전에 가져온 데이터 명시 필요 */
-        const berthDupleData = await this.findOneForDupleData(obj.oid);
+        const oldBerthDupleData = await this.findOneForDupleData(
+          newBerthDupleData.oid
+        );
 
         /** 알람을 구독한 유저 리스트 */
-        const userInfoList = await this.findUserInfoListForAlram(obj);
+        const userInfoList = await this.findUserInfoListForAlram(
+          newBerthDupleData
+        );
 
-        if (berthDupleData) {
+        if (oldBerthDupleData) {
           /** 중복 있을 시 update */
-          await berthStatSchedule.update(obj, {
-            where: { oid: obj.oid },
+          await berthStatSchedule.update(newBerthDupleData, {
+            where: { oid: newBerthDupleData.oid },
             transaction: t,
             async logging(sql) {
               const util = new Utils();
@@ -274,7 +285,7 @@ export class BerthPyService {
 
                 await databasesHistory.create({
                   oid: oid,
-                  workOid: obj.oid,
+                  workOid: newBerthDupleData.oid,
                   tableName: berthStatSchedule.tableName,
                   queryText: sql,
                 });
@@ -284,40 +295,45 @@ export class BerthPyService {
             },
           });
 
+          /** 터미널 코드가 같으며 입항일이 다를 시 */
           if (
-            berthDupleData.trminlCode === obj.trminlCode &&
-            berthDupleData.csdhpPrarnde !== obj.csdhpPrarnde
+            oldBerthDupleData.trminlCode === newBerthDupleData.trminlCode &&
+            oldBerthDupleData.csdhpPrarnde !== newBerthDupleData.csdhpPrarnde
           ) {
             Logger.warn(
-              `csdhpPrarnde=::: ${today.toISOString()}\n ${obj.oid} - ${
-                obj.csdhpPrarnde
-              } ::: is change! :::`
+              `csdhpPrarnde=::: ${today.toISOString()}\n ${
+                newBerthDupleData.oid
+              } - ${newBerthDupleData.csdhpPrarnde} ::: is change! :::`
             );
 
             /** 이전 접안일 데이터 update */
             await berthStatSchedule.update(
-              { previousCsdhpPrarnde: berthDupleData.csdhpPrarnde },
-              { where: { oid: obj.oid }, transaction: t }
+              { previousCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde },
+              { where: { oid: newBerthDupleData.oid }, transaction: t }
             );
 
             /** 입항일자 변경으로 인한 문자 전송 */
             await this.sendAlramOfcsdhpPrarnde(
               userInfoList,
-              obj,
-              berthDupleData
+              newBerthDupleData,
+              oldBerthDupleData
             );
 
             /** 알람 메시지 create */
             await this.sendWebAlramOfcsdhpPrarnde(
               userInfoList,
-              obj,
-              berthDupleData,
+              newBerthDupleData,
+              oldBerthDupleData,
               t
             );
           }
         } else {
-          Logger.debug(`::: is upsert ::: ${today.toISOString()}\n ${obj.oid}`);
-          await berthStatSchedule.upsert(obj, { transaction: t });
+          Logger.debug(
+            `::: is upsert ::: ${today.toISOString()}\n ${
+              newBerthDupleData.oid
+            }`
+          );
+          await berthStatSchedule.upsert(newBerthDupleData, { transaction: t });
         }
       }
 
@@ -326,7 +342,7 @@ export class BerthPyService {
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException("error in server");
+      throw new InternalServerErrorException(error);
     }
   }
 
