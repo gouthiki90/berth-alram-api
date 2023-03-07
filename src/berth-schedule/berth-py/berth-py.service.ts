@@ -255,10 +255,10 @@ export class BerthPyService {
   /** berth data create and alram push */
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
+    const today = new Date();
 
     try {
       for (const newBerthDupleData of data) {
-        const today = new Date();
         /** 모선항차의 중복을 찾기 위한 data */
         const oldBerthDupleData = await this.findOneForDupleData(
           newBerthDupleData.oid
@@ -295,6 +295,7 @@ export class BerthPyService {
             },
           });
 
+          /** 터미널 코드가 같으며 입항일이 다를 시 */
           if (
             oldBerthDupleData.trminlCode === newBerthDupleData.trminlCode &&
             oldBerthDupleData.csdhpPrarnde !== newBerthDupleData.csdhpPrarnde
@@ -341,7 +342,7 @@ export class BerthPyService {
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException("error in server");
+      throw new InternalServerErrorException(error);
     }
   }
 

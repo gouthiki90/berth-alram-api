@@ -1,3 +1,4 @@
+/** 알람 푸쉬 메시지에 필요한 interface */
 export interface ForAlramPushMessage {
   /** 터미널 코드 */
   trminlCode?: string;
