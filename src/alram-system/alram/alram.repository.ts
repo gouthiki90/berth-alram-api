@@ -10,6 +10,7 @@ export class AlramRepository {
     private readonly util: Utils
   ) {}
 
+  /** 페이징 SELECT */
   async findOne(
     oid: string,
     offset: number,
@@ -162,6 +163,7 @@ export class AlramRepository {
     }
   }
 
+  /** 페이징 total index 구하기 위한 SELECT */
   async findAll(
     oid: string,
     trminlCode: string,
