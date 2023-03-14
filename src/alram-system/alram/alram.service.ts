@@ -21,6 +21,7 @@ import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-
 import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
+import { AlramMeesage } from "./interface/alram.enums";
 
 @UseFilters(ErrorHandler)
 @Injectable()
@@ -57,7 +58,7 @@ export class AlramService {
         if (alramOfBerthOidDupleData) {
           await t.rollback();
           return {
-            message: `${alramOfBerthOidDupleData?.scheduleOid} 해당 모선항차는 이미 구독한 알람입니다.`,
+            message: `${alramOfBerthOidDupleData?.scheduleOid} ${AlramMeesage.REQUEIRD}`,
           };
         } else {
           const ALRAM_OID = await this.util.getOid(
@@ -131,6 +132,7 @@ export class AlramService {
         await subscriptionAlram.destroy({
           where: { oid: obj.alramOid },
           transaction: t,
+          /** query logging */
           async logging(sql) {
             const util = new Utils();
             try {
@@ -169,6 +171,7 @@ export class AlramService {
 
       /** child shipByName remove */
       for (const obj of data) {
+        /** 별칭을 가지고 있는 구독 리스트 */
         const havingAlramOidShipByName = await shipByname.findAll({
           where: { alramOid: obj.alramOid },
         });
