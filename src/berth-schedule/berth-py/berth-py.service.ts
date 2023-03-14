@@ -142,6 +142,10 @@ export class BerthPyService {
           isUse: userInfo.isUse,
         });
 
+        Logger.debug("message content ----------------");
+        Logger.debug(messageContent);
+        Logger.debug("message content ----------------");
+
         /** 문자 옵션이 on일때만 푸쉬하기 */
         if (userInfo.isNofitication === 1) {
           Logger.warn("::: message sending :::");
