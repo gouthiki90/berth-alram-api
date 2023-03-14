@@ -7,7 +7,12 @@ import {
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { ErrorHandler } from "src/error-handler/error-handler";
-import { container, subscriptionAlram } from "src/models";
+import {
+  container,
+  databasesHistory,
+  shipByname,
+  subscriptionAlram,
+} from "src/models";
 import { Utils } from "src/util/common.utils";
 import { AlramRepository } from "./alram.repository";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
@@ -16,6 +21,7 @@ import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-
 import { OffsetPagingInfoDto } from "./dto/offset-page-info.dto";
 import { RemoveAlramDto } from "./dto/remove-alram.dto";
 import { UpdateAlramDto } from "./dto/update-alram.dto";
+import { AlramMeesage } from "./interface/alram.enums";
 
 @UseFilters(ErrorHandler)
 @Injectable()
@@ -52,7 +58,7 @@ export class AlramService {
         if (alramOfBerthOidDupleData) {
           await t.rollback();
           return {
-            message: `${alramOfBerthOidDupleData?.scheduleOid} 해당 모선항차는 이미 구독한 알람입니다.`,
+            message: `${alramOfBerthOidDupleData?.scheduleOid} ${AlramMeesage.REQUEIRD}`,
           };
         } else {
           const ALRAM_OID = await this.util.getOid(
@@ -60,7 +66,32 @@ export class AlramService {
             "subscriptionAlram"
           );
           obj.oid = ALRAM_OID;
-          await subscriptionAlram.create({ ...obj }, { transaction: t });
+          await subscriptionAlram.create(
+            { ...obj },
+            {
+              transaction: t,
+              async logging(sql) {
+                const util = new Utils();
+                try {
+                  /** oid 생성 */
+                  const oid = await util.getOid(
+                    databasesHistory,
+                    "databasesHistory"
+                  );
+
+                  await databasesHistory.create({
+                    oid: oid,
+                    workOid: ALRAM_OID,
+                    tableName: subscriptionAlram.tableName,
+                    queryText: sql,
+                    userOid: obj.userOid,
+                  });
+                } catch (error) {
+                  Logger.error("logging", error);
+                }
+              },
+            }
+          );
         }
       }
 
@@ -101,6 +132,27 @@ export class AlramService {
         await subscriptionAlram.destroy({
           where: { oid: obj.alramOid },
           transaction: t,
+          /** query logging */
+          async logging(sql) {
+            const util = new Utils();
+            try {
+              /** oid 생성 */
+              const oid = await util.getOid(
+                databasesHistory,
+                "databasesHistory"
+              );
+
+              await databasesHistory.create({
+                oid: oid,
+                workOid: obj.alramOid,
+                tableName: subscriptionAlram.tableName,
+                queryText: sql,
+                userOid: obj.userOid,
+              });
+            } catch (error) {
+              Logger.error("logging", error);
+            }
+          },
         });
       }
 
@@ -116,6 +168,19 @@ export class AlramService {
           Logger.debug(con.oid);
           await container.destroy({ where: { oid: con.oid }, transaction: t });
         }
+      }
+
+      /** child shipByName remove */
+      for (const obj of data) {
+        /** 별칭을 가지고 있는 구독 리스트 */
+        const havingAlramOidShipByName = await shipByname.findAll({
+          where: { alramOid: obj.alramOid },
+        });
+
+        havingAlramOidShipByName.map(async (curr) => {
+          Logger.debug(curr.oid);
+          await shipByname.destroy({ where: { oid: curr.oid } });
+        });
       }
 
       const result = await t.commit();

@@ -3,8 +3,16 @@ export class GetUserInfoListDto {
   userOid?: string;
   /** 유저 연락처 */
   contact?: string;
-  /** 유저 연락처 2 */
+  /** 유저 연락처 10개 */
   contact_01?: string;
+  contact_02?: string;
+  contact_03?: string;
+  contact_04?: string;
+  contact_05?: string;
+  contact_06?: string;
+  contact_07?: string;
+  contact_08?: string;
+  contact_09?: string;
   /** 알람 oid */
   alramOid?: string;
   /** 문자 on-off 옵션 */

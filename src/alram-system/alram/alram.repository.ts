@@ -10,9 +10,7 @@ export class AlramRepository {
     private readonly util: Utils
   ) {}
 
-  /** 이전 출항일 보기의 true/false에 따른 쿼리문
-   * offset에 따라 findOne
-   */
+  /** 페이징 SELECT */
   async findOne(
     oid: string,
     offset: number,
@@ -84,6 +82,7 @@ export class AlramRepository {
                       LEFT(berth.tkoffPrarnde, 19)),
                   '%Y-%m-%d %H:%i'),
               NULL))
+              ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
               LIMIT ${offset}, 20
           `,
           {
@@ -150,6 +149,7 @@ export class AlramRepository {
                       LEFT(berth.tkoffPrarnde, 19)),
                   '%Y-%m-%d %H:%i'),
               NULL))
+              ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
               LIMIT ${offset}, 20
           `,
           {
@@ -163,6 +163,7 @@ export class AlramRepository {
     }
   }
 
+  /** 페이징 total index 구하기 위한 SELECT */
   async findAll(
     oid: string,
     trminlCode: string,
@@ -232,6 +233,7 @@ export class AlramRepository {
                           LEFT(berth.tkoffPrarnde, 19)),
                       '%Y-%m-%d %H:%i'),
                   NULL))
+                  ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
           `,
           {
             type: seqeulize.QueryTypes.SELECT,
@@ -297,6 +299,7 @@ export class AlramRepository {
                           LEFT(berth.tkoffPrarnde, 19)),
                       '%Y-%m-%d %H:%i'),
                   NULL))
+                  ORDER BY DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 16), LEFT(berth.csdhpPrarnde, 19)), '%Y-%m-%d %H:%i') ASC
           `,
           {
             type: seqeulize.QueryTypes.SELECT,

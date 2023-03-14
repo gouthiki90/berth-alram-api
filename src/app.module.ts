@@ -31,6 +31,7 @@ import { ManagementModule } from "./system/management/management.module";
       synchronize: true,
       timezone: "+09:00",
       logging: false,
+      logQueryParameters: true, // bind 해제 옵션
     }),
     DashboardModule,
     UserModule,

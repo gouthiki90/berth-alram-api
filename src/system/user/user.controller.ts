@@ -5,19 +5,16 @@ import {
   Body,
   Param,
   Delete,
-  UseFilters,
   Put,
   UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ErrorHandler } from "src/error-handler/error-handler";
 import { UserRepository } from "./user.repository";
 import { LoginDto } from "./dto/login.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
-@UseFilters(ErrorHandler)
 @Controller("user")
 export class UserController {
   constructor(
