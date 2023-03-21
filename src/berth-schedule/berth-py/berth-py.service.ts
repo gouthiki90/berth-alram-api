@@ -152,6 +152,14 @@ export class BerthPyService {
           Logger.warn("userOid ----", userInfo.userOid);
           Logger.warn("contact ----", userInfo.contact);
           Logger.warn("contact_01 ----", userInfo.contact_01);
+          Logger.warn("contact_02 ----", userInfo.contact_02);
+          Logger.warn("contact_03 ----", userInfo.contact_03);
+          Logger.warn("contact_04 ----", userInfo.contact_04);
+          Logger.warn("contact_05 ----", userInfo.contact_05);
+          Logger.warn("contact_06 ----", userInfo.contact_06);
+          Logger.warn("contact_07 ----", userInfo.contact_07);
+          Logger.warn("contact_08 ----", userInfo.contact_08);
+          Logger.warn("contact_09 ----", userInfo.contact_09);
           Logger.warn("::: message sending :::");
           await this.httpService.axiosRef
             .post(
