@@ -14,6 +14,14 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   contact?: string;
   /** 연락처 2 */
   contact_01?: string;
+  contact_02?: string;
+  contact_03?: string;
+  contact_04?: string;
+  contact_05?: string;
+  contact_06?: string;
+  contact_07?: string;
+  contact_08?: string;
+  contact_09?: string;
   /** 담당자 전화번호 */
   managerTel?: string;
   /** 담당자 이름 */

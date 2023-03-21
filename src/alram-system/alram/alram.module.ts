@@ -2,14 +2,14 @@ import { Module } from "@nestjs/common";
 import { AlramService } from "./alram.service";
 import { AlramController } from "./alram.controller";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { subscriptionAlram } from "src/models";
+import { databasesHistory, subscriptionAlram } from "src/models";
 import { AlramRepository } from "./alram.repository";
 import { Utils } from "src/util/common.utils";
 import { OffsetAlramDto } from "./dto/alram-offset-dto";
 import { OffsetPagenatedAlramStateDataDto } from "./dto/off-set-pagenated-alram-state-data.dto";
 
 @Module({
-  imports: [SequelizeModule.forFeature([subscriptionAlram])],
+  imports: [SequelizeModule.forFeature([subscriptionAlram, databasesHistory])],
   controllers: [AlramController],
   providers: [
     Array<OffsetAlramDto>,

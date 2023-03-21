@@ -2,8 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
-  UseFilters,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
 import { user } from "src/models";
@@ -13,9 +12,7 @@ import * as crypto from "crypto";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "src/auth/auth.service";
 import { Utils } from "src/util/common.utils";
-import { ErrorHandler } from "src/error-handler/error-handler";
 
-@UseFilters(ErrorHandler)
 @Injectable()
 export class UserService {
   constructor(
@@ -39,7 +36,7 @@ export class UserService {
       });
 
       if (!userData) {
-        throw new NotFoundException("유저 정보를 찾을 수 없습니다.");
+        throw new UnauthorizedException("로그인 정보를 찾을 수 없습니다.");
       }
 
       /** 로그인 시 토큰 발급 */
