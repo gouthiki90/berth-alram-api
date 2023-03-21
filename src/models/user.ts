@@ -9,16 +9,11 @@ import {
 } from "sequelize-typescript";
 
 export interface userAttributes {
-  id?: number;
-  oid?: string;
-  companyGroupCode?: string;
-  principal?: string;
-  authCode?: string;
-  authStatus?: string;
+  oid: string;
   userId: string;
   userName?: string;
   password: Uint8Array;
-  bizName?: string;
+  managerName?: string;
   contact?: string;
   contact_01?: string;
   contact_02?: string;
@@ -30,7 +25,8 @@ export interface userAttributes {
   contact_08?: string;
   contact_09?: string;
   managerTel?: string;
-  managerName?: string;
+  authStatus?: string;
+  status?: string;
   contactOption?: number;
   isNofitication?: number;
   createDate?: Date;
@@ -44,46 +40,11 @@ export class user
 {
   @Column({
     primaryKey: true,
-    autoIncrement: true,
-    type: DataType.INTEGER,
-    comment: "키값",
+    type: DataType.STRING(100),
+    comment: "키값(oid)",
   })
   @Index({ name: "PRIMARY", using: "BTREE", order: "ASC", unique: true })
-  id?: number;
-
-  @Column({ allowNull: true, type: DataType.STRING(100), comment: "키값(oid)" })
-  oid?: string;
-
-  @Column({
-    field: "company_group_code",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "회사 그룹 코드(사업자번호)",
-  })
-  companyGroupCode?: string;
-
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: "대표자 이름",
-  })
-  principal?: string;
-
-  @Column({
-    field: "auth_code",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "권한 코드",
-  })
-  authCode?: string;
-
-  @Column({
-    field: "auth_status",
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: "가입 승인 상태",
-  })
-  authStatus?: string;
+  oid!: string;
 
   @Column({
     field: "user_id",
@@ -100,12 +61,12 @@ export class user
   password!: Uint8Array;
 
   @Column({
-    field: "biz_name",
+    field: "manager_name",
     allowNull: true,
-    type: DataType.STRING(50),
-    comment: "사업자명",
+    type: DataType.STRING(20),
+    comment: "부서 이름",
   })
-  bizName?: string;
+  managerName?: string;
 
   @Column({
     allowNull: true,
@@ -154,12 +115,12 @@ export class user
   managerTel?: string;
 
   @Column({
-    field: "manager_name",
+    field: "auth_status",
     allowNull: true,
-    type: DataType.STRING(20),
-    comment: "부서 이름",
+    type: DataType.STRING(100),
+    comment: "가입 승인 상태",
   })
-  managerName?: string;
+  authStatus?: string;
 
   @Column({
     allowNull: true,

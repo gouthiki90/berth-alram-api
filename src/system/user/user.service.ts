@@ -43,7 +43,6 @@ export class UserService {
       const userTokenInfo = this.authService.login({
         oid: userData.oid,
         userId: userData.userId,
-        bizName: userData.bizName,
       });
 
       return userTokenInfo;

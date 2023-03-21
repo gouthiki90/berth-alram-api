@@ -5,5 +5,6 @@ export * from "./commonCode";
 export * from "./container";
 export * from "./databasesHistory";
 export * from "./shipByname";
+export * from "./stmCompany";
 export * from "./subscriptionAlram";
 export * from "./user";
