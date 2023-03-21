@@ -12,6 +12,7 @@ export class ManagementRepository {
       return await this.seqeulize.query(
         `
         SELECT
+            usr.oid,
             company_group_code, -- 회사 그룹 코드
             principal, -- 회사 대표자
             user_id, -- 유저 아이디
@@ -34,12 +35,13 @@ export class ManagementRepository {
       return await this.seqeulize.query(
         `
         SELECT
-            company_group_code, -- 회사 그룹 코드
-            principal, -- 회사 대표자
-            user_id, -- 유저 아이디
-            contact, -- 전화번호
-            email, -- 이메일
-            (SELECT code_name FROM common_code WHERE usr.status = oid) AS status -- 가입상태
+          usr.oid,
+          company_group_code, -- 회사 그룹 코드
+          principal, -- 회사 대표자
+          user_id, -- 유저 아이디
+          contact, -- 전화번호
+          email, -- 이메일
+          (SELECT code_name FROM common_code WHERE usr.status = oid) AS status -- 가입상태
         FROM user AS usr
         WHERE TRUE
         AND usr.oid = $oid
@@ -58,11 +60,14 @@ export class ManagementRepository {
       return await this.seqeulize.query(
         `
         SELECT
-            company_group_code, -- 회사 그룹 코드
-            principal, -- 회사 대표자
-            user_id, -- 유저 아이디
-            password, -- 패스워드
-            bizName -- 상호
+          usr.oid,
+          company_group_code, -- 회사 그룹 코드
+          principal, -- 회사 대표자
+          user_id, -- 유저 아이디
+          password, -- 패스워드
+          contact, -- 전화번호
+          bizName, -- 상호
+          limit_count -- 유저 할당 수
         FROM user AS usr
         `,
         { type: seqeulize.QueryTypes.SELECT }
