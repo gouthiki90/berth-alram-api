@@ -12,14 +12,14 @@ export class ManagementRepository {
       return await this.seqeulize.query(
         `
         SELECT
-            usr.oid,
-            company_group_code, -- 회사 그룹 코드
-            principal, -- 회사 대표자
-            user_id, -- 유저 아이디
-            contact, -- 전화번호
-            email, -- 이메일
-            (SELECT code_name FROM common_code WHERE usr.status = oid) AS status -- 가입상태
-        FROM user AS usr
+          oid,
+          code, -- 회사 그룹 코드
+          biz_name,
+          principal, -- 회사 대표자
+          tel, -- 전화번호
+          email, -- 이메일
+          limit_user
+        FROM stm_company
         `,
         { type: seqeulize.QueryTypes.SELECT }
       );
@@ -30,23 +30,27 @@ export class ManagementRepository {
   }
 
   /** 사용자정보 모달 SELECT */
-  async findOneUserInfoForSuper(oid: string) {
+  async findOneUserInfoForSuper(companyOid: string) {
     try {
       return await this.seqeulize.query(
         `
         SELECT
-          usr.oid,
-          company_group_code, -- 회사 그룹 코드
-          principal, -- 회사 대표자
-          user_id, -- 유저 아이디
-          contact, -- 전화번호
-          email, -- 이메일
+          usr.oid AS userOid,
+          usr.user_id,
+          com.oid AS companyOid,
+          com.code, -- 회사 그룹 코드
+          com.biz_name,
+          com.principal, -- 회사 대표자
+          com.tel, -- 전화번호
+          com.email, -- 이메일
+          com.limit_user
           (SELECT code_name FROM common_code WHERE usr.status = oid) AS status -- 가입상태
         FROM user AS usr
+        INNER JOIN stm_company AS com ON usr.stm_company_oid = com.oid -- 업체
         WHERE TRUE
-        AND usr.oid = $oid
+        AND com.oid = $oid
         `,
-        { type: seqeulize.QueryTypes.SELECT, bind: { oid: oid } }
+        { type: seqeulize.QueryTypes.SELECT, bind: { oid: companyOid } }
       );
     } catch (error) {
       Logger.error(error);
@@ -55,22 +59,23 @@ export class ManagementRepository {
   }
 
   /** 업체&업체코드 수정 또는 추가 모달 */
-  async findAllCompanyInfoForSuper() {
+  async findAllCompanyInfoForSuper(companyOid: string) {
     try {
       return await this.seqeulize.query(
         `
         SELECT
-          usr.oid,
-          company_group_code, -- 회사 그룹 코드
+          oid,
+          code, -- 회사 그룹 코드
+          biz_name,
           principal, -- 회사 대표자
-          user_id, -- 유저 아이디
-          password, -- 패스워드
-          contact, -- 전화번호
-          bizName, -- 상호
-          limit_count -- 유저 할당 수
-        FROM user AS usr
+          tel, -- 전화번호
+          email, -- 이메일
+          limit_user
+        FROM stm_company
+        WHERE TRUE
+        AND oid = $oid
         `,
-        { type: seqeulize.QueryTypes.SELECT }
+        { type: seqeulize.QueryTypes.SELECT, bind: { oid: companyOid } }
       );
     } catch (error) {
       Logger.error(error);

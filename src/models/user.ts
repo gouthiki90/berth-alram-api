@@ -10,6 +10,7 @@ import {
 
 export interface userAttributes {
   oid: string;
+  stmCompanyOid?: string;
   userId: string;
   userName?: string;
   password: Uint8Array;
@@ -45,6 +46,14 @@ export class user
   })
   @Index({ name: "PRIMARY", using: "BTREE", order: "ASC", unique: true })
   oid!: string;
+
+  @Column({
+    field: "stm_company_oid",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "회사 참조키",
+  })
+  stmCompanyOid?: string;
 
   @Column({
     field: "user_id",

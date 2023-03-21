@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { ManagementRepository } from "./management.repository";
@@ -41,8 +42,8 @@ export class ManagementController {
   }
 
   @Get("/company")
-  findAllCompanyInfoForSuper() {
-    return this.managementRepository.findAllCompanyInfoForSuper();
+  findAllCompanyInfoForSuper(@Query() companyOid: string) {
+    return this.managementRepository.findAllCompanyInfoForSuper(companyOid);
   }
 
   @Put("/status")
