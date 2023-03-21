@@ -100,21 +100,21 @@ export class AlramHistoryService {
   }
 
   /** 매주 주말마다 삭제 */
-  @Cron(CronExpression.EVERY_WEEKEND, {
-    name: "removeAlramHistorySchedule",
-  })
-  async removeAlramHistorySchedule() {
-    try {
-      Logger.warn("::: removeAlramHistorySchedule start... :::");
-      await this.removeScheduleFuntion();
-      Logger.warn("::: removeAlramHistorySchedule end... :::");
-    } catch (error) {
-      Logger.error(`::: removeAlramHistorySchedule Error! :::`);
-      Logger.error(error);
-      const GET_JOB = this.schedulerRegistry.getCronJob(
-        "removeAlramHistorySchedule"
-      );
-      GET_JOB.stop();
-    }
-  }
+  // @Cron(CronExpression.EVERY_WEEKEND, {
+  //   name: "removeAlramHistorySchedule",
+  // })
+  // async removeAlramHistorySchedule() {
+  //   try {
+  //     Logger.warn("::: removeAlramHistorySchedule start... :::");
+  //     await this.removeScheduleFuntion();
+  //     Logger.warn("::: removeAlramHistorySchedule end... :::");
+  //   } catch (error) {
+  //     Logger.error(`::: removeAlramHistorySchedule Error! :::`);
+  //     Logger.error(error);
+  //     const GET_JOB = this.schedulerRegistry.getCronJob(
+  //       "removeAlramHistorySchedule"
+  //     );
+  //     GET_JOB.stop();
+  //   }
+  // }
 }
