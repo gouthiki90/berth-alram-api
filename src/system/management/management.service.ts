@@ -4,12 +4,12 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { user } from "src/models";
+import { stmCompany, user } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { CreateCompanyManagementDto } from "./dto/create-management.dto";
-import * as crypto from "crypto";
-import { AuthCode, UserStatus } from "./interface/auth.enums";
-import { UpdateUserStatusManagementDto } from "./dto/update-management.dto";
+import { UserStatus } from "./interface/auth.enums";
+import { UpdateUserStatusManagementDto } from "./dto/update-management-status.dto";
+import { UpdateManagementDto } from "./dto/update-management.dto";
 
 @Injectable()
 export class ManagementService {
@@ -17,42 +17,55 @@ export class ManagementService {
     private readonly seqeulize: Sequelize,
     private readonly util: Utils
   ) {}
-  /** 회사 관리자 유저 create */
-  async createCompanyManagementUser(createUserDto: CreateCompanyManagementDto) {
+
+  /** 사업자 번호 중복체크 */
+  async checkingCompanyDupleCode(code: string) {
+    try {
+      return await stmCompany.findAll({ where: { code: code } });
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  /** 업체 create */
+  async createCompanyManagement(createCompanyDto: CreateCompanyManagementDto) {
     const t = await this.seqeulize.transaction();
     try {
-      // duple check
-      const userData = await user.findOne({
-        where: {
-          userId: createUserDto.userId,
-          password: crypto
-            .createHash("sha512")
-            .update(createUserDto.password)
-            .digest("hex"),
-        },
-      });
+      const companyIsDupleData = await this.checkingCompanyDupleCode(
+        createCompanyDto.code
+      );
 
-      if (userData?.userId) {
-        return { message: "중복된 아이디 입니다." };
+      if (companyIsDupleData.length === 0) {
+        return { message: "중복된 회사 코드입니다." };
       }
 
-      /** 유저 키값 생성 */
-      const USER_OID = await this.util.getOid(user, "User");
-      createUserDto.oid = USER_OID;
-
-      /** password encoding */
-      createUserDto.password = crypto
-        .createHash("sha512")
-        .update(createUserDto.password)
-        .digest("hex");
-
-      /** 사용 상태, 권한 코드 입력 */
-      createUserDto.authCode = AuthCode.MANAGEMENT;
-      createUserDto.status = UserStatus.USE;
-
-      await user.create(createUserDto, { transaction: t });
+      await stmCompany.create(createCompanyDto, { transaction: t });
       await t.commit();
       return { message: "회사관리자 계정을 성공적으로 생성했습니다." };
+    } catch (error) {
+      Logger.error(error);
+      await t.rollback();
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  /** 업체 업데이트 */
+  async updateStmCompanyManagem3ent(
+    updateCompanyManagementDto: UpdateManagementDto
+  ) {
+    const t = await this.seqeulize.transaction();
+    try {
+      const companyIsDupleData = await this.checkingCompanyDupleCode(
+        updateCompanyManagementDto.code
+      );
+
+      if (companyIsDupleData.length === 0) {
+        return { message: "중복된 회사 코드입니다." };
+      }
+
+      await stmCompany.create(updateCompanyManagementDto, { transaction: t });
+      await t.commit();
     } catch (error) {
       Logger.error(error);
       await t.rollback();

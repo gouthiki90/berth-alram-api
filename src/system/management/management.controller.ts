@@ -7,12 +7,14 @@ import {
   Put,
   UseGuards,
   Query,
+  Patch,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { ManagementRepository } from "./management.repository";
 import { CreateCompanyManagementDto } from "./dto/create-management.dto";
-import { UpdateUserStatusManagementDto } from "./dto/update-management.dto";
+import { UpdateUserStatusManagementDto } from "./dto/update-management-status.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { UpdateManagementDto } from "./dto/update-management.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("management")
@@ -23,10 +25,10 @@ export class ManagementController {
   ) {}
 
   @Post("/")
-  createCompanyManagementUser(
+  createCompanyManagement(
     createCompanyManagementDto: CreateCompanyManagementDto
   ) {
-    return this.managementService.createCompanyManagementUser(
+    return this.managementService.createCompanyManagement(
       createCompanyManagementDto
     );
   }
@@ -44,6 +46,13 @@ export class ManagementController {
   @Get("/company")
   findAllCompanyInfoForSuper(@Query() companyOid: string) {
     return this.managementRepository.findAllCompanyInfoForSuper(companyOid);
+  }
+
+  @Patch("/company")
+  updateStmCompanyManagement(updateCompanyManagementDto: UpdateManagementDto) {
+    return this.managementService.updateStmCompanyManagem3ent(
+      updateCompanyManagementDto
+    );
   }
 
   @Put("/status")
