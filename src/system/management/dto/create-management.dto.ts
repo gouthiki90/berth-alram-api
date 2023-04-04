@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { OffsetPagingInfoDto } from "./offset-paging-info.dto";
 
 @Injectable()
 export class CreateCompanyManagementDto {
@@ -16,4 +17,6 @@ export class CreateCompanyManagementDto {
   tel?: string;
   /** 유저 제한 수 */
   limitUser?: number;
+  /** 페이징 object */
+  offsetPagingInfoDto?: OffsetPagingInfoDto;
 }

@@ -7,7 +7,7 @@ export class ManagementRepository {
   constructor(private readonly seqeulize: Sequelize) {}
 
   /** 관리자 페이지 대쉬보드 SELECT */
-  async findAllUserInfoForSuper() {
+  async findAllUserInfoForSuper(offset: number) {
     try {
       return await this.seqeulize.query(
         `
@@ -20,7 +20,31 @@ export class ManagementRepository {
           email, -- 이메일
           limit_user
         FROM stm_company
+        LIMIT $offset, 20
         `,
+        { type: seqeulize.QueryTypes.SELECT, bind: { offset: offset } }
+      );
+    } catch (error) {
+      Logger.error(error);
+      throw new NotFoundException(error);
+    }
+  }
+
+  /** 관리자 페이지 대쉬보드 SELECT */
+  async findAllUserInfoForSuperAll() {
+    try {
+      return await this.seqeulize.query(
+        `
+          SELECT
+            oid,
+            code, -- 회사 그룹 코드
+            biz_name,
+            principal, -- 회사 대표자
+            tel, -- 전화번호
+            email, -- 이메일
+            limit_user
+          FROM stm_company
+          `,
         { type: seqeulize.QueryTypes.SELECT }
       );
     } catch (error) {

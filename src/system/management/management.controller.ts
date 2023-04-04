@@ -15,6 +15,7 @@ import { CreateCompanyManagementDto } from "./dto/create-management.dto";
 import { UpdateUserStatusManagementDto } from "./dto/update-management-status.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UpdateManagementDto } from "./dto/update-management.dto";
+import { OffsetPagingInfoDto } from "./dto/offset-paging-info.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("management")
@@ -34,8 +35,10 @@ export class ManagementController {
   }
 
   @Get("/")
-  findAllUserInfoForSuper() {
-    return this.managementRepository.findAllUserInfoForSuper();
+  findAllUserInfoForSuper(offsetPagingInfoDto: OffsetPagingInfoDto) {
+    return this.managementService.makePageInfoForCompanyList(
+      offsetPagingInfoDto
+    );
   }
 
   @Get("/user")
