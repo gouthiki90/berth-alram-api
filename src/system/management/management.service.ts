@@ -42,11 +42,17 @@ export class ManagementService {
 
       await stmCompany.create(createCompanyDto, { transaction: t });
       await t.commit();
-      return { message: "회사관리자 계정을 성공적으로 생성했습니다." };
+      return {
+        message: "회사관리자 계정을 성공적으로 생성했습니다.",
+        response: { ok: true },
+      };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException(error);
+      return {
+        message: "회사관리자 계정을 만드는 데 실패했습니다.",
+        response: { ok: false, error: new InternalServerErrorException(error) },
+      };
     }
   }
 
@@ -56,20 +62,22 @@ export class ManagementService {
   ) {
     const t = await this.seqeulize.transaction();
     try {
-      const companyIsDupleData = await this.checkingCompanyDupleCode(
-        updateCompanyManagementDto.code
-      );
-
-      if (companyIsDupleData.length !== 0) {
-        return { message: "중복된 회사 코드입니다." };
-      }
-
-      await stmCompany.create(updateCompanyManagementDto, { transaction: t });
+      await stmCompany.update(updateCompanyManagementDto, {
+        where: { oid: updateCompanyManagementDto.oid },
+        transaction: t,
+      });
       await t.commit();
+      return {
+        message: "회사관리자 계정을 성공적으로 업데이트 했습니다.",
+        response: { ok: true },
+      };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException(error);
+      return {
+        message: "회사관리자 계정을 업데이트 하는 데 실패했습니다.",
+        response: { ok: false, error: new InternalServerErrorException(error) },
+      };
     }
   }
 
