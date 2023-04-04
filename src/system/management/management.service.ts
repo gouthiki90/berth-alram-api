@@ -36,7 +36,7 @@ export class ManagementService {
         createCompanyDto.code
       );
 
-      if (companyIsDupleData.length === 0) {
+      if (companyIsDupleData.length !== 0) {
         return { message: "중복된 회사 코드입니다." };
       }
 
@@ -60,7 +60,7 @@ export class ManagementService {
         updateCompanyManagementDto.code
       );
 
-      if (companyIsDupleData.length === 0) {
+      if (companyIsDupleData.length !== 0) {
         return { message: "중복된 회사 코드입니다." };
       }
 
