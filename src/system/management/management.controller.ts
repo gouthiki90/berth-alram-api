@@ -17,7 +17,7 @@ import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-paging-info.dto";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller("management")
 export class ManagementController {
   constructor(
@@ -47,7 +47,7 @@ export class ManagementController {
   }
 
   @Get("/company")
-  findAllCompanyInfoForSuper(@Query() companyOid: string) {
+  findAllCompanyInfoForSuper(@Query("companyOid") companyOid: string) {
     return this.managementRepository.findAllCompanyInfoForSuper(companyOid);
   }
 
