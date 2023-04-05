@@ -92,7 +92,10 @@ export class ManagementService {
       );
 
       if (companyIsDupleData.length !== 0) {
-        return { message: "중복된 회사 코드입니다." };
+        return {
+          message: "중복된 회사 코드입니다.",
+          ok: false,
+        };
       }
 
       await stmCompany.create(createCompanyDto, { transaction: t });
