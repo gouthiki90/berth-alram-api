@@ -5,5 +5,6 @@ export class ForPagingCompanyDto {
   principal?: string;
   tel?: string;
   email?: string;
-  limit_user?: number;
+  limitUser?: number;
+  role?: string;
 }
