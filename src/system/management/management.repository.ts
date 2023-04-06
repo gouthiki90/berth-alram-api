@@ -73,7 +73,7 @@ export class ManagementRepository {
           WHERE TRUE
           AND com.oid = $companyOid
           `,
-        { type: seqeulize.QueryTypes.SELECT, bind: { oid: companyOid } }
+        { type: seqeulize.QueryTypes.SELECT, bind: { companyOid } }
       );
     } catch (error) {
       Logger.error(error);
