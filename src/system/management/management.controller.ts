@@ -51,6 +51,11 @@ export class ManagementController {
     return this.managementRepository.findAllCompanyInfoForSuper(companyOid);
   }
 
+  @Get("/users")
+  findAllUserListInfoForSuper(@Query("companyOid") companyOid: string) {
+    return this.managementRepository.findAllUserListInfoForSuper(companyOid);
+  }
+
   @Patch("/company")
   updateStmCompanyManagement(
     @Body() updateCompanyManagementDto: UpdateManagementDto
@@ -68,5 +73,14 @@ export class ManagementController {
     return this.managementService.updateUserStatus(
       updateUserStatusManagementDto
     );
+  }
+
+  @Patch("/auth/:oid")
+  updateUserAuth(
+    @Body()
+    role: string,
+    @Param("oid") oid: string
+  ) {
+    return this.managementService.updateUserAuth(role, oid);
   }
 }

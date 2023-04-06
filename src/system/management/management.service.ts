@@ -174,4 +174,17 @@ export class ManagementService {
       };
     }
   }
+
+  /** 유저 권한 업데이트 */
+  async updateUserAuth(role: string, oid: string) {
+    const t = await this.seqeulize.transaction();
+    try {
+      await user.update({ role }, { where: { oid }, transaction: t });
+      await t.commit();
+    } catch (error) {
+      Logger.error(error);
+      await t.rollback();
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
