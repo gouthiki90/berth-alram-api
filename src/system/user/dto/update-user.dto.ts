@@ -30,4 +30,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   contact_option?: number;
   /** 문자 on-off 옵션 */
   isNofitication?: number;
+  /** 권한 */
+  role?: string;
 }

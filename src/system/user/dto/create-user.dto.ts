@@ -21,4 +21,6 @@ export class CreateUserDto {
   contact_option?: number;
   /** 문자 on-off 옵션 */
   isNofitication?: number;
+  /** 권한 */
+  role?: string;
 }

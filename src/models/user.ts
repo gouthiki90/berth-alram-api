@@ -26,6 +26,7 @@ export interface userAttributes {
   contact_08?: string;
   contact_09?: string;
   managerTel?: string;
+  role?: string;
   authStatus?: string;
   status?: string;
   contactOption?: number;
@@ -122,6 +123,13 @@ export class user
     comment: "담당자 연락처",
   })
   managerTel?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "권한(회사 관리자, 슈퍼 관리자, 회사 직원)",
+  })
+  role?: string;
 
   @Column({
     field: "auth_status",

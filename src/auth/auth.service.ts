@@ -7,6 +7,7 @@ import { getTokenInfo } from "src/common/jwt.fn";
 interface User {
   oid: string;
   userId: string;
+  role: string;
 }
 
 @Injectable()
@@ -24,11 +25,12 @@ export class AuthService {
       ) &
         User;
 
-      const { userId, oid } = payload;
+      const { userId, oid, role } = payload;
 
       return {
         oid: oid,
         userId: userId,
+        role: role,
       };
     } catch (e) {
       throw new UnauthorizedException();

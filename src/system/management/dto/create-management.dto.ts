@@ -17,6 +17,8 @@ export class CreateCompanyManagementDto {
   tel?: string;
   /** 유저 제한 수 */
   limitUser?: number;
+  /** 권한 */
+  role?: string;
   /** 페이징 object */
   offsetPagingInfoDto?: OffsetPagingInfoDto;
 }
