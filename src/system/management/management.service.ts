@@ -102,14 +102,15 @@ export class ManagementService {
       await t.commit();
       return {
         message: "회사관리자 계정을 성공적으로 생성했습니다.",
-        response: { ok: true },
+        ok: true,
       };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
       return {
         message: "회사관리자 계정을 만드는 데 실패했습니다.",
-        response: { ok: false, error: new InternalServerErrorException(error) },
+        ok: false,
+        error: new InternalServerErrorException(error),
       };
     }
   }
@@ -127,14 +128,15 @@ export class ManagementService {
       await t.commit();
       return {
         message: "회사관리자 계정을 성공적으로 업데이트 했습니다.",
-        response: { ok: true },
+        ok: true,
       };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
       return {
         message: "회사관리자 계정을 업데이트 하는 데 실패했습니다.",
-        response: { ok: false, error: new InternalServerErrorException(error) },
+        ok: false,
+        error: new InternalServerErrorException(error),
       };
     }
   }
@@ -167,7 +169,8 @@ export class ManagementService {
       await t.rollback();
       return {
         message: "업데이트 중 에러",
-        response: { ok: false, error: new InternalServerErrorException(error) },
+        ok: false,
+        error: new InternalServerErrorException(error),
       };
     }
   }
