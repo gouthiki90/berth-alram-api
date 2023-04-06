@@ -158,12 +158,17 @@ export class ManagementService {
 
       await t.commit();
 
-      if (code === 1) return { message: "사용 상태로 업데이트 되었습니다." };
-      else return { message: "사용 중지 상태로 업데이트 되었습니다." };
+      if (code === 1)
+        return { message: "사용 상태로 업데이트 되었습니다.", ok: true };
+      else
+        return { message: "사용 중지 상태로 업데이트 되었습니다.", ok: true };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException(error);
+      return {
+        message: "업데이트 중 에러",
+        response: { ok: false, error: new InternalServerErrorException(error) },
+      };
     }
   }
 }
