@@ -34,7 +34,7 @@ export class ManagementController {
     );
   }
 
-  @Get("/")
+  @Post("/page")
   findAllUserInfoForSuper(@Body() offsetPagingInfoDto: OffsetPagingInfoDto) {
     return this.managementService.makePageInfoForCompanyList(
       offsetPagingInfoDto
