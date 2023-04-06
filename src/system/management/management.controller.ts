@@ -52,7 +52,9 @@ export class ManagementController {
   }
 
   @Patch("/company")
-  updateStmCompanyManagement(updateCompanyManagementDto: UpdateManagementDto) {
+  updateStmCompanyManagement(
+    @Body() updateCompanyManagementDto: UpdateManagementDto
+  ) {
     return this.managementService.updateStmCompanyManagem3ent(
       updateCompanyManagementDto
     );
