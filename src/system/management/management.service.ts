@@ -8,13 +8,14 @@ import { Sequelize } from "sequelize-typescript";
 import { stmCompany, user } from "src/models";
 import { Utils } from "src/util/common.utils";
 import { CreateCompanyManagementDto } from "./dto/create-management.dto";
-import { UserStatus } from "./interface/auth.enums";
+import { UserStatus, AuthCode } from "./interface/auth.enums";
 import { UpdateUserStatusManagementDto } from "./dto/update-management-status.dto";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-paging-info.dto";
 import { ManagementRepository } from "./management.repository";
 import { ForPagingCompanyDto } from "./dto/for-paging-company.dto";
 import { OffsetPagenatedBerthStateDataDto } from "./dto/offset-pagenated-berth-state-data.dto";
+import { UpdateUserAuthDto } from "./dto/update-user-auth.dto";
 
 @Injectable()
 export class ManagementService {
@@ -176,15 +177,51 @@ export class ManagementService {
   }
 
   /** 유저 권한 업데이트 */
-  async updateUserAuth(role: string, oid: string) {
+  async updateUserAuth(updateData: UpdateUserAuthDto) {
     const t = await this.seqeulize.transaction();
+
+    /** authCode 이름 */
+    let authCodeName: string;
+    switch (updateData.role) {
+      case AuthCode.SUPER:
+        authCodeName = "슈퍼계정";
+        break;
+      case AuthCode.EMPLOYEE:
+        authCodeName = "직원";
+        break;
+      case AuthCode.MANAGEMENT:
+        authCodeName = "회사 관리자";
+        break;
+      default:
+        break;
+    }
+
     try {
-      await user.update({ role }, { where: { oid }, transaction: t });
+      await user.update(
+        { role: updateData.role },
+        { where: { oid: updateData.oid }, transaction: t }
+      );
       await t.commit();
+
+      if (!authCodeName) {
+        return {
+          message: `업데이트 실패`,
+          ok: false,
+        };
+      }
+
+      return {
+        message: `권한이 ${authCodeName}으로 업데이트 되었습니다.`,
+        ok: true,
+      };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException(error);
+      return {
+        message: `업데이트 실패`,
+        ok: false,
+        error: new InternalServerErrorException(error),
+      };
     }
   }
 }

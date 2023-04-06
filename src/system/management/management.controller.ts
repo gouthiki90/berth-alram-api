@@ -16,6 +16,7 @@ import { UpdateUserStatusManagementDto } from "./dto/update-management-status.dt
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-paging-info.dto";
+import { UpdateUserAuthDto } from "./dto/update-user-auth.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("management")
@@ -75,12 +76,11 @@ export class ManagementController {
     );
   }
 
-  @Patch("/auth/:oid")
+  @Patch("/auth")
   updateUserAuth(
     @Body()
-    role: string,
-    @Param("oid") oid: string
+    updateData: UpdateUserAuthDto
   ) {
-    return this.managementService.updateUserAuth(role, oid);
+    return this.managementService.updateUserAuth(updateData);
   }
 }
