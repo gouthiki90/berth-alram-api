@@ -190,7 +190,7 @@ export class ManagementService {
         authCodeName = "직원";
         break;
       case AuthCode.MANAGEMENT:
-        authCodeName = "회사 관리자";
+        authCodeName = "관리자";
         break;
       default:
         break;
