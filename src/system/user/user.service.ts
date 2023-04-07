@@ -112,15 +112,6 @@ export class UserService {
         }
       }
 
-      /** 사전에 가입되지 않은 회사 코드 check */
-      const userCompanyCodeDupleData = await user.findOne({
-        where: { stmCompanyOid: updateUserDto.stmCompanyOid },
-      });
-
-      if (!userCompanyCodeDupleData) {
-        return { message: "아직 가입되지 않은 회사 코드 입니다.", ok: false };
-      }
-
       await user.update(updateUserDto, {
         where: { oid: oid },
         transaction: t,
