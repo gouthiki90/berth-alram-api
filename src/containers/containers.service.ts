@@ -58,7 +58,7 @@ export class ContainersService {
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException(`${error}`);
+      return { ok: false, error: new InternalServerErrorException(error) };
     }
   }
 
@@ -73,7 +73,7 @@ export class ContainersService {
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException("데이터 삭제 실패");
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -137,7 +137,7 @@ export class ContainersService {
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException("failed to update remark");
+      throw new InternalServerErrorException(error);
     }
   }
 }
