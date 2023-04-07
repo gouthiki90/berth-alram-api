@@ -23,4 +23,6 @@ export class CreateUserDto {
   isNofitication?: number;
   /** 권한 */
   role?: string;
+  /** 회사 코드 */
+  stmCompanyOid?: string;
 }

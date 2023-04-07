@@ -24,7 +24,7 @@ export class UserService {
   /** 로그인 */
   async login(loginData: LoginDto) {
     try {
-      // duple check
+      /** 로그인 check */
       const userData = await user.findOne({
         where: {
           userId: loginData.userId,
@@ -57,19 +57,24 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     const t = await this.seqeulize.transaction();
     try {
-      // duple check
+      /** 아이디 중복 check */
       const userData = await user.findOne({
         where: {
           userId: createUserDto.userId,
-          password: crypto
-            .createHash("sha512")
-            .update(createUserDto.password)
-            .digest("hex"),
         },
       });
 
       if (userData?.userId) {
-        return { message: "중복된 아이디 입니다." };
+        return { message: "중복된 아이디 입니다.", ok: false };
+      }
+
+      /** 사전에 가입되지 않은 회사 코드 check */
+      const userCompanyCodeDupleData = await user.findOne({
+        where: { stmCompanyOid: createUserDto.stmCompanyOid },
+      });
+
+      if (!userCompanyCodeDupleData) {
+        return { message: "아직 가입되지 않은 회사 코드 입니다.", ok: false };
       }
 
       createUserDto.password = crypto
@@ -93,9 +98,8 @@ export class UserService {
   /** 유저 정보 업데이트 */
   async update(oid: string, updateUserDto: UpdateUserDto) {
     const t = await this.seqeulize.transaction();
-    Logger.debug(updateUserDto);
     try {
-      // duple check
+      /** 아이디 중복 check */
       if (updateUserDto.userId) {
         const userData = await user.findOne({
           where: {
@@ -104,8 +108,17 @@ export class UserService {
         });
 
         if (userData?.userId) {
-          return { message: "중복된 아이디 입니다." };
+          return { message: "중복된 아이디 입니다.", ok: false };
         }
+      }
+
+      /** 사전에 가입되지 않은 회사 코드 check */
+      const userCompanyCodeDupleData = await user.findOne({
+        where: { stmCompanyOid: updateUserDto.stmCompanyOid },
+      });
+
+      if (!userCompanyCodeDupleData) {
+        return { message: "아직 가입되지 않은 회사 코드 입니다.", ok: false };
       }
 
       await user.update(updateUserDto, {
