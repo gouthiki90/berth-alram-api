@@ -12,6 +12,8 @@ import * as crypto from "crypto";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "src/auth/auth.service";
 import { Utils } from "src/util/common.utils";
+import sequelize from "sequelize";
+import { UserLimitDto } from "./dto/user-limit.dto";
 
 @Injectable()
 export class UserService {
@@ -75,6 +77,41 @@ export class UserService {
 
       if (!userCompanyCodeDupleData) {
         return { message: "아직 가입되지 않은 회사 코드 입니다.", ok: false };
+      }
+
+      /** 회사 코드 유저 리밋 validation list */
+      const userLimitValidationList: Array<UserLimitDto> =
+        await this.seqeulize.query(
+          `
+        SELECT
+          com.limit_user AS limitUser,
+          COUNT(usr.oid) AS userLimitCount
+        FROM user AS usr
+        INNER JOIN stm_company AS com ON usr.stm_company_oid = com.oid
+        WHERE TRUE
+        AND com.oid = $oid
+        GROUP BY com.oid
+        `,
+          {
+            type: sequelize.QueryTypes.SELECT,
+            bind: { oid: createUserDto.stmCompanyOid },
+          }
+        );
+
+      /** 유저 리밋 체크 */
+      if (userLimitValidationList.length > 0) {
+        for (const obj of userLimitValidationList) {
+          if (obj.limitUser === obj.userLimitCount)
+            return {
+              message:
+                "해당 업체 코드를 모든 유저가 사용 중입니다.\n해당 업체코드는 사용할 수 없는 코드입니다.",
+              ok: false,
+              error: new UnauthorizedException(),
+            };
+
+          if (obj.limitUser > obj.userLimitCount)
+            return { message: "해당 업체코드는 사용 가능합니다.", ok: true };
+        }
       }
 
       createUserDto.password = crypto
