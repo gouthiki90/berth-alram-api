@@ -25,4 +25,6 @@ export class CreateUserDto {
   role?: string;
   /** 회사 코드 */
   stmCompanyOid?: string;
+  /** 회사 코드 */
+  companyCode?: string;
 }

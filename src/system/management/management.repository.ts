@@ -65,7 +65,8 @@ export class ManagementRepository {
             usr.userName,
             usr.manager_name,
             usr.manager_tel,
-            (SELECT code_name FROM common_code WHERE usr.role = oid) AS role, -- 가입상태
+            (SELECT code_name FROM common_code WHERE usr.role = oid) AS role, -- 권한
+            usr.role AS roleCode, -- 권한 코드
             (SELECT code_name FROM common_code WHERE usr.status = oid) AS status, -- 가입상태
             (SELECT code_name FROM common_code WHERE usr.auth_status = oid) AS authStatus -- 가입상태
           FROM user AS usr

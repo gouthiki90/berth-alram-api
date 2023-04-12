@@ -108,9 +108,6 @@ export class UserService {
               ok: false,
               error: new UnauthorizedException(),
             };
-
-          if (obj.limitUser > obj.userLimitCount)
-            return { message: "해당 업체코드는 사용 가능합니다.", ok: true };
         }
       }
 
@@ -121,14 +118,21 @@ export class UserService {
 
       const USER_OID = await this.util.getOid(user, "User");
       createUserDto.oid = USER_OID;
+      createUserDto.companyCode = createUserDto.stmCompanyOid;
 
       await user.create(createUserDto, { transaction: t });
 
       await t.commit();
+
+      return { message: "성공적으로 계정이 생성되었습니다.", ok: true };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      throw new InternalServerErrorException(error);
+      return {
+        message: "계정 생성에 실패했습니다.",
+        ok: false,
+        error: new InternalServerErrorException(error),
+      };
     }
   }
 
