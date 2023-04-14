@@ -28,6 +28,7 @@ export class ManagementController {
 
   @Post("/")
   createCompanyManagement(
+    @Body()
     createCompanyManagementDto: CreateCompanyManagementDto
   ) {
     return this.managementService.createCompanyManagement(

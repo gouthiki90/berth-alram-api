@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { user } from "src/models";
+import { stmCompany, user } from "src/models";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import * as crypto from "crypto";
@@ -71,8 +71,8 @@ export class UserService {
       }
 
       /** 사전에 가입되지 않은 회사 코드 check */
-      const userCompanyCodeDupleData = await user.findOne({
-        where: { stmCompanyOid: createUserDto.stmCompanyOid },
+      const userCompanyCodeDupleData = await stmCompany.findOne({
+        where: { oid: createUserDto.stmCompanyOid },
       });
 
       if (!userCompanyCodeDupleData) {

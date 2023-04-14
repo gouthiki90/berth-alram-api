@@ -88,8 +88,9 @@ export class ManagementService {
   async createCompanyManagement(createCompanyDto: CreateCompanyManagementDto) {
     const t = await this.seqeulize.transaction();
     try {
+      Logger.debug(createCompanyDto);
       const companyIsDupleData = await this.checkingCompanyDupleCode(
-        createCompanyDto.code
+        createCompanyDto.oid
       );
 
       if (companyIsDupleData.length !== 0) {
