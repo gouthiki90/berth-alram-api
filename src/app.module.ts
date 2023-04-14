@@ -16,6 +16,7 @@ import { AlramHistoryModule } from "./alram-system/alram-history/alram-history.m
 import { CommonScheduleModule } from "./berth-schedule/common-schedule/common-schedule.module";
 import { ShipBynameModule } from "./berth-schedule/ship-byname/ship-byname.module";
 import { BerthInfoModule } from "./berth-schedule/berth-info/berth-info.module";
+import { ManagementModule } from "./system/management/management.module";
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { BerthInfoModule } from "./berth-schedule/berth-info/berth-info.module";
     AlramHistoryModule,
     CommonScheduleModule,
     ShipBynameModule,
+    ManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
