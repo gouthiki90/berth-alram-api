@@ -38,7 +38,11 @@ export class UserService {
       });
 
       if (!userData) {
-        throw new UnauthorizedException("로그인 정보를 찾을 수 없습니다.");
+        return {
+          message: "로그인 정보를 찾을 수 없습니다.",
+          ok: false,
+          error: new UnauthorizedException(),
+        };
       }
 
       /** 로그인 시 토큰 발급 */
@@ -172,7 +176,7 @@ export class UserService {
     try {
       await user.destroy({ where: { oid: oid }, transaction: t });
       const result = await t.commit();
-      return { result, message: "성공적으로 탈퇴되었습니다.", code: 1 };
+      return { result, message: "성공적으로 탈퇴되었습니다.", ok: true };
     } catch (error) {
       Logger.error(error);
       await t.rollback();
