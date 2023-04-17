@@ -17,6 +17,7 @@ import { CommonScheduleModule } from "./berth-schedule/common-schedule/common-sc
 import { ShipBynameModule } from "./berth-schedule/ship-byname/ship-byname.module";
 import { BerthInfoModule } from "./berth-schedule/berth-info/berth-info.module";
 import { ManagementModule } from "./system/management/management.module";
+import { CountModule } from './alram/count/count.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ManagementModule } from "./system/management/management.module";
     CommonScheduleModule,
     ShipBynameModule,
     ManagementModule,
+    CountModule,
   ],
   controllers: [AppController],
   providers: [AppService],
