@@ -88,32 +88,21 @@ export class ManagementService {
   async createCompanyManagement(createCompanyDto: CreateCompanyManagementDto) {
     const t = await this.seqeulize.transaction();
     try {
-      Logger.debug(createCompanyDto);
       const companyIsDupleData = await this.checkingCompanyDupleCode(
         createCompanyDto.oid
       );
 
       if (companyIsDupleData.length !== 0) {
-        return {
-          message: "중복된 회사 코드입니다.",
-          ok: false,
-        };
+        return -1;
       }
 
       await stmCompany.create(createCompanyDto, { transaction: t });
       await t.commit();
-      return {
-        message: "회사관리자 계정을 성공적으로 생성했습니다.",
-        ok: true,
-      };
+      return 1;
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      return {
-        message: "회사관리자 계정을 만드는 데 실패했습니다.",
-        ok: false,
-        error: new InternalServerErrorException(error),
-      };
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -128,18 +117,11 @@ export class ManagementService {
         transaction: t,
       });
       await t.commit();
-      return {
-        message: "회사관리자 계정을 성공적으로 업데이트 했습니다.",
-        ok: true,
-      };
+      return 1;
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      return {
-        message: "회사관리자 계정을 업데이트 하는 데 실패했습니다.",
-        ok: false,
-        error: new InternalServerErrorException(error),
-      };
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -162,18 +144,12 @@ export class ManagementService {
 
       await t.commit();
 
-      if (code === 1)
-        return { message: "사용 상태로 업데이트 되었습니다.", ok: true };
-      else
-        return { message: "사용 중지 상태로 업데이트 되었습니다.", ok: true };
+      if (code === 1) return UserStatus.USE;
+      else return UserStatus.CLOSE;
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      return {
-        message: "업데이트 중 에러",
-        ok: false,
-        error: new InternalServerErrorException(error),
-      };
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -205,24 +181,14 @@ export class ManagementService {
       await t.commit();
 
       if (!authCodeName) {
-        return {
-          message: `업데이트 실패`,
-          ok: false,
-        };
+        return -1;
       }
 
-      return {
-        message: `권한이 ${authCodeName}으로 업데이트 되었습니다.`,
-        ok: true,
-      };
+      return authCodeName;
     } catch (error) {
       Logger.error(error);
       await t.rollback();
-      return {
-        message: `업데이트 실패`,
-        ok: false,
-        error: new InternalServerErrorException(error),
-      };
+      throw new InternalServerErrorException(error);
     }
   }
 }

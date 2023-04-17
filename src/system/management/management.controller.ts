@@ -8,6 +8,8 @@ import {
   UseGuards,
   Query,
   Patch,
+  Logger,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { ManagementService } from "./management.service";
 import { ManagementRepository } from "./management.repository";
@@ -17,6 +19,7 @@ import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UpdateManagementDto } from "./dto/update-management.dto";
 import { OffsetPagingInfoDto } from "./dto/offset-paging-info.dto";
 import { UpdateUserAuthDto } from "./dto/update-user-auth.dto";
+import { UserStatus } from "./interface/auth.enums";
 
 @UseGuards(JwtAuthGuard)
 @Controller("management")
@@ -27,13 +30,26 @@ export class ManagementController {
   ) {}
 
   @Post("/")
-  createCompanyManagement(
+  async createCompanyManagement(
     @Body()
     createCompanyManagementDto: CreateCompanyManagementDto
   ) {
-    return this.managementService.createCompanyManagement(
-      createCompanyManagementDto
-    );
+    try {
+      const responseData = await this.managementService.createCompanyManagement(
+        createCompanyManagementDto
+      );
+
+      if (responseData === -1)
+        return {
+          message: "중복된 회사 코드입니다.",
+          ok: false,
+        };
+      else if (responseData === 1)
+        return { message: "회사 코드를 성공적으로 생성했습니다.", ok: true };
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
   }
 
   @Post("/page")
@@ -59,29 +75,80 @@ export class ManagementController {
   }
 
   @Patch("/company")
-  updateStmCompanyManagement(
+  async updateStmCompanyManagement(
     @Body() updateCompanyManagementDto: UpdateManagementDto
   ) {
-    return this.managementService.updateStmCompanyManagement(
-      updateCompanyManagementDto
-    );
+    try {
+      const responseData =
+        await this.managementService.updateStmCompanyManagement(
+          updateCompanyManagementDto
+        );
+      if (responseData === 1)
+        return {
+          message: "회사관리자 계정을 성공적으로 업데이트 했습니다.",
+          ok: true,
+        };
+    } catch (error) {
+      Logger.error(error);
+      return {
+        message: "회사관리자 계정을 업데이트 하는 데 실패했습니다.",
+        ok: false,
+        error: new InternalServerErrorException(error),
+      };
+    }
   }
 
   @Put("/status")
-  updateUserStatus(
+  async updateUserStatus(
     @Body()
     updateUserStatusManagementDto: UpdateUserStatusManagementDto
   ) {
-    return this.managementService.updateUserStatus(
-      updateUserStatusManagementDto
-    );
+    try {
+      const responseData = await this.managementService.updateUserStatus(
+        updateUserStatusManagementDto
+      );
+
+      if (responseData === UserStatus.USE)
+        return { message: "사용 상태로 업데이트 되었습니다.", ok: true };
+      else if (responseData === UserStatus.CLOSE)
+        return { message: "사용 중지 상태로 업데이트 되었습니다.", ok: true };
+    } catch (error) {
+      Logger.error(error);
+      return {
+        message: "업데이트 중 에러",
+        ok: false,
+        error: new InternalServerErrorException(error),
+      };
+    }
   }
 
   @Patch("/auth")
-  updateUserAuth(
+  async updateUserAuth(
     @Body()
     updateData: UpdateUserAuthDto
   ) {
-    return this.managementService.updateUserAuth(updateData);
+    try {
+      const responseData = await this.managementService.updateUserAuth(
+        updateData
+      );
+
+      if (responseData === -1)
+        return {
+          message: `업데이트 실패`,
+          ok: false,
+        };
+      else if (responseData)
+        return {
+          message: `권한이 ${responseData}으로 업데이트 되었습니다.`,
+          ok: true,
+        };
+    } catch (error) {
+      Logger.error(error);
+      return {
+        message: `업데이트 실패`,
+        ok: false,
+        error: new InternalServerErrorException(error),
+      };
+    }
   }
 }
