@@ -62,7 +62,7 @@ export class ManagementController {
   updateStmCompanyManagement(
     @Body() updateCompanyManagementDto: UpdateManagementDto
   ) {
-    return this.managementService.updateStmCompanyManagem3ent(
+    return this.managementService.updateStmCompanyManagement(
       updateCompanyManagementDto
     );
   }

@@ -1,6 +1,6 @@
 export * from "./alramHistory";
-export * from "./berthInfo";
 export * from "./berthStatSchedule";
+export * from "./berthInfo";
 export * from "./commonCode";
 export * from "./container";
 export * from "./databasesHistory";

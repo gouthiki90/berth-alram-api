@@ -13,6 +13,7 @@ export interface userAttributes {
   stmCompanyOid?: string;
   userId: string;
   userName?: string;
+  bizName?: string;
   password: Uint8Array;
   managerName?: string;
   contact?: string;
@@ -66,6 +67,9 @@ export class user
 
   @Column({ allowNull: true, type: DataType.STRING(50), comment: "유저 이름" })
   userName?: string;
+
+  @Column({ field: "biz_name", allowNull: true, type: DataType.STRING(100) })
+  bizName?: string;
 
   @Column({ type: DataType.BLOB, comment: "PW" })
   password!: Uint8Array;

@@ -118,7 +118,7 @@ export class ManagementService {
   }
 
   /** 업체 업데이트 */
-  async updateStmCompanyManagem3ent(
+  async updateStmCompanyManagement(
     updateCompanyManagementDto: UpdateManagementDto
   ) {
     const t = await this.seqeulize.transaction();
