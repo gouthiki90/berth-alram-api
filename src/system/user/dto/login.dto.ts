@@ -3,4 +3,6 @@ export class LoginDto {
   userId: string;
   /** 비밀번호 */
   password: any;
+  /** 권한 */
+  role?: string;
 }

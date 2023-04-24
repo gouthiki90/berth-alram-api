@@ -9,12 +9,13 @@ import {
 } from "sequelize-typescript";
 
 export interface userAttributes {
-  id?: number;
-  oid?: string;
+  oid: string;
+  stmCompanyOid?: string;
   userId: string;
   userName?: string;
-  password: Uint8Array;
   bizName?: string;
+  password: Uint8Array;
+  managerName?: string;
   contact?: string;
   contact_01?: string;
   contact_02?: string;
@@ -26,7 +27,9 @@ export interface userAttributes {
   contact_08?: string;
   contact_09?: string;
   managerTel?: string;
-  managerName?: string;
+  role?: string;
+  authStatus?: string;
+  status?: string;
   contactOption?: number;
   isNofitication?: number;
   createDate?: Date;
@@ -40,15 +43,19 @@ export class user
 {
   @Column({
     primaryKey: true,
-    autoIncrement: true,
-    type: DataType.INTEGER,
-    comment: "키값",
+    type: DataType.STRING(100),
+    comment: "키값(oid)",
   })
   @Index({ name: "PRIMARY", using: "BTREE", order: "ASC", unique: true })
-  id?: number;
+  oid!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(100), comment: "키값(oid)" })
-  oid?: string;
+  @Column({
+    field: "stm_company_oid",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "회사 참조키",
+  })
+  stmCompanyOid?: string;
 
   @Column({
     field: "user_id",
@@ -61,16 +68,19 @@ export class user
   @Column({ allowNull: true, type: DataType.STRING(50), comment: "유저 이름" })
   userName?: string;
 
+  @Column({ field: "biz_name", allowNull: true, type: DataType.STRING(100) })
+  bizName?: string;
+
   @Column({ type: DataType.BLOB, comment: "PW" })
   password!: Uint8Array;
 
   @Column({
-    field: "biz_name",
+    field: "manager_name",
     allowNull: true,
-    type: DataType.STRING(50),
-    comment: "사업자명",
+    type: DataType.STRING(20),
+    comment: "부서 이름",
   })
-  bizName?: string;
+  managerName?: string;
 
   @Column({
     allowNull: true,
@@ -119,12 +129,27 @@ export class user
   managerTel?: string;
 
   @Column({
-    field: "manager_name",
     allowNull: true,
-    type: DataType.STRING(20),
-    comment: "부서 이름",
+    type: DataType.STRING(100),
+    comment: "권한(회사 관리자, 슈퍼 관리자, 회사 직원)",
   })
-  managerName?: string;
+  role?: string;
+
+  @Column({
+    field: "auth_status",
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "가입 승인 상태",
+  })
+  authStatus?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: "유저 사용 상태",
+    defaultValue: "0aply_using",
+  })
+  status?: string;
 
   @Column({
     field: "contact_option",

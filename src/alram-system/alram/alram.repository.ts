@@ -10,7 +10,9 @@ export class AlramRepository {
     private readonly util: Utils
   ) {}
 
-  /** 페이징 SELECT */
+  /** 이전 출항일 보기의 true/false에 따른 쿼리문
+   * offset에 따라 findOne
+   */
   async findOne(
     oid: string,
     offset: number,

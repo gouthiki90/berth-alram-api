@@ -6,6 +6,7 @@ import { Sequelize } from "sequelize-typescript";
 export class AlramHistoryRepository {
   constructor(private readonly seqeulize: Sequelize) {}
 
+  /** alramHistory select all */
   async findOneOfUserAlramHistory(userOid: string) {
     try {
       return await this.seqeulize.query(
@@ -24,6 +25,7 @@ export class AlramHistoryRepository {
     }
   }
 
+  /** findOne for one user of history count */
   async findOneAlramHistoryCount(userOid: string) {
     try {
       /** 각 유저가 받은 알람 수 */

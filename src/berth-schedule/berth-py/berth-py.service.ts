@@ -264,7 +264,10 @@ export class BerthPyService {
 
   /* #endregion */
 
-  /** berth data create and alram push */
+  /** 선석 스케줄 데이터를 python에서 받아 create
+   * 해당 데이터를 통해 사용자에게 alram push
+   * alram push를 한 content를 기록 create
+   */
   async create(data: Array<CreateBerthPyDto>) {
     const t = await this.seqeulize.transaction();
     const today = new Date();

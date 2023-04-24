@@ -10,6 +10,7 @@ export class ContainersReposiotry {
     private readonly util: Utils
   ) {}
 
+  /** container all select data list */
   async findAll(query: any) {
     const { berthOid, alramOid } = query;
     const whereArr = [
