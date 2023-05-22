@@ -5,15 +5,13 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Sequelize } from "sequelize-typescript";
-import { stmCompany, user } from "src/models";
+import { user } from "src/models";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import * as crypto from "crypto";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "src/auth/auth.service";
 import { Utils } from "src/util/common.utils";
-import sequelize from "sequelize";
-import { UserLimitDto } from "./dto/user-limit.dto";
 
 @Injectable()
 export class UserService {
@@ -74,47 +72,6 @@ export class UserService {
         return { message: "중복된 아이디 입니다.", ok: false };
       }
 
-      /** 사전에 가입되지 않은 회사 코드 check */
-      const userCompanyCodeDupleData = await stmCompany.findOne({
-        where: { oid: createUserDto.stmCompanyOid },
-      });
-
-      if (!userCompanyCodeDupleData) {
-        return { message: "아직 가입되지 않은 회사 코드 입니다.", ok: false };
-      }
-
-      /** 회사 코드 유저 리밋 validation list */
-      const userLimitValidationList: Array<UserLimitDto> =
-        await this.seqeulize.query(
-          `
-        SELECT
-          com.limit_user AS limitUser,
-          COUNT(usr.oid) AS userLimitCount
-        FROM user AS usr
-        INNER JOIN stm_company AS com ON usr.stm_company_oid = com.oid
-        WHERE TRUE
-        AND com.oid = $oid
-        GROUP BY com.oid
-        `,
-          {
-            type: sequelize.QueryTypes.SELECT,
-            bind: { oid: createUserDto.stmCompanyOid },
-          }
-        );
-
-      /** 유저 리밋 체크 */
-      if (userLimitValidationList.length > 0) {
-        for (const obj of userLimitValidationList) {
-          if (obj.limitUser === obj.userLimitCount)
-            return {
-              message:
-                "해당 업체 코드를 모든 유저가 사용 중입니다.\n해당 업체코드는 사용할 수 없는 코드입니다.",
-              ok: false,
-              error: new UnauthorizedException(),
-            };
-        }
-      }
-
       createUserDto.password = crypto
         .createHash("sha512")
         .update(createUserDto.password)
@@ -122,7 +79,6 @@ export class UserService {
 
       const USER_OID = await this.util.getOid(user, "User");
       createUserDto.oid = USER_OID;
-      createUserDto.companyCode = createUserDto.stmCompanyOid;
 
       await user.create(createUserDto, { transaction: t });
 
