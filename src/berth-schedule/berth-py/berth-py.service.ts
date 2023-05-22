@@ -11,6 +11,7 @@ import sequelize from "sequelize";
 import { Utils } from "src/util/common.utils";
 import { GetUserInfoListDto } from "./dto/get-user-info-list.dto";
 import { ForAlramPushMessage } from "./interface/berth-alram-push.interface";
+import * as moment from "moment";
 
 @Injectable()
 export class BerthPyService {
@@ -25,9 +26,9 @@ export class BerthPyService {
   /** 별칭 유무에 따른 메시지 return */
   dependsShipNameMakePushMessage(forAlramPushInterface: ForAlramPushMessage) {
     if (forAlramPushInterface?.isUse !== 1) {
-      return `${forAlramPushInterface.trminlCode} 터미널의 ${forAlramPushInterface.oid} 모선항차 입항시간이\n ${forAlramPushInterface.oldCsdhpPrarnde}에서 ${forAlramPushInterface.newCsdhpPrarnde}으로 변경되었습니다.`;
+      return `${forAlramPushInterface.trminlCode} ${forAlramPushInterface.oid} 입항시간이\n ${forAlramPushInterface.oldCsdhpPrarnde} -> ${forAlramPushInterface.newCsdhpPrarnde}`;
     } else if (forAlramPushInterface?.nickname_01) {
-      return `${forAlramPushInterface.trminlCode} 터미널의 ${forAlramPushInterface?.nickname_01}(${forAlramPushInterface.oid}) 모선항차 입항시간이\n ${forAlramPushInterface.oldCsdhpPrarnde}에서 ${forAlramPushInterface.newCsdhpPrarnde}으로 변경되었습니다.`;
+      return `${forAlramPushInterface.trminlCode} ${forAlramPushInterface?.nickname_01}(${forAlramPushInterface.oid}) 입항시간이\n ${forAlramPushInterface.oldCsdhpPrarnde} -> ${forAlramPushInterface.newCsdhpPrarnde}`;
     } else {
       throw new InternalServerErrorException("::: no variable :::");
     }
@@ -136,8 +137,12 @@ export class BerthPyService {
         const messageContent = this.dependsShipNameMakePushMessage({
           trminlCode: newBerthData.trminlCode,
           oid: newBerthData.oid,
-          newCsdhpPrarnde: newBerthData.csdhpPrarnde,
-          oldCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde,
+          newCsdhpPrarnde: moment(newBerthData.csdhpPrarnde).format(
+            "YYYY-MM-DD HH:mm"
+          ),
+          oldCsdhpPrarnde: moment(oldBerthDupleData.csdhpPrarnde).format(
+            "YYYY-MM-DD HH:mm"
+          ),
           nickname_01: userInfo.nickname_01,
           isUse: userInfo.isUse,
         });
@@ -215,8 +220,12 @@ export class BerthPyService {
         const messageContent = this.dependsShipNameMakePushMessage({
           trminlCode: newBerthData.trminlCode,
           oid: newBerthData.oid,
-          newCsdhpPrarnde: newBerthData.csdhpPrarnde,
-          oldCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde,
+          newCsdhpPrarnde: moment(newBerthData.csdhpPrarnde).format(
+            "YYYY-MM-DD HH:mm"
+          ),
+          oldCsdhpPrarnde: moment(oldBerthDupleData.csdhpPrarnde).format(
+            "YYYY-MM-DD HH:mm"
+          ),
           nickname_01: userInfo.nickname_01,
           isUse: userInfo.isUse,
         });
