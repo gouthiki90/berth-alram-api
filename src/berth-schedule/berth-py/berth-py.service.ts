@@ -137,12 +137,8 @@ export class BerthPyService {
         const messageContent = this.dependsShipNameMakePushMessage({
           trminlCode: newBerthData.trminlCode,
           oid: newBerthData.oid,
-          newCsdhpPrarnde: moment(newBerthData.csdhpPrarnde).format(
-            "YYYY-MM-DD HH:mm"
-          ),
-          oldCsdhpPrarnde: moment(oldBerthDupleData.csdhpPrarnde).format(
-            "YYYY-MM-DD HH:mm"
-          ),
+          newCsdhpPrarnde: newBerthData.csdhpPrarnde,
+          oldCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde,
           nickname_01: userInfo.nickname_01,
           isUse: userInfo.isUse,
         });
@@ -220,12 +216,8 @@ export class BerthPyService {
         const messageContent = this.dependsShipNameMakePushMessage({
           trminlCode: newBerthData.trminlCode,
           oid: newBerthData.oid,
-          newCsdhpPrarnde: moment(newBerthData.csdhpPrarnde).format(
-            "YYYY-MM-DD HH:mm"
-          ),
-          oldCsdhpPrarnde: moment(oldBerthDupleData.csdhpPrarnde).format(
-            "YYYY-MM-DD HH:mm"
-          ),
+          newCsdhpPrarnde: newBerthData.csdhpPrarnde,
+          oldCsdhpPrarnde: oldBerthDupleData.csdhpPrarnde,
           nickname_01: userInfo.nickname_01,
           isUse: userInfo.isUse,
         });
