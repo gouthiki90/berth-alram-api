@@ -17,11 +17,11 @@ export class CommonScheduleRepository {
       const whereArr = [
         ["AND trminlCode = :trminlCode", trminlCode],
         [
-          "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 10), LEFT(csdhpPrarnde, 10)) BETWEEN :startDate AND :endDate",
+          "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
           searchType === "1",
         ],
         [
-          "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 10), LEFT(tkoffPrarnde, 10)) BETWEEN :startDate AND :endDate",
+          "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
           searchType === "2",
         ],
       ];
