@@ -58,11 +58,11 @@ export class DashBoardRepository {
       ["AND berth.trminlCode = :trminlCode", trminlCode],
       [
         "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
-        searchType === "1",
+        searchType === "1" && trminlCode !== "ICT",
       ],
       [
         "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
-        searchType === "2",
+        searchType === "2" && trminlCode !== "ICT",
       ],
       [
         "AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) <= :endDate",
@@ -124,14 +124,6 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", trminlCode],
       [
-        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
-        searchType === "1",
-      ],
-      [
-        "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
-        searchType === "2",
-      ],
-      [
         "AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) <= :endDate",
         searchType === "1" && trminlCode === "ICT",
       ],
@@ -139,7 +131,16 @@ export class DashBoardRepository {
         "AND LEFT(REPLACE(tkoffPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(tkoffPrarnde, '/', '-'), 10) <= :endDate",
         searchType === "2" && trminlCode === "ICT",
       ],
+      [
+        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
+        searchType === "1" && trminlCode !== "ICT",
+      ],
+      [
+        "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
+        searchType === "2" && trminlCode !== "ICT",
+      ],
     ];
+
     return await this.seqeulize.query(
       `
       SELECT 
