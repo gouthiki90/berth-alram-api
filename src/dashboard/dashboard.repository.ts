@@ -64,6 +64,14 @@ export class DashBoardRepository {
         "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
         searchType === "2",
       ],
+      [
+        "AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) <= :endDate",
+        searchType === "1" && trminlCode === "ICT",
+      ],
+      [
+        "AND LEFT(REPLACE(tkoffPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(tkoffPrarnde, '/', '-'), 10) <= :endDate",
+        searchType === "2" && trminlCode === "ICT",
+      ],
     ];
     return await this.seqeulize.query(
       `
@@ -122,6 +130,14 @@ export class DashBoardRepository {
       [
         "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
         searchType === "2",
+      ],
+      [
+        "AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(csdhpPrarnde, '/', '-'), 10) <= :endDate",
+        searchType === "1" && trminlCode === "ICT",
+      ],
+      [
+        "AND LEFT(REPLACE(tkoffPrarnde, '/', '-'), 10) >= :startDate AND LEFT(REPLACE(tkoffPrarnde, '/', '-'), 10) <= :endDate",
+        searchType === "2" && trminlCode === "ICT",
       ],
     ];
     return await this.seqeulize.query(
