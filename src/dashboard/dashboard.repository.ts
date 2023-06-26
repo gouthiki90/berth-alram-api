@@ -58,11 +58,13 @@ export class DashBoardRepository {
       ["AND berth.trminlCode = :trminlCode", trminlCode],
       [
         "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
-        query.searchType === "1",
+        searchType === "1",
       ],
       [
-        "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
-        query.searchType === "2",
+        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
+        (searchType === "1" && trminlCode === "E1CT") ||
+          trminlCode === "ICT" ||
+          trminlCode === "SNCT",
       ],
       [
         "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
@@ -122,15 +124,18 @@ export class DashBoardRepository {
   }
 
   async findForPageInfoAll(query: BerthQueryDto) {
+    const { trminlCode, searchType } = query;
     const whereArr = [
-      ["AND berth.trminlCode = :trminlCode", query.trminlCode],
+      ["AND berth.trminlCode = :trminlCode", trminlCode],
       [
         "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
-        query.searchType === "1",
+        searchType === "1",
       ],
       [
-        "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
-        query.searchType === "2",
+        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
+        (searchType === "1" && trminlCode === "E1CT") ||
+          trminlCode === "ICT" ||
+          trminlCode === "SNCT",
       ],
       [
         "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
@@ -138,9 +143,8 @@ export class DashBoardRepository {
       ],
       [
         "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
-        searchType === "2" &&
-          trminlCode === "E1CT" &&
-          trminlCode === "ICT" &&
+        (searchType === "2" && trminlCode === "E1CT") ||
+          trminlCode === "ICT" ||
           trminlCode === "SNCT",
       ],
     ];
