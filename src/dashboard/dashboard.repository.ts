@@ -56,11 +56,11 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", query.trminlCode],
       [
-        "AND DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)), '%Y-%m-%d %H:%i') BETWEEN :startDate AND :endDate",
+        "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
         query.searchType === "1",
       ],
       [
-        "AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)), '%Y-%m-%d %H:%i')  BETWEEN :startDate AND :endDate",
+        "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
         query.searchType === "2",
       ],
     ];
@@ -114,11 +114,11 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", query.trminlCode],
       [
-        "AND DATE_FORMAT(IF(LEFT(berth.csdhpPrarnde, 1) = '(', MID(berth.csdhpPrarnde, 2, 10), LEFT(berth.csdhpPrarnde, 10)), '%Y-%m-%d %H:%i') BETWEEN :startDate AND :endDate",
+        "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
         query.searchType === "1",
       ],
       [
-        "AND DATE_FORMAT(IF(LEFT(berth.tkoffPrarnde, 1) = '(', MID(berth.tkoffPrarnde, 2, 10), LEFT(berth.tkoffPrarnde, 10)), '%Y-%m-%d %H:%i')  BETWEEN :startDate AND :endDate",
+        "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
         query.searchType === "2",
       ],
     ];
