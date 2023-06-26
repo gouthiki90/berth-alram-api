@@ -57,24 +57,12 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", trminlCode],
       [
-        "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
+        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
         searchType === "1",
       ],
       [
-        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
-        (searchType === "1" && trminlCode === "E1CT") ||
-          trminlCode === "ICT" ||
-          trminlCode === "SNCT",
-      ],
-      [
-        "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
-        searchType === "2",
-      ],
-      [
         "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
-        (searchType === "2" && trminlCode === "E1CT") ||
-          trminlCode === "ICT" ||
-          trminlCode === "SNCT",
+        searchType === "2",
       ],
     ];
     return await this.seqeulize.query(
@@ -128,24 +116,12 @@ export class DashBoardRepository {
     const whereArr = [
       ["AND berth.trminlCode = :trminlCode", trminlCode],
       [
-        "AND DATE(berth.csdhpPrarnde) >= :startDate AND DATE(berth.csdhpPrarnde) <= :endDate",
+        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
         searchType === "1",
       ],
       [
-        "AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) >= :startDate AND IF(LEFT(csdhpPrarnde, 1) = '(', MID(csdhpPrarnde, 2, 16), LEFT(csdhpPrarnde, 19)) <= :endDate",
-        (searchType === "1" && trminlCode === "E1CT") ||
-          trminlCode === "ICT" ||
-          trminlCode === "SNCT",
-      ],
-      [
-        "AND DATE(berth.tkoffPrarnde) >= :startDate AND DATE(berth.tkoffPrarnde) <= :endDate",
-        searchType === "2",
-      ],
-      [
         "AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) >= :startDate AND IF(LEFT(tkoffPrarnde, 1) = '(', MID(tkoffPrarnde, 2, 16), LEFT(tkoffPrarnde, 19)) <= :endDate",
-        (searchType === "2" && trminlCode === "E1CT") ||
-          trminlCode === "ICT" ||
-          trminlCode === "SNCT",
+        searchType === "2",
       ],
     ];
     return await this.seqeulize.query(
